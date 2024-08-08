@@ -56,3 +56,22 @@ void Game::closeEvent(QCloseEvent *event)
     this->clean_game();
 }
 
+void Game::keyPressEvent(QKeyEvent* event)
+{
+    switch (event->key())
+    {
+    case Qt::Key_W:
+        
+        break;
+    case Qt::Key_A:
+        
+        break;
+    case Qt::Key_S:
+        
+        break;
+    case Qt::Key_D:
+        
+        break;
+    }
+}
+

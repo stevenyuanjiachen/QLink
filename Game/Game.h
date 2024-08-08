@@ -5,6 +5,7 @@
 #include <QIcon>
 #include <QPainter>
 #include <QTimer>
+#include <QKeyEvent>
 #include "Sprite.h"
 
 class QPainter;

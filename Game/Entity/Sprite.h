@@ -12,9 +12,13 @@ public:
 
     void update() override;
     void draw(QPainter* painter) override;
+    void moveBy(int dx, int dy);
 private:
     QVector2D position;
     QPixmap pixmap; // image
+    // 速度
+    QVector2D velocity;
+    int speed;
 };
 
 
