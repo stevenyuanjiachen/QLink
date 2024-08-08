@@ -3,7 +3,8 @@ add_library(libGame Game.cpp)
 
 # the lib's interface 
 target_include_directories(libGame INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Entity"
 )
 
 # Find the Qt's lib

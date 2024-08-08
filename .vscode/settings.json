@@ -1,6 +1,7 @@
 {
     "cmake.generator": "MinGW Makefiles",
     "files.associations": {
-        "qapplication": "cpp"
+        "qapplication": "cpp",
+        "qvector2d": "cpp"
     }
 }
