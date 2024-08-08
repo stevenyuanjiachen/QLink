@@ -14,12 +14,14 @@ class Game : public QWidget
 public:
     explicit Game(QWidget* parent = nullptr);
     void run();
+public: // 功能函数
     void init_game(int w, int h, const QString& title,const QIcon& = QIcon());
-    void clean_game();
     void update_game();
     void draw_game(QPainter* painter);
+    void clean_game();
 protected:
     void paintEvent(QPaintEvent* event) override;
+    void closeEvent(QCloseEvent* event) override;
 };
 
 #endif

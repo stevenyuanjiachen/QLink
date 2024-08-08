@@ -8,7 +8,7 @@ Game::Game(QWidget* parent)
         update_game();
         update();
     });
-    timer->start(1000/240);
+    timer->start(1000/60);
 }
 
 void Game::run()
@@ -35,13 +35,24 @@ void Game::draw_game(QPainter *painter)
 
 }
 
+void Game::update_game()
+{
+    
+}
+
+void Game::clean_game()
+{
+
+}
+
 void Game::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
     draw_game(&painter); 
 }
 
-void Game::update_game()
+void Game::closeEvent(QCloseEvent *event)
 {
-    
+    this->clean_game();
 }
+
