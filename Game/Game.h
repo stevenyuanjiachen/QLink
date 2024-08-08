@@ -23,6 +23,7 @@ public: // 功能函数
 protected:
     void paintEvent(QPaintEvent* event) override;
     void closeEvent(QCloseEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;
 };
 
 #endif

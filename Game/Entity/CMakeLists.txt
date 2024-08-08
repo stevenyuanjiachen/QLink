@@ -1,4 +1,6 @@
-add_library(libEntity)
+add_library(libEntity
+    Sprite.cpp
+)
 
 target_include_directories(libEntity INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}

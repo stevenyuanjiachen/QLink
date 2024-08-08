@@ -6,6 +6,11 @@ Sprite::Sprite(double x, double y, const QString &image):
     pixmap.load(image);
 }
 
+void Sprite::update()
+{
+    
+}
+
 void Sprite::draw(QPainter *painter)
 {
     painter->drawPixmap(position.toPoint(), pixmap);

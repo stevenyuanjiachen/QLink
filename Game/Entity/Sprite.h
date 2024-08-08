@@ -11,7 +11,7 @@ public:
     Sprite(double x, double y, const QString& image);
 
     void update() override;
-    void draw(QPainter* painter);
+    void draw(QPainter* painter) override;
 private:
     QVector2D position;
     QPixmap pixmap; // image
