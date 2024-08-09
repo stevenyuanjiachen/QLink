@@ -4,6 +4,7 @@
         "qapplication": "cpp",
         "qvector2d": "cpp",
         "qrect": "cpp",
-        "qset": "cpp"
+        "qset": "cpp",
+        "new": "cpp"
     }
 }

@@ -31,8 +31,6 @@ protected:
     void keyReleaseEvent(QKeyEvent* event) override;
 private:
     Manager mgr;    
-public:
-    inline static double HEIGHT, WIDTH;
 };
 
 #endif

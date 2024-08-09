@@ -1,6 +1,8 @@
 #include "Game.h"
 
+// add Entities
 Sprite* player;
+Map* gameMap;
 
 Game::Game(QWidget* parent)
     : QWidget(parent)
@@ -24,8 +26,6 @@ void Game::init_game(
     const QString& title,
     const QIcon& icon)
 {
-    this->HEIGHT = h, this->WIDTH = w;
-    
     setFixedSize(w, h);
     setWindowTitle(title);
     if(!icon.isNull())
@@ -34,8 +34,10 @@ void Game::init_game(
     }
 
     // add the entities
-    mgr.addEntity(new Map);
-    player = (Sprite*) mgr.addEntity(new Sprite(0, 0, "../images/enemy1.png"));
+    gameMap = new Map(w, h);
+    player = new Sprite(190, 400, "../images/me1.png");
+    mgr.addEntity(gameMap);
+    mgr.addEntity(player);
 }
 
 void Game::draw_game(QPainter *painter)

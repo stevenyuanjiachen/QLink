@@ -6,12 +6,16 @@
 class Map : public Entity
 {
 public:
-    Map(/* args */);
+    Map(double width, double height);
     void draw(QPainter* painter);
     void update();
+    inline double width(){ return WIDTH; }
+    inline double height(){ return HEIGHT; }
 private:
     QPixmap pixmap;
-    int ypos1, ypos2;
+    double ypos1, ypos2;
+    double speed ;
+    const double WIDTH, HEIGHT;
 };
 
 
