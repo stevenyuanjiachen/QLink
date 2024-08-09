@@ -6,8 +6,10 @@
 #include <QPainter>
 #include <QTimer>
 #include <QKeyEvent>
+
 #include "Sprite.h"
 #include "Manager.h"
+#include "Map.h"
 
 class QPainter;
 
