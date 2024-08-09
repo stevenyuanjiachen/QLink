@@ -8,8 +8,7 @@ class Manager
 {
 public:
     Manager(){};
-    template<class T>
-    T* addEntity(T* e);
+    Entity* addEntity(Entity* e);
     void update();
     void draw(QPainter* painter);
 private:

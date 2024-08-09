@@ -1,7 +1,6 @@
 #include "Manager.h"
 
-template<class T>
-T* Manager::addEntity(T* e)
+Entity* Manager::addEntity(Entity* e)
 {
     entities.insert(e);
     return e;

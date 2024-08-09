@@ -31,7 +31,7 @@ void Game::init_game(
         setWindowIcon(icon);
     }
 
-    player = new Sprite(0, 0, "../images/enemy1.png");
+    player = (Sprite*) mgr.addEntity(new Sprite(0, 0, "../images/enemy1.png"));
 }
 
 void Game::draw_game(QPainter *painter)
