@@ -1,5 +1,7 @@
 #include "Game.h"
 
+Sprite* player;
+
 Game::Game(QWidget* parent)
     : QWidget(parent)
 {
@@ -28,6 +30,8 @@ void Game::init_game(
     {
         setWindowIcon(icon);
     }
+
+    player = new Sprite(0, 0, "../images/enemy1.png");
 }
 
 void Game::draw_game(QPainter *painter)
@@ -61,16 +65,16 @@ void Game::keyPressEvent(QKeyEvent* event)
     switch (event->key())
     {
     case Qt::Key_W:
-    
+        player->velocity.setY(-1);
         break;
     case Qt::Key_A:
-        
+        player->velocity.setX(-1); 
         break;
     case Qt::Key_S:
-        
+        player->velocity.setY(1);
         break;
     case Qt::Key_D:
-        
+        player->velocity.setX(1);
         break;
     }
 }
@@ -80,16 +84,16 @@ void Game::keyReleaseEvent(QKeyEvent *event)
     switch (event->key())
     {
     case Qt::Key_W:
-        
+        player->velocity.setY(0);
         break;
     case Qt::Key_A:
-        
+        player->velocity.setX(0);
         break;
     case Qt::Key_S:
-        
+        player->velocity.setY(0);
         break;
     case Qt::Key_D:
-        
+        player->velocity.setX(0);
         break;
     }
 }
