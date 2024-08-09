@@ -36,18 +36,29 @@ void Game::init_game(
     // add the entities
     gameMap = new Map(w, h);
     player = new Sprite(190, 400, "../images/me1.png");
-    mgr.addEntity(gameMap);
     mgr.addEntity(player);
 }
 
 void Game::draw_game(QPainter *painter)
 {
+    gameMap->draw(painter);
     mgr.draw(painter);
 }
 
 void Game::update_game()
 {
+    gameMap->update();
     mgr.update();
+    
+    // 限制飞机范围
+    if(player->position.x()<0) 
+        player->position.setX(0);
+    if(player->position.x()>gameMap->width()-player->width()) 
+        player->position.setX(gameMap->width()-player->width()); 
+    if(player->position.y()<0)  
+        player->position.setY(0);
+    if(player->position.y()>gameMap->height()-player->height()) 
+        player->position.setY(gameMap->height()-player->height());
 }
 
 void Game::clean_game()

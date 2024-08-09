@@ -13,6 +13,8 @@ public:
 
     void update() override;
     void draw(QPainter* painter) override;
+    inline double width() { return pixmap.width(); }
+    inline double height() { return pixmap.height(); }   
 public:
     QVector2D position;
     QPixmap pixmap; // image
