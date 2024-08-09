@@ -25,6 +25,8 @@ protected:
     void paintEvent(QPaintEvent* event) override;
     void closeEvent(QCloseEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
+    void keyReleaseEvent(QKeyEvent* event) override;
+    
 };
 
 #endif

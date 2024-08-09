@@ -8,7 +8,7 @@ Sprite::Sprite(double x, double y, const QString &image):
 
 void Sprite::update()
 {
-    
+    this->position += speed * velocity;
 }
 
 void Sprite::draw(QPainter *painter)
@@ -16,7 +16,3 @@ void Sprite::draw(QPainter *painter)
     painter->drawPixmap(position.toPoint(), pixmap);
 }
 
-void Sprite::moveBy(int dx, int dy)
-{
-    this->position += QVector2D(dx, dy);
-}
