@@ -15,7 +15,7 @@ Game::Game(QWidget* parent)
 
 void Game::run()
 {
-    init_game(560, 450, "PlaneGame");
+    init_game(480, 700, "PlaneGame");
     this->show();
 }
 
@@ -24,6 +24,8 @@ void Game::init_game(
     const QString& title,
     const QIcon& icon)
 {
+    this->HEIGHT = h, this->WIDTH = w;
+    
     setFixedSize(w, h);
     setWindowTitle(title);
     if(!icon.isNull())
