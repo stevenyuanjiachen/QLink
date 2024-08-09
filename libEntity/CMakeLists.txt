@@ -6,7 +6,6 @@ add_library(Entity
 
 target_include_directories(Entity 
     INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}"
-    PRIVATE ${PROJECT_SOURCE_DIR}
 )
 
 # Find the Qt's lib

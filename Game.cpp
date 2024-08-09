@@ -32,6 +32,8 @@ void Game::init_game(
     {
         setWindowIcon(icon);
     }
+
+    // add the entities
     mgr.addEntity(new Map);
     player = (Sprite*) mgr.addEntity(new Sprite(0, 0, "../images/enemy1.png"));
 }
