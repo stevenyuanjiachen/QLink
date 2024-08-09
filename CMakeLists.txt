@@ -10,16 +10,17 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Add my own libs
-add_subdirectory(Game)
+add_subdirectory(libEntity)
 
 # Add executable 
 add_executable(PlaneGame
   main.cpp
+  Game.cpp
 )
 
 # link the libs
 target_link_libraries(PlaneGame 
-  libGame  
+  PUBLIC Entity
 )
 
 # install settings

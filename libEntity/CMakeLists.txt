@@ -1,9 +1,9 @@
-add_library(libEntity
+add_library(Entity
     Sprite.cpp
     Manager.cpp
 )
 
-target_include_directories(libEntity INTERFACE
+target_include_directories(Entity INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
@@ -12,6 +12,6 @@ list(APPEND CMAKE_PREFIX_PATH "D:/Qt/6.7.2/mingw_64/")
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
-target_link_libraries(libEntity PUBLIC
+target_link_libraries(Entity PUBLIC
     PUBLIC Qt${QT_VERSION_MAJOR}::Widgets
 )
