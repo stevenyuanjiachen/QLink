@@ -9,6 +9,7 @@ Sprite::Sprite(double x, double y, const QString &image):
 void Sprite::update()
 {
     this->position += speed * velocity;
+    collider = QRect(position.toPoint(), pixmap.size());
 }
 
 void Sprite::draw(QPainter *painter)

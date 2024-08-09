@@ -3,6 +3,7 @@
 
 #include "Entity.h"
 #include <QVector2D>
+#include <QRect>
 
 class Sprite : public Entity
 {
@@ -18,6 +19,8 @@ public:
     // 速度
     QVector2D velocity;
     int speed;
+    //碰撞箱
+    QRect collider;
 };
 
 
