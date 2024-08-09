@@ -7,6 +7,7 @@
 #include <QTimer>
 #include <QKeyEvent>
 #include "Sprite.h"
+#include "Manager.h"
 
 class QPainter;
 
@@ -26,7 +27,8 @@ protected:
     void closeEvent(QCloseEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
     void keyReleaseEvent(QKeyEvent* event) override;
-    
+private:
+    Manager mgr;    
 };
 
 #endif

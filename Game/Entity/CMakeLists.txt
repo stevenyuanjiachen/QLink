@@ -1,5 +1,6 @@
 add_library(libEntity
     Sprite.cpp
+    Manager.cpp
 )
 
 target_include_directories(libEntity INTERFACE

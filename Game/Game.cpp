@@ -32,12 +32,12 @@ void Game::init_game(
 
 void Game::draw_game(QPainter *painter)
 {
-
+    mgr.draw(painter);
 }
 
 void Game::update_game()
 {
-    
+    mgr.update();
 }
 
 void Game::clean_game()
