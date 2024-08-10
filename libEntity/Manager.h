@@ -10,49 +10,19 @@ class Manager
 {
 public:
     // get the Manager Instance
-    static Manager* getInstance()
-    {
-        static Manager* ins = nullptr;
-        if(ins == nullptr)
-            ins = new Manager();
-        return ins;
-    }
+    static Manager *getInstance();
     // Add Entity
-    template<class T>
-    T* addEntity(T* e)
-    {
-        entities.insert(e);
-        return e;
-    }
+    Entity *addEntity(Entity *e);
     // draw and update
-    void update()
-    {
-        for(auto& e : entities)
-        {
-            e->update();
-        }
-    }
-    void draw(QPainter* painter)
-    {
-        for(auto& e : entities)
-        {
-            e->draw(painter);
-        }
-    }
+    void update();
+    void draw(QPainter *painter);
     // refresh
-    void refresh()
-    {
-        entities.removeIf([](Entity* e){
-            if(e->isActive()==0)
-            {
-                delete e;
-                return true;
-            }else return false;
-        });
-    }
+    void refresh();
+    QSet<Entity* > getEntities(EntityType type) { return entities[type]; }
+
 private:
-    QSet<Entity*> entities;
-    Manager(){}; 
+    QSet<Entity *> entities[10];
+    Manager() {}
 };
 
 #endif

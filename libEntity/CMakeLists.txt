@@ -1,4 +1,5 @@
 add_library(Entity
+    Manager.cpp
     Sprite.cpp
     Map.cpp
     PlayerPlane.cpp

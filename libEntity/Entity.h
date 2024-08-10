@@ -2,6 +2,12 @@
 #define ENTITY_H
 
 #include <QPainter>
+
+enum EntityType
+{
+    ET_none, ET_player, ET_bullet, ET_enemy
+};
+
 class Entity
 {
 public:
@@ -16,10 +22,10 @@ public:
     
     // the type of the Entity
     inline int type() { return m_type; }
-    inline void set_type(int type) { this->m_type = type; }
+    inline void setType(EntityType type) { this->m_type = type; }
 protected:
     bool active = true;
-    int m_type = 0;
+    EntityType m_type = ET_none;
 };
 
 #endif

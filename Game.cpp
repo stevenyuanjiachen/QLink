@@ -38,6 +38,7 @@ void Game::init_game(
     // add the entities
     gameMap = new Map(w, h);
     player = new PlayerPlane(190, 400, "../images/me1.png");
+    player->setType(ET_player);
     Mgr->addEntity(player);
 }
 
@@ -140,7 +141,9 @@ void Game::create_enemy()
     else if(65<type && type<=80) type = 2;
     else type = 3;
 
-    auto enemy = Mgr->addEntity(new EnemyPlane(0,0,enemyImages[type]));
+    EnemyPlane* enemy = new EnemyPlane(0,0,enemyImages[type]);
+    enemy->setType(ET_enemy);
+    Mgr->addEntity(enemy);
 
     int posx = QRandomGenerator::global()->bounded(480-enemy->width());
     enemy->position.setX(posx);
