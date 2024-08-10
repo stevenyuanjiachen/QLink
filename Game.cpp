@@ -130,13 +130,13 @@ void Game::create_enemy()
     QStringList enemyImages=
     {
         "",
-        "../images/enemy1.png/",
-        "../images/enemy2.png/",
-        "../images/enemy2.png/",
+        "../images/enemy1.png",
+        "../images/enemy2.png",
+        "../images/enemy3.png",
     };
     int type = QRandomGenerator::global()->bounded(100);
     if(0<=type && type<=65) type = 1;
-    else if(65<type && type<=90) type = 2;
+    else if(65<type && type<=80) type = 2;
     else type = 3;
 
     auto enemy = Mgr->addEntity(new EnemyPlane(0,0,enemyImages[type]));
