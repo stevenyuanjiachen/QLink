@@ -8,7 +8,7 @@ class PlayerPlane : public Sprite
 {
 public:
     PlayerPlane();
-    void fire(Manager& mgr);
+    void fire();
 };
 
 #endif

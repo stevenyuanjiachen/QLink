@@ -30,7 +30,6 @@ protected:
     void keyPressEvent(QKeyEvent* event) override;
     void keyReleaseEvent(QKeyEvent* event) override;
 private:
-    Manager mgr;    
 };
 
 #endif

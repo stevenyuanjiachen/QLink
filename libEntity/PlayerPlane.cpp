@@ -4,7 +4,7 @@ PlayerPlane::PlayerPlane()
 {
 }
 
-void PlayerPlane::fire(Manager& mgr)
+void PlayerPlane::fire()
 {
-    mgr.addEntity(new Sprite);
+    Mgr->addEntity(new Sprite);
 }
