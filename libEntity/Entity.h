@@ -6,6 +6,7 @@ class Entity
 {
 public:
     Entity() {};
+    virtual ~Entity() {};
     virtual void update() = 0;
     virtual void draw(QPainter* painter) = 0;
 
@@ -16,7 +17,7 @@ public:
     // the type of the Entity
     inline int type() { return m_type; }
     inline void set_type(int type) { this->m_type = type; }
-private:
+protected:
     bool active = true;
     int m_type = 0;
 };

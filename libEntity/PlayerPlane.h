@@ -3,6 +3,7 @@
 
 #include "Sprite.h"
 #include "Manager.h"
+#include "Bullet.h"
 
 class PlayerPlane : public Sprite
 {

@@ -39,6 +39,17 @@ public:
             e->draw(painter);
         }
     }
+    // refresh
+    void refresh()
+    {
+        entities.removeIf([](Entity* e){
+            if(e->isActive()==0)
+            {
+                delete e;
+                return true;
+            }else return false;
+        });
+    }
 private:
     QSet<Entity*> entities;
     Manager(){}; 

@@ -2,10 +2,9 @@
 
 void PlayerPlane::fire()
 {
-    Sprite* bullet = new Sprite(
-        this->position.x()+this->width()/2,
-        this->position.y()-10,
-        "../images/bullet1.png");
+    Bullet* bullet = new Bullet(0,0,"../images/bullet1.png");
+    bullet->position.setX(this->position.x()+this->width()/2);
+    bullet->position.setY(this->position.y()-bullet->height());
     bullet->velocity.setY(-1);
     Mgr->addEntity(bullet);
 }

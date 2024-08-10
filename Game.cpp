@@ -60,7 +60,11 @@ void Game::update_game()
     if(player->position.y()>gameMap->height()-player->height()) 
         player->position.setY(gameMap->height()-player->height());
     // player fire
-    player->fire();
+
+    static int i=0;
+    if(i==0)
+        player->fire();
+    i=(i+1)%30;
 }
 
 void Game::clean_game()
