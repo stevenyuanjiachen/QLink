@@ -7,7 +7,7 @@
 class PlayerPlane : public Sprite
 {
 public:
-    PlayerPlane();
+    using Sprite::Sprite;
     void fire();
 };
 

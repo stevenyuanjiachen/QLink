@@ -1,7 +1,7 @@
 #include "Game.h"
 
 // add Entities
-Sprite* player;
+PlayerPlane* player;
 Map* gameMap;
 
 Game::Game(QWidget* parent)
@@ -35,7 +35,7 @@ void Game::init_game(
 
     // add the entities
     gameMap = new Map(w, h);
-    player = new Sprite(190, 400, "../images/me1.png");
+    player = new PlayerPlane(190, 400, "../images/me1.png");
     Mgr->addEntity(player);
 }
 
@@ -50,7 +50,7 @@ void Game::update_game()
     gameMap->update();
     Mgr->update();
     
-    // 限制飞机范围
+    // limit the position of player
     if(player->position.x()<0) 
         player->position.setX(0);
     if(player->position.x()>gameMap->width()-player->width()) 
@@ -59,6 +59,8 @@ void Game::update_game()
         player->position.setY(0);
     if(player->position.y()>gameMap->height()-player->height()) 
         player->position.setY(gameMap->height()-player->height());
+    // player fire
+    player->fire();
 }
 
 void Game::clean_game()

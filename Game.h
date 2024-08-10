@@ -8,7 +8,7 @@
 #include <QKeyEvent>
 
 #include "Sprite.h"
-#include "Manager.h"
+#include "PlayerPlane.h"
 #include "Map.h"
 
 class QPainter;
