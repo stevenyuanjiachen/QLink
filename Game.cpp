@@ -69,7 +69,8 @@ void Game::update_game()
 
 void Game::clean_game()
 {
-
+    delete Mgr;
+    delete gameMap;
 }
 
 void Game::paintEvent(QPaintEvent *event)
