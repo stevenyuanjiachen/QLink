@@ -1,4 +1,6 @@
 #include "Game.h"
+#include <QRandomGenerator>
+#include "EnemyPlane.h"
 
 // add Entities
 PlayerPlane* player;
@@ -59,12 +61,13 @@ void Game::update_game()
         player->position.setY(0);
     if(player->position.y()>gameMap->height()-player->height()) 
         player->position.setY(gameMap->height()-player->height());
-    // player fire
-
+    
     static int i=0;
-    if(i==0)
-        player->fire();
-    i=(i+1)%30;
+    // player fire
+    if(i%30==0) player->fire();
+    // create enemy
+    if(i%60==0) create_enemy();
+    i=(i+1)%600;
 }
 
 void Game::clean_game()
@@ -120,4 +123,25 @@ void Game::keyReleaseEvent(QKeyEvent *event)
         player->velocity.setX(0);
         break;
     }
+}
+
+void Game::create_enemy()
+{
+    QStringList enemyImages=
+    {
+        "",
+        "../images/enemy1.png/",
+        "../images/enemy2.png/",
+        "../images/enemy2.png/",
+    };
+    int type = QRandomGenerator::global()->bounded(100);
+    if(0<=type && type<=65) type = 1;
+    else if(65<type && type<=90) type = 2;
+    else type = 3;
+
+    auto enemy = Mgr->addEntity(new EnemyPlane(0,0,enemyImages[type]));
+
+    int posx = QRandomGenerator::global()->bounded(480-enemy->width());
+    enemy->position.setX(posx);
+    enemy->velocity.setY(1);
 }

@@ -3,6 +3,7 @@ add_library(Entity
     Map.cpp
     PlayerPlane.cpp
     Bullet.cpp
+    EnemyPlane.cpp
 )
 
 target_include_directories(Entity 

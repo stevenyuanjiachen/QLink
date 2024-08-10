@@ -24,6 +24,8 @@ public: // 功能函数
     void update_game();
     void draw_game(QPainter* painter);
     void clean_game();
+
+    void create_enemy();
 protected:
     void paintEvent(QPaintEvent* event) override;
     void closeEvent(QCloseEvent* event) override;
