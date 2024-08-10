@@ -49,6 +49,7 @@ void Game::draw_game(QPainter *painter)
 
 void Game::update_game()
 {
+    Mgr->refresh();
     gameMap->update();
     Mgr->update();
     
@@ -132,7 +133,7 @@ void Game::create_enemy()
         "",
         "../images/enemy1.png",
         "../images/enemy2.png",
-        "../images/enemy3.png",
+        "../images/enemy3_n1.png",
     };
     int type = QRandomGenerator::global()->bounded(100);
     if(0<=type && type<=65) type = 1;
@@ -143,5 +144,6 @@ void Game::create_enemy()
 
     int posx = QRandomGenerator::global()->bounded(480-enemy->width());
     enemy->position.setX(posx);
+    enemy->position.setY(-enemy->height());
     enemy->velocity.setY(1);
 }
