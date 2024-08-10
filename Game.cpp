@@ -70,6 +70,8 @@ void Game::update_game()
     // create enemy
     if(i%60==0) create_enemy();
     i=(i+1)%600;
+
+    collision_detection();    
 }
 
 void Game::clean_game()
@@ -149,4 +151,27 @@ void Game::create_enemy()
     enemy->position.setX(posx);
     enemy->position.setY(-enemy->height());
     enemy->velocity.setY(1);
+}
+
+void Game::collision_detection()
+{
+    for(auto enemy: Mgr->getEntities(ET_enemy))
+    {
+        EnemyPlane* foo = (EnemyPlane*) enemy;
+        for(auto bullet: Mgr->getEntities(ET_bullet))
+        {
+            Bullet* bar = (Bullet*) bullet;
+            if(foo->collider.intersects(bar->collider))
+            {
+                foo->destroy();
+                bar->destroy();
+            }
+        }
+
+        if(foo->collider.intersects(player->collider))
+        {
+            foo->destroy();
+        }
+        
+    }
 }
