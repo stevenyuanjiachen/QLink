@@ -2,6 +2,7 @@ add_library(Entity
     Sprite.cpp
     Manager.cpp
     Map.cpp
+    PlayerPlane.cpp
 )
 
 target_include_directories(Entity 
