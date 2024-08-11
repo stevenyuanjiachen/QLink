@@ -19,11 +19,11 @@ void Animation::update()
 
 bool Animation::updateOnce()
 {
-    static int index_once = elapsedTimer.elapsed()/m_speed % images_num;
-    index = elapsedTimer.elapsed()/m_speed % images_num - index_once;
-    
-    if(index == this->images_num-1) return true;
-    return false; 
+    m_speed = 5;
+    ++counter;
+    if(counter%m_speed==0) ++index;
+    if(counter==m_speed*this->images_num) return true;
+    return false;
 }
 
 void Animation::draw(QPainter *painter, QVector2D position)

@@ -18,6 +18,11 @@ void Sprite::update()
     }
     else if(state==ES_destroy)
     {
+        if(!destroy_begin)
+        {
+            destroy_begin = true;
+            animas[AT_destroy].destroyBegin();
+        }
         if(animas[AT_destroy].updateOnce()) state=ES_clean;
     }
 }

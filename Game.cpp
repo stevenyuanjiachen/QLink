@@ -157,9 +157,11 @@ void Game::collision_detection()
 {
     for(auto enemy: Mgr->getEntities(ET_enemy))
     {
+        if(enemy->getState()!=ES_alive) continue;
         EnemyPlane* foo = (EnemyPlane*) enemy;
         for(auto bullet: Mgr->getEntities(ET_bullet))
         {
+            if(bullet->getState()!=ES_alive) continue;
             Bullet* bar = (Bullet*) bullet;
             if(foo->collider.intersects(bar->collider))
             {

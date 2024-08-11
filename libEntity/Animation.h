@@ -21,6 +21,7 @@ public:
 
     void update();
     bool updateOnce();
+    void destroyBegin() {this->index=0; elapsedTimer.restart();};
     void draw(QPainter* painter, QVector2D position);
 private:
     QPixmap images[ANIMA_IMAGES_NUM];
@@ -29,6 +30,7 @@ private:
     QElapsedTimer elapsedTimer;
     int m_speed;
     int index;
+    int counter=0;
 };
 
 #endif

@@ -26,6 +26,8 @@ public:
     int speed;
     //碰撞箱
     QRect collider;
+private:
+    bool destroy_begin=false;
 };
 
 
