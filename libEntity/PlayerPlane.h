@@ -8,8 +8,10 @@
 class PlayerPlane : public Sprite
 {
 public:
-    using Sprite::Sprite;
-    void fire();
+    PlayerPlane(double x, double y, const QString& image);
+    void destroy() ;
+    void fire() ;
+
 };
 
 #endif

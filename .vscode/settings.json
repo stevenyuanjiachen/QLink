@@ -5,6 +5,8 @@
         "qvector2d": "cpp",
         "qrect": "cpp",
         "qset": "cpp",
-        "new": "cpp"
+        "new": "cpp",
+        "chrono": "cpp",
+        "variant": "cpp"
     }
 }

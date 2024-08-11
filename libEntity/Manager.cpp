@@ -34,7 +34,7 @@ void Manager::refresh()
     {
         entities[i].removeIf([](Entity *e)
                              {
-            if(e->isActive()==0)
+            if(e->getState()==ES_clean)
             {
                 delete e;
                 return true;
