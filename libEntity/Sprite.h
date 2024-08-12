@@ -8,7 +8,6 @@
 class Sprite : public Entity
 {
 public:
-    Sprite();
     Sprite(double x, double y, const QString& image);
 
     void update() override;

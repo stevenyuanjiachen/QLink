@@ -4,6 +4,11 @@
 #include <QObject>
 #include <QPainter>
 
+const int ENTITY_TYPR_NUM = 3;
+enum EntityType{
+    ET_none, ET_hero, ET_box
+};
+
 class Entity: public QObject
 {
     Q_OBJECT
