@@ -4,6 +4,7 @@
 #include "Entity.h"
 #include <QSet>
 #include <QPainter>
+#define Mgr Manager::getInstance()
 
 class Manager
 {

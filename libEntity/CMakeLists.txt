@@ -4,6 +4,7 @@ set(CMAKE_AUTORCC ON)
 
 add_library(Entity
     Sprite.cpp
+    Manager.cpp
 )
 
 target_include_directories(Entity 
