@@ -1,7 +1,7 @@
 #include "Sprite.h"
 
 Sprite::Sprite(double x, double y, const QString &image):
-    position(x, y), speed(3), velocity(0,0)
+    position(x, y), speed(2), velocity(0,0)
 {
     pixmap.load(image);
 }
