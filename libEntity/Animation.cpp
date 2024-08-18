@@ -1,7 +1,7 @@
 #include "Animation.h"
 
 Animation::Animation(const QStringList& image_list):
-    index(0), animation_speed(20), counter(0)
+    index(0), animation_speed(6), counter(0)
 {
     image_num = image_list.count();
     for(int i=0; i<image_num; ++i)
@@ -18,6 +18,7 @@ void Animation::update()
         counter=0;
     } 
     ++counter;
+    index%=image_num;
 }
 
 void Animation::draw(QPainter *painter, const QVector2D& postion)

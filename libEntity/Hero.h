@@ -17,10 +17,11 @@ class Hero: public Sprite
 public:
     Hero(double x, double y);
 
+    void update() override;
+    void draw(QPainter* painter) override;
 private:
     HeroState state;
     QVector<Animation> anima;
 };
-
 
 #endif

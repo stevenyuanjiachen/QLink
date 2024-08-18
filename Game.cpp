@@ -2,8 +2,7 @@
 #include "Hero.h"
 #include "Manager.h"
 
-Hero* player1 = new Hero(0,0);
-Mgr->addEntity(player1);
+Hero* player1;
 
 Game::Game(QWidget* parent)
     : QWidget(parent)
@@ -33,16 +32,19 @@ void Game::init_game(
     {
         setWindowIcon(icon);
     }
+
+    player1 = new Hero(0,0);
+    Mgr->addEntity(player1);
 }
 
 void Game::draw_game(QPainter *painter)
 {
-
+    Mgr->draw(painter);
 }
 
 void Game::update_game()
 {
-    
+    Mgr->update();
 }
 
 void Game::clean_game()
