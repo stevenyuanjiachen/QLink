@@ -3,7 +3,7 @@
 
 #include "Sprite.h"
 #include "Animation.h"
-#include "HeroResourceList.h"
+#include "ResourceList.h"
 
 const int HERO_STATE_NUM = 8;
 enum HeroState

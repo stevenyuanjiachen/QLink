@@ -1,8 +1,10 @@
 #include "Game.h"
 #include "Hero.h"
 #include "Manager.h"
+#include "Map.h"
 
 Hero *player1;
+Map* gameMap;
 
 Game::Game(QWidget *parent)
     : QWidget(parent)
@@ -17,7 +19,7 @@ Game::Game(QWidget *parent)
 
 void Game::run()
 {
-    init_game(560, 450, "QLink");
+    init_game(MAP_HEIGHT*CUBE_LENGTH, MAP_WIDTH*CUBE_LENGTH, "QLink");
     this->show();
 }
 
@@ -35,6 +37,9 @@ void Game::init_game(
 
     player1 = new Hero(0, 0);
     Mgr->addEntity(player1);
+
+    gameMap = new Map();
+    Mgr->addEntity(gameMap);
 }
 
 void Game::draw_game(QPainter *painter)

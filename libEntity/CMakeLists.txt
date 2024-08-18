@@ -6,6 +6,7 @@ add_library(Entity
     Entity.cpp
     Sprite.cpp
     Manager.cpp
+    Map.cpp
     Animation.cpp 
     Hero.cpp
 )

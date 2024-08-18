@@ -1,5 +1,5 @@
-#ifndef HERO_RES_LIST
-#define HERO_RES_LIST
+#ifndef RES_LIST
+#define RES_LIST
 
 // Hero Resource List
 const QStringList stand_up_list = 
@@ -82,4 +82,18 @@ const QStringList move_right_list =
     "../images/Player/move_right6",
 };
 
+// Map Resource List
+const QStringList map_list =
+{
+    "../images/Grass_Tile/0.png",
+    "../images/Grass_Tile/1.png",
+    "../images/Grass_Tile/2.png",
+    "../images/Grass_Tile/3.png",
+    "../images/Grass_Tile/4.png",
+    "../images/Grass_Tile/5.png",
+    "../images/Grass_Tile/6.png",
+    "../images/Grass_Tile/7.png",
+    "../images/Grass_Tile/8.png",
+    "../images/Grass_Tile/9.png"
+};
 #endif
