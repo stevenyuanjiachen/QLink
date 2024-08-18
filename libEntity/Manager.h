@@ -9,7 +9,7 @@
 class Manager
 {
 public:
-    Manager* getInstance();
+    static Manager* getInstance();
     void addEntity(Entity* e);
 
     void update();

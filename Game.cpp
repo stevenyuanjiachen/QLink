@@ -1,4 +1,9 @@
 #include "Game.h"
+#include "Hero.h"
+#include "Manager.h"
+
+Hero* player1 = new Hero(0,0);
+Mgr->addEntity(player1);
 
 Game::Game(QWidget* parent)
     : QWidget(parent)
