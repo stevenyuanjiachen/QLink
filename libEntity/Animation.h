@@ -1,0 +1,25 @@
+#ifndef ANIMATION_H
+#define ANIMATION_H
+
+#include <QPixmap>
+#include <QVector2D>
+#include <QPainter>
+
+const int ANIMA_MAX_IMAGE_NUM = 10;
+
+class Animation
+{
+public:
+    Animation(QStringList image_list);
+    void update();
+    void draw(QPainter* painter, QVector2D postion);
+    void restart();
+private:
+    QPixmap images[ANIMA_MAX_IMAGE_NUM];
+    int image_num;
+    
+    int index;
+    int animation_speed;
+    int counter;
+};
+#endif
