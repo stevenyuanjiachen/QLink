@@ -6,6 +6,7 @@ add_library(Entity
     Sprite.cpp
     Manager.cpp
     Animation.cpp 
+    Hero.cpp
 )
 
 target_include_directories(Entity 

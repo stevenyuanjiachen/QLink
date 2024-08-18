@@ -1,6 +1,6 @@
 #include "Animation.h"
 
-Animation::Animation(QStringList image_list):
+Animation::Animation(const QStringList& image_list):
     index(0), animation_speed(20), counter(0)
 {
     image_num = image_list.count();
@@ -20,7 +20,7 @@ void Animation::update()
     ++counter;
 }
 
-void Animation::draw(QPainter *painter, QVector2D postion)
+void Animation::draw(QPainter *painter, const QVector2D& postion)
 {
     painter->drawPixmap(postion.toPoint(), images[index]);
 }
