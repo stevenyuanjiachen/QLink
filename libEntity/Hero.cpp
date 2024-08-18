@@ -16,6 +16,7 @@ Hero::Hero(double x, double y)
 
 void Hero::update()
 {
+    Sprite::update();
     anima[state].update();
 }
 

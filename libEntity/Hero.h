@@ -20,6 +20,8 @@ public:
 
     void update() override;
     void draw(QPainter* painter) override;
+    void setState(HeroState state) { this->state = state; }
+    HeroState getState() const {return this->state; }
 private:
     HeroState state;
     QVector<Animation> anima;
