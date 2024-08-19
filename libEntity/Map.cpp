@@ -6,7 +6,7 @@ Map::Map()
     {
         for(int j=0; j<MAP_WIDTH; ++j)
         {
-            gameMap[i][j].load(map_list[map_num[i][j]]);
+            gameMap[i][j].load(MAP_LIST[map_num[i][j]]);
         }
     }
 }

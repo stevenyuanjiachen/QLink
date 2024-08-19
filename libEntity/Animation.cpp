@@ -25,15 +25,15 @@ void Animation::update()
 void Animation::draw(QPainter *painter, const QVector2D& postion)
 {
     painter->drawPixmap(postion.toPoint(), images[index]);
-    painter->drawPixmap(postion.x()-CUBE_LENGTH*MAP_WIDTH, postion.y(), images[index]); // left
-    painter->drawPixmap(postion.x()+CUBE_LENGTH*MAP_WIDTH, postion.y(), images[index]); // right
-    painter->drawPixmap(postion.x(), postion.y()-CUBE_LENGTH*MAP_HEIGHT, images[index]); // up
-    painter->drawPixmap(postion.x(), postion.y()+CUBE_LENGTH*MAP_HEIGHT, images[index]); // down
-
 }
 
 void Animation::restart()
 {
     counter = 0;
     index = 0;
+}
+
+bool Animation::isLastFrame()
+{
+    return index==image_num-1;
 }

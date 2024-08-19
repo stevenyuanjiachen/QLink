@@ -9,7 +9,7 @@ Manager *Manager::getInstance()
 
 void Manager::addEntity(Entity *e)
 {
-    entities[e->type()].insert(e);
+    entities[e->getType()].insert(e);
 }
 
 void Manager::update()

@@ -15,6 +15,7 @@ public:
     void update();
     void draw(QPainter* painter, const QVector2D& postion);
     void restart();
+    bool isLastFrame(); // whether is the last frame
 private:
     QPixmap images[ANIMA_MAX_IMAGE_NUM];
     int image_num;

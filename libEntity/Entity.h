@@ -23,11 +23,11 @@ public:
     inline void destroy() { this->active = false; }
     
     // the type of the Entity
-    inline int type() { return m_type; }
-    inline void set_type(int type) { this->m_type = type; }
+    inline EntityType getType() { return type; }
+    inline void setType(EntityType type) { this->type = type; }
 private:
     bool active = true;
-    int m_type = 0;
+    EntityType type = ET_none;
 };
 
 #endif
