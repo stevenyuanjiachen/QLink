@@ -24,13 +24,14 @@ public:
 public:
     // 功能函数
     void generateBox();
+    void collitionDetect();
 protected:
+    // 事件处理
     void paintEvent(QPaintEvent* event) override;
     void closeEvent(QCloseEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
     void keyReleaseEvent(QKeyEvent* event) override;
     
 };
-
 
 #endif

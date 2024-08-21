@@ -10,6 +10,7 @@ const int BOX_PLACE = 5;
 Hero *player1;
 Map* gameMap;
 
+// 游戏实现
 Game::Game(QWidget *parent)
     : QWidget(parent)
 {
@@ -26,10 +27,8 @@ void Game::run()
     this->show();
 }
 
-void Game::initGame(
-    int w, int h,
-    const QString &title,
-    const QIcon &icon)
+void Game::initGame( int w, int h, 
+    const QString &title, const QIcon &icon)
 {
     setFixedSize(w, h);
     setWindowTitle(title);
@@ -138,6 +137,8 @@ void Game::keyReleaseEvent(QKeyEvent *event)
     }
 }
 
+
+// 功能函数
 void Game::generateBox()
 {
     for(int i=BOX_PLACE; i<MAP_HEIGHT-BOX_PLACE; ++i)
@@ -148,4 +149,9 @@ void Game::generateBox()
             Mgr->addEntity(new Box(j*CUBE_LENGTH, i*CUBE_LENGTH, (BoxColor)color));
         }
     }
+}
+
+void Game::collitionDetect()
+{
+    
 }
