@@ -9,6 +9,7 @@ add_library(Entity
     Map.cpp
     Animation.cpp 
     Hero.cpp
+    Box.cpp
 )
 
 target_include_directories(Entity 

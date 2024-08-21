@@ -14,13 +14,16 @@ class Game : public QWidget
 {
     Q_OBJECT
 public:
+    // 游戏实现
     explicit Game(QWidget* parent = nullptr);
     void run();
-public: // 功能函数
-    void init_game(int w, int h, const QString& title,const QIcon& = QIcon());
-    void update_game();
-    void draw_game(QPainter* painter);
-    void clean_game();
+    void initGame(int w, int h, const QString& title,const QIcon& = QIcon());
+    void updateGame();
+    void drawGame(QPainter* painter);
+    void cleanGame();
+public:
+    // 功能函数
+    void generateBox();
 protected:
     void paintEvent(QPaintEvent* event) override;
     void closeEvent(QCloseEvent* event) override;
@@ -28,5 +31,6 @@ protected:
     void keyReleaseEvent(QKeyEvent* event) override;
     
 };
+
 
 #endif

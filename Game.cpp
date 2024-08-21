@@ -2,6 +2,10 @@
 #include "Hero.h"
 #include "Manager.h"
 #include "Map.h"
+#include "Box.h"
+#include <QRandomGenerator>
+
+const int BOX_PLACE = 5;
 
 Hero *player1;
 Map* gameMap;
@@ -10,20 +14,19 @@ Game::Game(QWidget *parent)
     : QWidget(parent)
 {
     QTimer *timer = new QTimer(this);
-    timer->callOnTimeout(this, [=]()
-                         {
-        update_game();
+    timer->callOnTimeout(this, [=](){
+        updateGame();
         update(); });
-    timer->start(1000 / 60);
+    timer->start(1000 / 60); // 帧率60
 }
 
 void Game::run()
 {
-    init_game(MAP_HEIGHT*CUBE_LENGTH, MAP_WIDTH*CUBE_LENGTH, "QLink");
+    initGame(MAP_HEIGHT*CUBE_LENGTH, MAP_WIDTH*CUBE_LENGTH, "QLink");
     this->show();
 }
 
-void Game::init_game(
+void Game::initGame(
     int w, int h,
     const QString &title,
     const QIcon &icon)
@@ -35,36 +38,38 @@ void Game::init_game(
         setWindowIcon(icon);
     }
 
+    gameMap = new Map();
+    Mgr->addEntity(gameMap);
+    
     player1 = new Hero(0, 0);
     Mgr->addEntity(player1);
 
-    gameMap = new Map();
-    Mgr->addEntity(gameMap);
+    generateBox();
 }
 
-void Game::draw_game(QPainter *painter)
+void Game::drawGame(QPainter *painter)
 {
     Mgr->draw(painter);
 }
 
-void Game::update_game()
+void Game::updateGame()
 {
     Mgr->update();
 }
 
-void Game::clean_game()
+void Game::cleanGame()
 {
 }
 
 void Game::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
-    draw_game(&painter);
+    drawGame(&painter);
 }
 
 void Game::closeEvent(QCloseEvent *event)
 {
-    this->clean_game();
+    this->cleanGame();
 }
 
 void Game::keyPressEvent(QKeyEvent *event)
@@ -129,6 +134,18 @@ void Game::keyReleaseEvent(QKeyEvent *event)
             player1->velocity.setX(0);
             player1->velocity.setY(0);
             break;
+        }
+    }
+}
+
+void Game::generateBox()
+{
+    for(int i=BOX_PLACE; i<MAP_HEIGHT-BOX_PLACE; ++i)
+    {
+        for(int j=BOX_PLACE; j<MAP_WIDTH-BOX_PLACE; ++j)
+        {
+            int color = QRandomGenerator::global()->bounded(BOX_COLOR_NUM);
+            Mgr->addEntity(new Box(j*CUBE_LENGTH, i*CUBE_LENGTH, (BoxColor)color));
         }
     }
 }
