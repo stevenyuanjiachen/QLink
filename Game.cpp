@@ -153,5 +153,13 @@ void Game::generateBox()
 
 void Game::collitionDetect()
 {
+    for(auto i: Mgr->getEntity(ET_box))
+    {
+        Box* foo = (Box*)i;
+        if(player1->intersects(foo->getCollider()))
+        {
+            
+        }
+    }
     
 }

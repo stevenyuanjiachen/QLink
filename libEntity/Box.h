@@ -21,9 +21,10 @@ class Box : public Entity
 {
 public:
     Box(int x, int y, BoxColor color);
-
     void update() override;
     void draw(QPainter* painter) override;
+public:
+    QRect& getCollider() { return collider; }
 private:
     QVector2D position;
     QRect collider;

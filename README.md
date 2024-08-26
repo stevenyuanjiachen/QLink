@@ -1,6 +1,9 @@
-# QLink
-
+# The Qt's dll
 To install the Qt's dll, input this in the powershell
 ```shell
-D:\Qt\6.7.2\mingw_64\bin\windeployqt.exe ./build/QLink.exe
+d:\qt\6.7.2\mingw_64\bin\windeployqt.exe ./build/QLink.exe
 ```
+
+# About Collider
+the Hero's collider is on feet
+![](images\README\Hero_colldier.png)

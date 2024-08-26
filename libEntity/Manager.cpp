@@ -12,6 +12,11 @@ void Manager::addEntity(Entity *e)
     entities[e->getType()].insert(e);
 }
 
+QSet<Entity *> &Manager::getEntity(EntityType type)
+{
+    return entities[type];
+}
+
 void Manager::update()
 {
     for(int i=0; i<ENTITY_TYPR_NUM; ++i)

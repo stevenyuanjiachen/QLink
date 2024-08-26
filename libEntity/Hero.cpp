@@ -13,12 +13,16 @@ Hero::Hero(double x, double y)
     anima.append(Animation(MOVE_DOWN_LIST));
     anima.append(Animation(MOVE_LEFT_LIST));
     anima.append(Animation(MOVE_RIGHT_LIST));
+    // Reset the collider
+    collider = QRect(position.x(), position.y()+35, pixmap.width(), pixmap.height()-35);
 }
 
 void Hero::update()
 {
     Sprite::update();
     anima[state].update();
+    // Reset the collider
+    collider = QRect(position.x(), position.y()+35, pixmap.width(), pixmap.height()-35);
     
     // limit the position of the Hero
     // out from left
@@ -46,4 +50,9 @@ void Hero::update()
 void Hero::draw(QPainter *painter)
 {
     anima[state].draw(painter, position);
+}
+
+void Hero::collideBoxEvent()
+{
+    
 }

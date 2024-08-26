@@ -11,6 +11,7 @@ class Manager
 public:
     static Manager* getInstance();
     void addEntity(Entity* e);
+    QSet<Entity*>& getEntity(EntityType type);
 
     void update();
     void draw(QPainter* painter);
