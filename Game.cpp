@@ -54,6 +54,7 @@ void Game::drawGame(QPainter *painter)
 void Game::updateGame()
 {
     Mgr->update();
+    collitionDetect();
 }
 
 void Game::cleanGame()
