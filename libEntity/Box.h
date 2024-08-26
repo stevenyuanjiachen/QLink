@@ -5,6 +5,8 @@
 #include "Animation.h"
 #include "ResourceList.h"
 #include <QVector2D>
+#include <QPixmap>
+#include <QRect>
 #include <QVector>
 
 const int BOX_COLOR_NUM = 3;
@@ -27,6 +29,7 @@ public:
     QRect& getCollider() { return collider; }
 private:
     QVector2D position;
+    QPixmap pixmap;
     QRect collider;
     Animation* anima;
     BoxColor color;

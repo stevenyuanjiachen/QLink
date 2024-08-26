@@ -2,6 +2,7 @@
 #define HERO_H
 
 #include "Sprite.h"
+#include "Box.h"
 #include "Animation.h"
 #include "ResourceList.h"
 
@@ -12,6 +13,7 @@ enum HeroState
     HS_move_up, HS_move_down, HS_move_left, HS_move_right,
     HS_collide_up, HS_collide_down, HS_collide_left, HS_collide_right
 };
+enum HeroBlockState { block_none, block_up, block_down, block_left, block_right};
 
 class Hero: public Sprite
 {
@@ -24,9 +26,10 @@ public:
     void setState(HeroState state) { this->state = state; }
     HeroState getState() const {return this->state; }
     bool intersects(const QRect& coll) { return collider.intersects(coll); }
-    void collideBoxEvent();
+    void collideBoxEvent(Box* box);
 private:
     HeroState state;
+    HeroBlockState blockState;
     QVector<Animation> anima;
 };
 

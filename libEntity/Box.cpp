@@ -1,7 +1,7 @@
 #include "Box.h"
 
 Box::Box(int x, int y, BoxColor color):
-    position(x, y), color(color), state(BS_normal)
+    position(x, y), color(color), state(BS_normal), pixmap(BOX_RED_LIST[0])
 {
     this->setType(ET_box);
     // load the animation
@@ -21,6 +21,7 @@ Box::Box(int x, int y, BoxColor color):
 
 void Box::update()
 {
+    collider = QRect(position.toPoint(), pixmap.size());
     switch (state)
     {
     case BS_triggered:

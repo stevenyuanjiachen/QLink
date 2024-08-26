@@ -2,7 +2,8 @@
 #include "Map.h"
 
 Hero::Hero(double x, double y)
-: Sprite(x, y, STAND_DOWN_LIST[0]), state(HS_stand_down)
+    : Sprite(x, y, STAND_DOWN_LIST[0]), 
+    state(HS_stand_down), blockState(block_none)
 {
     this->setType(ET_hero);
     anima.append(Animation(STAND_UP_LIST));
@@ -13,8 +14,6 @@ Hero::Hero(double x, double y)
     anima.append(Animation(MOVE_DOWN_LIST));
     anima.append(Animation(MOVE_LEFT_LIST));
     anima.append(Animation(MOVE_RIGHT_LIST));
-    // Reset the collider
-    collider = QRect(position.x(), position.y()+35, pixmap.width(), pixmap.height()-35);
 }
 
 void Hero::update()
@@ -24,26 +23,31 @@ void Hero::update()
     // Reset the collider
     collider = QRect(position.x(), position.y()+35, pixmap.width(), pixmap.height()-35);
     
+    // edge block
+    if(this->position.y()<0) blockState = block_up;
+    if(this->position.y()>MAP_HEIGHT*CUBE_LENGTH) blockState = block_down;
+    if(this->position.x()<0) blockState = block_left;
+    if(this->position.x()>MAP_WIDTH*CUBE_LENGTH) blockState = block_right;
+
     // limit the position of the Hero
-    // out from left
-    if(position.x() < 0)
+    switch (blockState)
     {
-        position.setX(0);
-    }
-    // out from right
-    if(position.x() > CUBE_LENGTH*MAP_WIDTH-pixmap.width())
-    {
-        position.setX(CUBE_LENGTH*MAP_WIDTH-pixmap.width());
-    }
-    // out from up
-    if(position.y() < 0)
-    {
-        position.setY(0);
-    }
-    // out from down
-    if(position.y() > CUBE_LENGTH*MAP_HEIGHT-pixmap.height())
-    {
-        position.setY(CUBE_LENGTH*MAP_HEIGHT-pixmap.height());
+    case block_up:
+        position.setY(position.y()+speed);
+        blockState = block_none;
+        break;
+    case block_down:
+        position.setY(position.y()-speed);
+        blockState = block_none;
+        break;
+    case block_left:
+        position.setX(position.x()+speed);
+        blockState = block_none;
+        break;
+    case block_right:
+        position.setX(position.x()-speed);
+        blockState = block_none;
+        break;
     }
 }
 
@@ -52,7 +56,23 @@ void Hero::draw(QPainter *painter)
     anima[state].draw(painter, position);
 }
 
-void Hero::collideBoxEvent()
+void Hero::collideBoxEvent(Box* box)
 {
-    
+    // limit the position
+    switch (state)
+    {
+    case HS_move_up:
+        blockState = block_up;
+        break;
+    case HS_move_down:
+        blockState = block_down;
+        break;
+    case HS_move_left:
+        blockState = block_left;
+        break;
+    case HS_move_right:
+        blockState = block_right;
+        break;
+    }
+
 }
