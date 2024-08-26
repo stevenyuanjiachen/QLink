@@ -17,6 +17,8 @@ Box::Box(int x, int y, BoxColor color):
         anima = new Animation(BOX_PINK_LIST);
         break;
     }
+    // 
+    triggeredTimer.start();
 }
 
 void Box::update()
@@ -24,6 +26,9 @@ void Box::update()
     collider = QRect(position.toPoint(), pixmap.size());
     switch (state)
     {
+    case BS_normal:
+        if(!anima->isFirstFrame()) anima->updateBack();
+        break;
     case BS_triggered:
         if(!anima->isLastFrame()) anima->update();
         break;
@@ -36,4 +41,22 @@ void Box::update()
 void Box::draw(QPainter *painter)
 {
     anima->draw(painter, position);
+}
+
+void Box::collideEvent()
+{
+    if(triggeredTimer.elapsed() < 500)
+        return;
+    switch (state)
+    {
+    case BS_normal:
+        state = BS_triggered;
+        triggeredTimer.restart();
+        break;
+    case BS_triggered:
+        state = BS_normal;
+        triggeredTimer.restart();
+        break;
+    }
+    
 }

@@ -22,6 +22,17 @@ void Animation::update()
     index%=image_num;
 }
 
+void Animation::updateBack()
+{
+    if(counter==animation_speed)
+    {
+        --index;
+        counter=0;
+    } 
+    ++counter;
+    index=(index+image_num)%image_num;
+}
+
 void Animation::draw(QPainter *painter, const QVector2D& postion)
 {
     painter->drawPixmap(postion.toPoint(), images[index]);
@@ -36,4 +47,9 @@ void Animation::restart()
 bool Animation::isLastFrame()
 {
     return index==image_num-1;
+}
+
+bool Animation::isFirstFrame()
+{
+    return index==0;
 }

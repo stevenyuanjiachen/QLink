@@ -5,6 +5,7 @@
 #include "Animation.h"
 #include "ResourceList.h"
 #include <QVector2D>
+#include <QElapsedTimer>
 #include <QPixmap>
 #include <QRect>
 #include <QVector>
@@ -27,6 +28,7 @@ public:
     void draw(QPainter* painter) override;
 public:
     QRect& getCollider() { return collider; }
+    void collideEvent();
 private:
     QVector2D position;
     QPixmap pixmap;
@@ -34,5 +36,6 @@ private:
     Animation* anima;
     BoxColor color;
     BoxState state;
+    QElapsedTimer triggeredTimer;
 };
 #endif

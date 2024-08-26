@@ -160,6 +160,7 @@ void Game::collitionDetect()
         if(player1->intersects(foo->getCollider()))
         {
             player1->collideBoxEvent(foo);
+            foo->collideEvent();
         }
     }
     
