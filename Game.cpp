@@ -3,7 +3,7 @@
 #include "Manager.h"
 #include "Map.h"
 #include <QRandomGenerator>
-#include <QVector>
+#include <QSet>
 
 const int BOX_PLACE = 5;
 
@@ -154,7 +154,7 @@ void Game::generateBox()
 
 void Game::collitionDetect()
 {
-    QVector<Box*> triggeredBoxes;
+    QSet<Box*> triggeredBoxes;
     // dect all the collision
     for(auto i: Mgr->getEntity(ET_box))
     {
@@ -162,13 +162,13 @@ void Game::collitionDetect()
         if(player1->intersects(foo->getCollider()))
         {
             player1->collideBoxEvent();
-            triggeredBoxes.append(foo);
+            triggeredBoxes.insert(foo);
         }
     }
 
     // if only one collision, then triggered
-    if(triggeredBoxes.length()!=1) return;
-    Box* foo = triggeredBoxes[0];
+    if(triggeredBoxes.size()!=1) return;
+    Box* foo = *triggeredBoxes.begin();
     foo->collideEvent();
     
     if(player1->getTriggeredBox()==nullptr)
