@@ -3,9 +3,11 @@
 
 Hero::Hero(double x, double y)
     : Sprite(x, y, STAND_DOWN_LIST[0]), 
-    state(HS_stand_down), blockState(block_none)
+    state(HS_stand_down), blockState(block_none),
+    triggeredBox(nullptr)
 {
     this->setType(ET_hero);
+    triggeredTimer.start();
     anima.append(Animation(STAND_UP_LIST));
     anima.append(Animation(STAND_DOWN_LIST));
     anima.append(Animation(STAND_LEFT_LIST));
@@ -56,7 +58,7 @@ void Hero::draw(QPainter *painter)
     anima[state].draw(painter, position);
 }
 
-void Hero::collideBoxEvent(Box* box)
+void Hero::collideBoxEvent()
 {
     // limit the position
     switch (state)
@@ -74,5 +76,19 @@ void Hero::collideBoxEvent(Box* box)
         blockState = block_right;
         break;
     }
+}
 
+void Hero::addTriggeredBox(Box *box)
+{
+    if(triggeredTimer.elapsed()<500) return;
+
+    if(triggeredBox==nullptr)
+    {
+        triggeredBox = box;
+    }
+    else
+    {
+        throw "Hero have had a triggeredBox";
+    }
+    triggeredTimer.restart();
 }

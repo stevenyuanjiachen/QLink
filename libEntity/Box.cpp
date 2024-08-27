@@ -27,11 +27,22 @@ void Box::update()
     switch (state)
     {
     case BS_normal:
-        if(!anima->isFirstFrame()) anima->updateBack();
         break;
     case BS_triggered:
         if(!anima->isLastFrame()) anima->update();
         break;
+    case BS_cancel_triggered:
+        if(!anima->isFirstFrame()) anima->updateBack();
+        break;
+    case BS_elimate:
+        if(!anima->isFirstFrame())
+        {
+            anima->updateBack();
+            break;
+        }else
+        {
+            state = BS_clean;
+        }
     case BS_clean:
         this->destroy();
         break;
@@ -54,9 +65,8 @@ void Box::collideEvent()
         triggeredTimer.restart();
         break;
     case BS_triggered:
-        state = BS_normal;
+        state = BS_cancel_triggered;
         triggeredTimer.restart();
         break;
     }
-    
 }

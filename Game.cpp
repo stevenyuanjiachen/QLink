@@ -2,8 +2,8 @@
 #include "Hero.h"
 #include "Manager.h"
 #include "Map.h"
-#include "Box.h"
 #include <QRandomGenerator>
+#include <QVector>
 
 const int BOX_PLACE = 5;
 
@@ -154,14 +154,45 @@ void Game::generateBox()
 
 void Game::collitionDetect()
 {
+    QVector<Box*> triggeredBoxes;
+    // dect all the collision
     for(auto i: Mgr->getEntity(ET_box))
     {
         Box* foo = (Box*)i;
         if(player1->intersects(foo->getCollider()))
         {
-            player1->collideBoxEvent(foo);
-            foo->collideEvent();
+            player1->collideBoxEvent();
+            triggeredBoxes.append(foo);
         }
+    }
+
+    // if only one collision, then triggered
+    if(triggeredBoxes.length()!=1) return;
+    Box* foo = triggeredBoxes[0];
+    foo->collideEvent();
+    
+    if(player1->getTriggeredBox()==nullptr)
+    {
+        player1->addTriggeredBox(foo);
+    }
+    else
+    {
+        ElimateBox(player1->getTriggeredBox(), foo);
+        player1->resetTriggeredBox();
+    }
+}
+
+void Game::ElimateBox(Box *box1, Box *box2)
+{
+    if(box1==box2) 
+    {
+        box1->cancelTriggered();
+        return;
+    }
+    else if(box1->getColor() == box2->getColor())
+    {
+        box1->elimate();
+        box2->elimate();
     }
     
 }
