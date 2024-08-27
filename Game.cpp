@@ -4,6 +4,7 @@
 #include "Map.h"
 #include <QRandomGenerator>
 #include <QSet>
+#include <QDebug>
 
 const int BOX_PLACE = 5;
 
@@ -169,14 +170,18 @@ void Game::collitionDetect()
     // if only one collision, then triggered
     if(triggeredBoxes.size()!=1) return;
     Box* foo = *triggeredBoxes.begin();
+    if(foo->untriggerable()) return;
     foo->collideEvent();
     
+
     if(player1->getTriggeredBox()==nullptr)
     {
         player1->addTriggeredBox(foo);
+        qInfo() << "player1 get:" << player1->getTriggeredBox();
     }
     else
     {
+        qInfo() << "player1 abandon:" << player1->getTriggeredBox();
         ElimateBox(player1->getTriggeredBox(), foo);
         player1->resetTriggeredBox();
     }
