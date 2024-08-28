@@ -170,10 +170,9 @@ void Game::collitionDetect()
     // if only one collision, then triggered
     if(triggeredBoxes.size()!=1) return;
     Box* foo = *triggeredBoxes.begin();
-    if(foo->untriggerable()) return;
     foo->collideEvent();
     
-
+   
     if(player1->getTriggeredBox()==nullptr)
     {
         player1->addTriggeredBox(foo);
