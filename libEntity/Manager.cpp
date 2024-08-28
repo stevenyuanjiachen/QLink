@@ -37,5 +37,4 @@ void Manager::draw(QPainter *painter)
             j->draw(painter);
         }
     }
-    
 }

@@ -3,6 +3,7 @@
     "files.associations": {
         "qapplication": "cpp",
         "qvector2d": "cpp",
-        "qrect": "cpp"
+        "qrect": "cpp",
+        "qrandomgenerator": "cpp"
     }
 }

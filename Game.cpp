@@ -4,6 +4,7 @@
 #include "Map.h"
 #include <QRandomGenerator>
 #include <QSet>
+#include <QTimer>
 #include <QDebug>
 
 const int BOX_PLACE = 5;
@@ -45,6 +46,8 @@ void Game::initGame( int w, int h,
     Mgr->addEntity(player1);
 
     generateBox();
+
+    triggerElapsedTimer.start();
 }
 
 void Game::drawGame(QPainter *painter)
@@ -167,11 +170,13 @@ void Game::collitionDetect()
         }
     }
     
-    // if only one collision, then triggered
+    // if only one collision && trigger elapse>500 , then triggered
     if(triggeredBoxes.size()!=1) return;
-    Box* foo = *triggeredBoxes.begin();
-
+    if(triggerElapsedTimer.elapsed()<500) return;
+    triggerElapsedTimer.restart();
+    
     // boxes' trigger event
+    Box* foo = *triggeredBoxes.begin();
     foo->trigger();
 
     // player's trigger event
