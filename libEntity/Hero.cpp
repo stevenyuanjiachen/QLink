@@ -7,7 +7,7 @@ Hero::Hero(double x, double y)
     triggeredBox(nullptr)
 {
     this->setType(ET_hero);
-    triggeredTimer.start();
+    triggerTimer.start();
     anima.append(Animation(STAND_UP_LIST));
     anima.append(Animation(STAND_DOWN_LIST));
     anima.append(Animation(STAND_LEFT_LIST));
@@ -58,7 +58,7 @@ void Hero::draw(QPainter *painter)
     anima[state].draw(painter, position);
 }
 
-void Hero::collideBoxEvent()
+void Hero::collideEvent()
 {
     // limit the position
     switch (state)
@@ -80,7 +80,7 @@ void Hero::collideBoxEvent()
 
 void Hero::addTriggeredBox(Box *box)
 {
-    if(triggeredTimer.elapsed()<500) return;
+    if(triggerTimer.elapsed()<500) return;
 
     if(triggeredBox==nullptr)
     {
@@ -90,5 +90,5 @@ void Hero::addTriggeredBox(Box *box)
     {
         throw "Hero have had a triggeredBox";
     }
-    triggeredTimer.restart();
+    triggerTimer.restart();
 }

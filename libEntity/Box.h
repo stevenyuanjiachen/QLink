@@ -5,7 +5,6 @@
 #include "Animation.h"
 #include "ResourceList.h"
 #include <QVector2D>
-#include <QElapsedTimer>
 #include <QPixmap>
 #include <QRect>
 #include <QVector>
@@ -21,7 +20,8 @@ enum BoxState
 {
     BS_normal,
     BS_triggered,
-    BS_cancel_triggered,
+    BS_triggering,
+    BS_cancel_triggering,
     BS_elimate,
     BS_clean
 };
@@ -35,10 +35,11 @@ public:
 
 public:
     QRect &getCollider() { return collider; }
-    void collideEvent();
-    void cancelTriggered() { state = BS_cancel_triggered; };
-    BoxColor getColor() { return color; }
-    void elimate() { state = BS_elimate; }
+    BoxColor getColor() const { return color; }
+    void trigger();
+    void cancelTrigger();
+    void elimate(); 
+
 private:
     QVector2D position;
     QPixmap pixmap;
@@ -46,7 +47,6 @@ private:
     Animation *anima;
     BoxColor color;
     BoxState state;
-    QElapsedTimer triggeredTimer;
 };
 
 #endif

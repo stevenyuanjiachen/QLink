@@ -34,7 +34,7 @@ public:
     void setState(HeroState state) { this->state = state; }
     HeroState getState() const { return this->state; }
     bool intersects(const QRect &coll) { return collider.intersects(coll); }
-    void collideBoxEvent();
+    void collideEvent();
     void addTriggeredBox(Box *box);
     Box *getTriggeredBox() const { return triggeredBox; }
     void resetTriggeredBox() { triggeredBox = nullptr; }
@@ -44,7 +44,7 @@ private:
     HeroBlockState blockState;
     QVector<Animation> anima;
     Box *triggeredBox;
-    QElapsedTimer triggeredTimer;
+    QElapsedTimer triggerTimer;
 };
 
 #endif

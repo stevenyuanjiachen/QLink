@@ -162,17 +162,19 @@ void Game::collitionDetect()
         Box* foo = (Box*)i;
         if(player1->intersects(foo->getCollider()))
         {
-            player1->collideBoxEvent();
+            player1->collideEvent();
             triggeredBoxes.insert(foo);
         }
     }
-
+    
     // if only one collision, then triggered
     if(triggeredBoxes.size()!=1) return;
     Box* foo = *triggeredBoxes.begin();
-    foo->collideEvent();
-    
-   
+
+    // boxes' trigger event
+    foo->trigger();
+
+    // player's trigger event
     if(player1->getTriggeredBox()==nullptr)
     {
         player1->addTriggeredBox(foo);
@@ -190,7 +192,7 @@ void Game::ElimateBox(Box *box1, Box *box2)
 {
     if(box1==box2) 
     {
-        box1->cancelTriggered();
+        box1->cancelTrigger();
         return;
     }
     else if(box1->getColor() == box2->getColor())

@@ -17,32 +17,31 @@ Box::Box(int x, int y, BoxColor color):
         anima = new Animation(BOX_PINK_LIST);
         break;
     }
-    // 
-    triggeredTimer.start();
 }
 
 void Box::update()
 {
     collider = QRect(position.toPoint(), pixmap.size());
+
+    // state machine
     switch (state)
     {
     case BS_normal:
         break;
     case BS_triggered:
-        if(!anima->isLastFrame()) anima->update();
         break;
-    case BS_cancel_triggered:
+    case BS_triggering:
+        if(!anima->isLastFrame()) anima->update();
+        else state = BS_triggered;
+        break;
+    case BS_cancel_triggering:
         if(!anima->isFirstFrame()) anima->updateBack();
+        else state = BS_normal;
         break;
     case BS_elimate:
-        if(!anima->isFirstFrame())
-        {
-            anima->updateBack();
-            break;
-        }else
-        {
-            state = BS_clean;
-        }
+        if(!anima->isLastFrame()) anima->update();
+        else state = BS_clean;
+        break;
     case BS_clean:
         this->destroy();
         break;
@@ -54,19 +53,17 @@ void Box::draw(QPainter *painter)
     anima->draw(painter, position);
 }
 
-void Box::collideEvent()
+void Box::trigger()
 {
-    if(triggeredTimer.elapsed() < 500)
-        return;
-    switch (state)
-    {
-    case BS_normal:
-        state = BS_triggered;
-        triggeredTimer.restart();
-        break;
-    case BS_triggered:
-        state = BS_cancel_triggered;
-        triggeredTimer.restart();
-        break;
-    }
+    if(state == BS_normal) state = BS_triggering;
+}
+
+void Box::cancelTrigger()
+{
+    if(state == BS_triggered) state = BS_cancel_triggering;
+}
+
+void Box::elimate()
+{
+    state = BS_elimate;
 }
