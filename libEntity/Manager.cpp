@@ -42,9 +42,9 @@ void Manager::draw(QPainter *painter)
 
 void Manager::refresh()
 {
-    for(auto i: entities)
+    for(int i=0; i<ENTITY_TYPR_NUM; ++i)
     {
-        i.removeIf([](Entity* e){
+        entities[i].removeIf([](Entity* e){
             if(e->isActive())
             {
                 return false;
