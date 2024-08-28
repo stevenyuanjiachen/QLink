@@ -38,9 +38,13 @@ void Box::update()
         if(!anima->isFirstFrame()) anima->updateBack();
         else state = BS_normal;
         break;
-    case BS_elimate:
+    case BS_elimating:
         if(!anima->isLastFrame()) anima->update();
-        else state = BS_clean;
+        else state = BS_elimate;
+        break;
+    case BS_elimate:
+        if(waitingBox==nullptr || waitingBox->isElimated() && this->isElimated())
+            state = BS_clean;
         break;
     case BS_clean:
         this->destroy();
@@ -63,7 +67,18 @@ void Box::cancelTrigger()
     if(state == BS_triggered) state = BS_cancel_triggering;
 }
 
+bool Box::isElimated()
+{
+    return state==BS_elimate || state==BS_clean;
+}
+
 void Box::elimate()
 {
-    state = BS_elimate;
+    state = BS_elimating;
+}
+
+void Box::elimateWith(Box *box)
+{
+    waitingBox = box;
+    elimate(); 
 }

@@ -184,6 +184,7 @@ void Game::collitionDetect()
     {
         player1->addTriggeredBox(foo);
         qInfo() << "player1 get:" << player1->getTriggeredBox();
+        
     }
     else
     {
@@ -205,13 +206,12 @@ void Game::ElimateBox(Box *box1, Box *box2)
         qInfo() << "elimate Box:" << box1;
         qInfo() << "elimate Box:" << box2;
 
-        box1->elimate();
-        box2->elimate();
+        box1->elimateWith(box2);
+        box2->elimateWith(box1);
     }
     else if(box1->getColor() != box2->getColor())
     {
         box1->cancelTrigger();
         box2->cancelTrigger();
     }
-    
 }

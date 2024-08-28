@@ -23,6 +23,7 @@ enum BoxState
     BS_triggering,
     BS_cancel_triggering,
     BS_elimate,
+    BS_elimating,
     BS_clean
 };
 
@@ -34,11 +35,13 @@ public:
     void draw(QPainter *painter) override;
 
 public:
-    QRect &getCollider() { return collider; }
-    BoxColor getColor() const { return color; }
+    inline QRect &getCollider() { return collider; }
+    inline BoxColor getColor() const { return color; }
     void trigger();
     void cancelTrigger();
+    bool isElimated();
     void elimate(); 
+    void elimateWith(Box* box = nullptr);
 
 private:
     QVector2D position;
@@ -47,6 +50,7 @@ private:
     Animation *anima;
     BoxColor color;
     BoxState state;
+    Box* waitingBox;
 };
 
 #endif
