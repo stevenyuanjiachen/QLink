@@ -19,6 +19,7 @@ QSet<Entity *> &Manager::getEntity(EntityType type)
 
 void Manager::update()
 {
+    this->refresh();
     for(int i=0; i<ENTITY_TYPR_NUM; ++i)
     {
         for (auto j:entities[i])
@@ -36,5 +37,22 @@ void Manager::draw(QPainter *painter)
         {
             j->draw(painter);
         }
+    }
+}
+
+void Manager::refresh()
+{
+    for(auto i: entities)
+    {
+        i.removeIf([](Entity* e){
+            if(e->isActive())
+            {
+                return false;
+            }else
+            {
+                delete e;
+                return true;
+            }
+        });
     }
 }
