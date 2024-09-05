@@ -14,6 +14,7 @@ enum HeroState
 
 class Hero: public Sprite
 {
+    Q_OBJECT
 public:
     Hero(double x, double y);
 

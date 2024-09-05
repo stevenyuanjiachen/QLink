@@ -13,7 +13,8 @@ class Entity: public QObject
 {
     Q_OBJECT
 public:
-    Entity(){};
+    Entity();
+    virtual ~Entity();
     virtual void update() = 0;
     virtual void draw(QPainter* painter) = 0;
 

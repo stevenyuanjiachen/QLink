@@ -7,6 +7,7 @@
 
 class Sprite : public Entity
 {
+    Q_OBJECT
 public:
     Sprite(double x, double y, const QString& image);
 

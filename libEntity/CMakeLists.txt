@@ -3,6 +3,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 add_library(Entity
+    Entity.cpp
     Sprite.cpp
     Manager.cpp
     Animation.cpp 
