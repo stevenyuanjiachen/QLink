@@ -2,11 +2,18 @@
 #define MANAGER_H
 
 #include "Entity.h"
+#include <QSet>
+#include <QPainter>
 
 class Manager
 {
 public:
+    Manager* getInstance();
     void addEntity(Entity* e);
+
+    void update();
+    void draw(QPainter* painter);
+    void refresh();
     
 private:
     Manager(){}

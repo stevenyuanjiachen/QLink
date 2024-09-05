@@ -6,8 +6,9 @@ add_library(Entity
     Sprite.cpp
 )
 
-target_include_directories(Entity INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}
+target_include_directories(Entity 
+    INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}"
+    PUBLIC "${PROJECT_BINARY_DIR}"
 )
 
 # Find the Qt's lib
