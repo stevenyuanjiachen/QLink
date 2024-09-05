@@ -12,7 +12,7 @@
 const int BOX_COLOR_NUM = 3;
 enum BoxColor
 {
-    BC_red,
+    BC_red = 1,
     BC_pink,
     BC_blue
 };
@@ -40,7 +40,7 @@ public:
     inline BoxColor getColor() const { return color; }
     inline int getR() { return matrixPosition.x(); }
     inline int getC() { return matrixPosition.y(); }
-    inline void setMatrixPosition(int r, int c);
+    void setMatrixPosition(int r, int c);
     void trigger();
     void cancelTrigger();
     void emitSignalCancelTrigger();

@@ -30,6 +30,8 @@ public:
     void generateBox();
     void collitionDetect();
     void ElimateBox(Box *playerBox, Box *box);
+    bool horizonElimatable(Box* box1, Box* box2);
+    bool verticalElimatable(Box* box1, Box* box2);
 
 protected:
     // 事件处理

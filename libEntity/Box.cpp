@@ -59,7 +59,7 @@ void Box::draw(QPainter *painter)
     anima->draw(painter, position);
 }
 
-inline void Box::setMatrixPosition(int r, int c)
+void Box::setMatrixPosition(int r, int c)
 {
     matrixPosition.setX(r);
     matrixPosition.setY(c);

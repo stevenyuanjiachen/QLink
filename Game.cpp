@@ -155,7 +155,7 @@ void Game::generateBox()
     // generate Box matrix
     for (int i = 1; i <= M; ++i)
         for (int j = 1; j <= N; ++j)
-            boxMatrix[i][j] = QRandomGenerator::global()->bounded(BOX_COLOR_NUM);
+            boxMatrix[i][j] = QRandomGenerator::global()->bounded(BOX_COLOR_NUM) + 1;
 
     // generate Box
     int startX = (BACKGROUND_WIDTH * CUBE_LENGTH - N * CUBE_LENGTH) / 2;
@@ -168,8 +168,8 @@ void Game::generateBox()
         for (int j = 0; j < N; ++j)
         {
             x = startX + j * CUBE_LENGTH;
-            Box* box = new Box(x, y, (BoxColor)boxMatrix[i+1][j+1]);
-            box->setMatrixPosition(i, j);
+            Box *box = new Box(x, y, (BoxColor)boxMatrix[i + 1][j + 1]);
+            box->setMatrixPosition(i+1, j+1);
             Mgr->addEntity(box);
         }
     }
@@ -223,14 +223,79 @@ void Game::ElimateBox(Box *playerBox, Box *box)
         return;
     }
     // not same color
-    else if (playerBox->getColor() != box->getColor())
+    if (playerBox->getColor() != box->getColor())
     {
         connect(box, &Box::signalCancelTrigger, playerBox, &Box::cancelTrigger);
         connect(box, &Box::signalElimate, box, &Box::cancelTrigger);
+        return;
     }
     // the same color
-    else if (playerBox->getColor() == box->getColor())
+    if (playerBox->getColor() == box->getColor())
     {
-        
+        // no corner
+        if(horizonElimatable(playerBox, box) || verticalElimatable(playerBox, box))
+        {
+            qInfo() << "elimate Box:" << playerBox;
+            qInfo() << "elimate Box:" << box;
+            connect(box, &Box::signalElimate, playerBox, &Box::elimate);
+            connect(box, &Box::signalElimate, box, &Box::elimate);
+        }
+        else 
+        {
+            connect(box, &Box::signalCancelTrigger, playerBox, &Box::cancelTrigger);
+            connect(box, &Box::signalElimate, box, &Box::cancelTrigger);
+        }
     }
+}
+
+bool Game::horizonElimatable(Box *box1, Box *box2)
+{
+    int r1 = box1->getR();
+    int c1 = box1->getC();
+    int r2 = box2->getR();
+    int c2 = box2->getC();
+
+    if (r1 != r2)
+        return false;
+    
+    //ensure c1<c2
+    if (c1 > c2)
+    {
+        int foo = c1;
+        c1 = c2;
+        c2 = foo;
+    }
+
+    for(int i=c1+1; i<c2; ++i)
+    {
+        if(boxMatrix[r1][i] != 0) return false;
+    }
+
+    return true;
+}
+
+bool Game::verticalElimatable(Box *box1, Box *box2)
+{
+    int r1 = box1->getR();
+    int c1 = box1->getC();
+    int r2 = box2->getR();
+    int c2 = box2->getC();
+
+    if (c1 != c2)
+        return false;
+    
+    //ensure c1<c2
+    if (r1 > r2)
+    {
+        int foo = r1;
+        r1 = r2;
+        r2 = foo;
+    }
+
+    for(int i=r1+1; i<r2; ++i)
+    {
+        if(boxMatrix[i][c1] != 0) return false;
+    }
+
+    return true;
 }
