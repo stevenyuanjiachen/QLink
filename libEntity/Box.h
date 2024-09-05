@@ -38,6 +38,9 @@ public:
 public:
     inline QRect &getCollider() { return collider; }
     inline BoxColor getColor() const { return color; }
+    inline int getR() { return matrixPosition.x(); }
+    inline int getC() { return matrixPosition.y(); }
+    inline void setMatrixPosition(int r, int c);
     void trigger();
     void cancelTrigger();
     void emitSignalCancelTrigger();
@@ -50,12 +53,12 @@ signals:
 
 private:
     QVector2D position;
+    QVector2D matrixPosition;
     QPixmap pixmap;
     QRect collider;
     Animation *anima;
     BoxColor color;
     BoxState state;
-    Box* waitingBox;
 };
 
 #endif

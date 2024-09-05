@@ -8,6 +8,9 @@
 #include "Box.h"
 #include <QElapsedTimer>
 
+const int MAX_M = 10;
+const int MAX_N = 10;
+
 class QPainter;
 
 class Game : public QWidget
@@ -37,6 +40,7 @@ protected:
 
 private:
     QElapsedTimer triggerElapsedTimer;
+    int boxMatrix[MAX_M+2][MAX_N+2] = {};
 };
 
 #endif

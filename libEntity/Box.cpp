@@ -59,6 +59,12 @@ void Box::draw(QPainter *painter)
     anima->draw(painter, position);
 }
 
+inline void Box::setMatrixPosition(int r, int c)
+{
+    matrixPosition.setX(r);
+    matrixPosition.setY(c);
+}
+
 void Box::trigger()
 {
     if(state == BS_normal) state = BS_triggering;
