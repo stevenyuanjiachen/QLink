@@ -1,11 +1,14 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
+#include <QObject>
 #include <QPainter>
-class Entity
+
+class Entity: public QObject
 {
+    Q_OBJECT
 public:
-    Entity();
+    Entity(){};
     virtual void update() = 0;
     virtual void draw(QPainter* painter) = 0;
 

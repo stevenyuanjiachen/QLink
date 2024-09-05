@@ -13,7 +13,7 @@ Game::Game(QWidget* parent)
 
 void Game::run()
 {
-    init_game(560, 450, "PlaneGame");
+    init_game(560, 450, "QLink");
     this->show();
 }
 
