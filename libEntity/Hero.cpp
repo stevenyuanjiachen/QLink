@@ -27,9 +27,9 @@ void Hero::update()
     
     // edge block
     if(this->position.y()<0) blockState = block_up;
-    if(this->position.y()>MAP_HEIGHT*CUBE_LENGTH) blockState = block_down;
+    if(this->position.y()>BACKGROUND_HRIGHT*CUBE_LENGTH) blockState = block_down;
     if(this->position.x()<0) blockState = block_left;
-    if(this->position.x()>MAP_WIDTH*CUBE_LENGTH) blockState = block_right;
+    if(this->position.x()>BACKGROUND_WIDTH*CUBE_LENGTH) blockState = block_right;
 
     // limit the position of the Hero
     switch (blockState)

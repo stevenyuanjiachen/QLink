@@ -8,6 +8,9 @@
 #include <QDebug>
 
 const int BOX_PLACE = 5;
+// the Box Matrix is M*N
+int M=8, N=6;
+
 
 Hero *player1;
 Map* gameMap;
@@ -25,28 +28,33 @@ Game::Game(QWidget *parent)
 
 void Game::run()
 {
-    initGame(MAP_HEIGHT*CUBE_LENGTH, MAP_WIDTH*CUBE_LENGTH, "QLink");
+    initGame(BACKGROUND_HRIGHT*CUBE_LENGTH, BACKGROUND_WIDTH*CUBE_LENGTH, "QLink");
     this->show();
 }
 
 void Game::initGame( int w, int h, 
     const QString &title, const QIcon &icon)
 {
-    setFixedSize(w, h);
-    setWindowTitle(title);
-    if (!icon.isNull())
+    // Set the Window's Size, Title and Icon
+    setFixedSize(w, h); // size
+    setWindowTitle(title); // title
+    if (!icon.isNull()) // icon
     {
         setWindowIcon(icon);
     }
 
+    // generate map
     gameMap = new Map();
     Mgr->addEntity(gameMap);
     
+    // generate player
     player1 = new Hero(0, 0);
     Mgr->addEntity(player1);
 
+    // generate Box matric
     generateBox();
 
+    // trigger timer start
     triggerElapsedTimer.start();
 }
 
@@ -146,12 +154,18 @@ void Game::keyReleaseEvent(QKeyEvent *event)
 // 功能函数
 void Game::generateBox()
 {
-    for(int i=BOX_PLACE; i<MAP_HEIGHT-BOX_PLACE; ++i)
+    int startX = (BACKGROUND_WIDTH*CUBE_LENGTH - N*CUBE_LENGTH)/2;
+    int startY = (BACKGROUND_HRIGHT*CUBE_LENGTH - M*CUBE_LENGTH)/2;
+    int x, y;
+
+    for(int i=0; i<M; ++i)
     {
-        for(int j=BOX_PLACE; j<MAP_WIDTH-BOX_PLACE; ++j)
+        y = startY + i*CUBE_LENGTH;
+        for(int j=0; j<N; ++j)
         {
+            x = startX + j*CUBE_LENGTH;
             int color = QRandomGenerator::global()->bounded(BOX_COLOR_NUM);
-            Mgr->addEntity(new Box(j*CUBE_LENGTH, i*CUBE_LENGTH, (BoxColor)color));
+            Mgr->addEntity(new Box(x, y, (BoxColor)color));
         }
     }
 }
@@ -184,7 +198,6 @@ void Game::collitionDetect()
     {
         player1->addTriggeredBox(foo);
         qInfo() << "player1 get:" << player1->getTriggeredBox();
-        
     }
     else
     {

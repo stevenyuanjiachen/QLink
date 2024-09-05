@@ -4,8 +4,8 @@
 #include "Entity.h"
 #include "ResourceList.h"
 const int CUBE_LENGTH = 32;
-const int MAP_WIDTH = 20;
-const int MAP_HEIGHT = 20;
+const int BACKGROUND_WIDTH = 20;
+const int BACKGROUND_HRIGHT = 20;
 
 class Map: public Entity
 {
@@ -14,10 +14,10 @@ public:
     void draw(QPainter* painter) override;
     void update() override;
 private:
-    QPixmap gameMap[MAP_HEIGHT][MAP_WIDTH];
+    QPixmap gameMap[BACKGROUND_HRIGHT][BACKGROUND_WIDTH];
 };
 
-const int map_num[MAP_HEIGHT][MAP_WIDTH]=
+const int background[BACKGROUND_HRIGHT][BACKGROUND_WIDTH]=
 {
     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
     0,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,0,

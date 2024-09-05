@@ -2,20 +2,20 @@
 
 Map::Map()
 {
-    for(int i=0; i<MAP_HEIGHT; ++i)
+    for(int i=0; i<BACKGROUND_HRIGHT; ++i)
     {
-        for(int j=0; j<MAP_WIDTH; ++j)
+        for(int j=0; j<BACKGROUND_WIDTH; ++j)
         {
-            gameMap[i][j].load(MAP_LIST[map_num[i][j]]);
+            gameMap[i][j].load(MAP_LIST[background[i][j]]);
         }
     }
 }
 
 void Map::draw(QPainter *painter)
 {
-    for(int i=0; i<MAP_HEIGHT; ++i)
+    for(int i=0; i<BACKGROUND_HRIGHT; ++i)
     {
-        for(int j=0; j<MAP_WIDTH; ++j)
+        for(int j=0; j<BACKGROUND_WIDTH; ++j)
         {
             painter->drawPixmap(j*CUBE_LENGTH, i*CUBE_LENGTH, gameMap[i][j]);
         }
