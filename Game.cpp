@@ -4,6 +4,7 @@
 #include "Map.h"
 #include <QRandomGenerator>
 #include <QSet>
+#include <QIcon>
 #include <QTimer>
 #include <QDebug>
 
@@ -27,7 +28,7 @@ Game::Game(QWidget *parent)
 
 void Game::run()
 {
-    initGame(BACKGROUND_HRIGHT * CUBE_LENGTH, BACKGROUND_WIDTH * CUBE_LENGTH, "QLink");
+    initGame(BACKGROUND_HRIGHT * CUBE_LENGTH, BACKGROUND_WIDTH * CUBE_LENGTH, "QLink", QIcon(GAME_ICON));
     this->show();
 }
 

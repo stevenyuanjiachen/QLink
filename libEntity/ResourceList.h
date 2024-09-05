@@ -1,6 +1,9 @@
 #ifndef RES_LIST
 #define RES_LIST
 
+// QLink Icon
+const QString GAME_ICON = "../images/Icon/QLink_icon.png";
+
 // Hero Resource List
 const QStringList STAND_UP_LIST = 
 {
