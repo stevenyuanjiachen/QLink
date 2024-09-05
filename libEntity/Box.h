@@ -29,6 +29,7 @@ enum BoxState
 
 class Box : public Entity
 {
+    Q_OBJECT
 public:
     Box(int x, int y, BoxColor color);
     void update() override;
@@ -39,9 +40,13 @@ public:
     inline BoxColor getColor() const { return color; }
     void trigger();
     void cancelTrigger();
-    bool isElimated();
+    void emitSignalCancelTrigger();
     void elimate(); 
-    void elimateWith(Box* box = nullptr);
+    void emitSignalElimate();
+
+signals:
+    void signalElimate(Box* box);
+    void signalCancelTrigger(Box* box);
 
 private:
     QVector2D position;

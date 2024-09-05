@@ -27,8 +27,11 @@ void Box::update()
     switch (state)
     {
     case BS_normal:
+        this->disconnect();
         break;
     case BS_triggered:
+        emitSignalElimate();
+        emitSignalCancelTrigger();
         break;
     case BS_triggering:
         if(!anima->isLastFrame()) anima->update();
@@ -43,8 +46,7 @@ void Box::update()
         else state = BS_elimate;
         break;
     case BS_elimate:
-        if(waitingBox==nullptr || waitingBox->isElimated() && this->isElimated())
-            state = BS_clean;
+        state = BS_clean;
         break;
     case BS_clean:
         this->destroy();
@@ -67,9 +69,9 @@ void Box::cancelTrigger()
     if(state == BS_triggered) state = BS_cancel_triggering;
 }
 
-bool Box::isElimated()
+void Box::emitSignalCancelTrigger()
 {
-    return state==BS_elimate || state==BS_clean;
+    emit signalCancelTrigger(this);
 }
 
 void Box::elimate()
@@ -77,8 +79,7 @@ void Box::elimate()
     state = BS_elimating;
 }
 
-void Box::elimateWith(Box *box)
+void Box::emitSignalElimate()
 {
-    waitingBox = box;
-    elimate(); 
+    emit signalElimate(this);
 }

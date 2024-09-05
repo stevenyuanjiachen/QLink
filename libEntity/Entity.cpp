@@ -2,7 +2,8 @@
 
 
 
-Entity::Entity()
+Entity::Entity():
+    QObject(nullptr)
 {
 }
 

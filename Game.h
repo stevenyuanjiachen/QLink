@@ -26,7 +26,7 @@ public:
     // 功能函数
     void generateBox();
     void collitionDetect();
-    void ElimateBox(Box *box1, Box *box2);
+    void ElimateBox(Box *playerBox, Box *box);
 
 protected:
     // 事件处理

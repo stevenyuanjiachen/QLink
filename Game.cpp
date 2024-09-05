@@ -194,24 +194,24 @@ void Game::collitionDetect()
     }
 }
 
-void Game::ElimateBox(Box *box1, Box *box2)
+void Game::ElimateBox(Box *playerBox, Box *box)
 {
-    if(box1==box2) 
+    if(playerBox==box) 
     {
-        box1->cancelTrigger();
+        playerBox->cancelTrigger();
         return;
     }
-    else if(box1->getColor() == box2->getColor())
+    else if(playerBox->getColor() == box->getColor())
     {
-        qInfo() << "elimate Box:" << box1;
-        qInfo() << "elimate Box:" << box2;
-
-        box1->elimateWith(box2);
-        box2->elimateWith(box1);
+        qInfo() << "elimate Box:" << playerBox;
+        qInfo() << "elimate Box:" << box;
+        
+        connect(box, &Box::signalElimate, playerBox, &Box::elimate);
+        connect(box, &Box::signalElimate, box, &Box::elimate);
     }
-    else if(box1->getColor() != box2->getColor())
+    else if(playerBox->getColor() != box->getColor())
     {
-        box1->cancelTrigger();
-        box2->cancelTrigger();
+        connect(box, &Box::signalCancelTrigger, playerBox, &Box::cancelTrigger);
+        connect(box, &Box::signalElimate, box, &Box::cancelTrigger);
     }
 }
