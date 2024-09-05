@@ -38,8 +38,8 @@ public:
 public:
     inline QRect &getCollider() { return collider; }
     inline BoxColor getColor() const { return color; }
-    inline int getR() { return matrixPosition.x(); }
-    inline int getC() { return matrixPosition.y(); }
+    inline int getR() const { return matrixPosition.x(); }
+    inline int getC() const { return matrixPosition.y(); }
     void setMatrixPosition(int r, int c);
     void trigger();
     void cancelTrigger();

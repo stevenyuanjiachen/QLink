@@ -20,7 +20,7 @@ public:
     // 游戏实现
     explicit Game(QWidget *parent = nullptr);
     void run();
-    void initGame(int w, int h, const QString &title, const QIcon & = QIcon());
+    void initGame(const int w,const int h, const QString &title, const QIcon & = QIcon());
     void updateGame();
     void drawGame(QPainter *painter);
     void cleanGame();
@@ -30,8 +30,12 @@ public:
     void generateBox();
     void collitionDetect();
     void ElimateBox(Box *playerBox, Box *box);
-    bool horizonElimatable(Box* box1, Box* box2);
-    bool verticalElimatable(Box* box1, Box* box2);
+    bool horizonElimatable(int r1, int c1, int r2, int c2);
+    bool horizonElimatable(const Box* box1, const Box* box2);
+    bool verticalElimatable(int r1, int c1, int r2, int c2);
+    bool verticalElimatable(const Box* box1, const Box* box2);
+    bool oneCornerElimatable(const Box* box1, const Box* box2);
+    bool twoCornerElimatable(const Box* box1, const Box* box2);
 
 protected:
     // 事件处理
