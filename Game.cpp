@@ -2,6 +2,7 @@
 #include "Hero.h"
 #include "Manager.h"
 #include "Map.h"
+#include <MyProgressBar.h>
 #include <QRandomGenerator>
 #include <QSet>
 #include <QIcon>
@@ -13,17 +14,17 @@ int M = 8, N = 6;
 
 Hero *player1;
 Map *gameMap;
+MyProgressBar* progressBar;
 
 // 游戏实现
 Game::Game(QWidget *parent)
     : QWidget(parent)
 {
     QTimer *timer = new QTimer(this);
-    timer->callOnTimeout(this, [=]()
-                         {
+    timer->callOnTimeout(this, [=](){
         updateGame();
         update(); });
-    timer->start(1000 / 60); // 帧率60
+    timer->start(1000 / GAME_FPS);
 }
 
 void Game::run()
@@ -58,11 +59,15 @@ void Game::initGame(int w, int h,
 
     // trigger timer start
     triggerElapsedTimer.start();
+
+    // generate the Progress Bar
+    progressBar = new MyProgressBar(CUBE_LENGTH, CUBE_LENGTH, 10*CUBE_LENGTH, 0.8*CUBE_LENGTH, 60);
 }
 
 void Game::drawGame(QPainter *painter)
 {
     Mgr->draw(painter);
+    progressBar->draw(painter);
 }
 
 void Game::updateGame()

@@ -8,6 +8,7 @@
 #include "Box.h"
 #include <QElapsedTimer>
 
+const int GAME_FPS = 60;
 const int MAX_M = 10;
 const int MAX_N = 10;
 
