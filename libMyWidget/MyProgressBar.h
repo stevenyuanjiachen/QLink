@@ -20,11 +20,11 @@ public:
     void setValue(double value);
 private:
     int x, y, width, height;
-    int offset; // 进度条相对边框收缩
+    int frameWidth; 
     // the frame
-    QRectF frameRect; 
-    QPen framePen; 
-    QBrush frameBrush;
+    QRectF frame1Rect, frame2Rect; 
+    QPen frame1Pen, frame2Pen; 
+    QBrush frame1Brush, frame2Brush;
     // the bar
     QRectF barRect;
     QPen barPen;

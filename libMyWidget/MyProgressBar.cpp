@@ -1,21 +1,27 @@
 #include "MyProgressBar.h"
 
 MyProgressBar::MyProgressBar(int x, int y, int w, int h, double time):
-    QObject(nullptr), x(x), y(y), width(w), height(h), offset(2),
+    QObject(nullptr), x(x), y(y), width(w), height(h), frameWidth(4),
     time(time*1000), value(time*1000)
 {
     // set the location
-    frameRect.setRect(x, y, w, h);
-    barRect.setRect(x+offset, y+offset, w-2*offset, h-2*offset);
+    frame1Rect.setRect(x, y, w, h);
+    frame2Rect.setRect(x+frameWidth, y+frameWidth, w-2*frameWidth, h-2*frameWidth);
+    barRect.setRect(x+frameWidth+2, y+frameWidth+2, w-2*frameWidth-4, h-2*frameWidth-4);
+
 
     // set the frame
-    framePen.setWidth(1);
-    framePen.setColor(QColor(210, 210, 210));   
-    framePen.setStyle(Qt::SolidLine);     // 线的类型
-    framePen.setCapStyle(Qt::FlatCap);    // 线端点样式
-    framePen.setJoinStyle(Qt::BevelJoin); // 线的连接点样式
-    frameBrush.setColor(QColor(190, 190, 190));
-    frameBrush.setStyle(Qt::SolidPattern);
+    frame1Pen.setWidth(2);
+    frame1Pen.setColor(QColor(160, 82, 45));   
+    frame1Pen.setStyle(Qt::SolidLine);     
+    frame1Brush.setColor(QColor(233, 137, 62));
+    frame1Brush.setStyle(Qt::SolidPattern);
+
+    frame2Pen.setWidth(2);
+    frame2Pen.setColor(QColor(160, 82, 45));   
+    frame2Pen.setStyle(Qt::SolidLine);     
+    frame2Brush.setColor(QColor(222, 184, 135));
+    frame2Brush.setStyle(Qt::SolidPattern);
 
     // set the bar
     barPen.setStyle(Qt::NoPen);
@@ -29,25 +35,28 @@ MyProgressBar::MyProgressBar(int x, int y, int w, int h, double time):
 
 void MyProgressBar::draw(QPainter *painter)
 {
-    painter->setRenderHint(QPainter::Antialiasing);
-    painter->setRenderHint(QPainter::TextAntialiasing);
+    painter->setRenderHint(QPainter::Antialiasing, false);
+    painter->setRenderHint(QPainter::TextAntialiasing, false);
 
     // draw the frame
-    painter->setPen(framePen);
-    painter->setBrush(frameBrush);
-    painter->drawRoundedRect(frameRect, 12, 12);
+    painter->setPen(frame1Pen);
+    painter->setBrush(frame1Brush);
+    painter->drawRoundedRect(frame1Rect, 5, 5);
+    painter->setPen(frame2Pen);
+    painter->setBrush(frame2Brush);
+    painter->drawRoundedRect(frame2Rect, 5, 5); 
 
     // draw the bar
     if(value==0) return;
     painter->setPen(barPen);
     painter->setBrush(barBrush);
-    painter->drawRoundedRect(barRect, 10, 10);
+    painter->drawRoundedRect(barRect, 3, 3);
 
 }
 
 void MyProgressBar::update()
 {
     value-=1;
-    double barLength = (width-2*offset)*value/time;
-    barRect.setRect(x+offset, y+offset, barLength, height-2*offset);
+    double barLength = (width-2*frameWidth-4)*value/time;
+    barRect.setRect(x+frameWidth+2, y+frameWidth+2, barLength, height-2*frameWidth-4);
 }
