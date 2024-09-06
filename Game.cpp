@@ -28,7 +28,10 @@ Game::Game(QWidget *parent)
 
 void Game::run()
 {
-    initGame(BACKGROUND_HRIGHT * CUBE_LENGTH, BACKGROUND_WIDTH * CUBE_LENGTH, "QLink", QIcon(GAME_ICON));
+    int winWidth = MAP_WIDTH * CUBE_LENGTH;
+    int winHeight = MAP_HRIGHT * CUBE_LENGTH;
+
+    initGame(winWidth, winHeight, "QLink", QIcon(GAME_ICON));
     this->show();
 }
 
@@ -48,7 +51,7 @@ void Game::initGame(int w, int h,
     Mgr->addEntity(gameMap);
 
     // generate player
-    player1 = new Hero(0, 0);
+    player1 = new Hero(MAP_BLOCK_LEFT+5, MAP_BLOCK_UP+5);
     Mgr->addEntity(player1);
 
     // generate Box matric
@@ -159,8 +162,8 @@ void Game::generateBox()
             boxMatrix[i][j] = QRandomGenerator::global()->bounded(BOX_COLOR_NUM) + 1;
 
     // generate Box
-    int startX = (BACKGROUND_WIDTH * CUBE_LENGTH - N * CUBE_LENGTH) / 2;
-    int startY = (BACKGROUND_HRIGHT * CUBE_LENGTH - M * CUBE_LENGTH) / 2;
+    int startX = (MAP_WIDTH * CUBE_LENGTH - N * CUBE_LENGTH) / 2;
+    int startY = (MAP_HRIGHT * CUBE_LENGTH - M * CUBE_LENGTH) / 2;
     int x, y;
 
     for (int i = 0; i < M; ++i)

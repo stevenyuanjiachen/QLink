@@ -2,9 +2,9 @@
 #include "Map.h"
 
 Hero::Hero(double x, double y)
-    : Sprite(x, y, STAND_DOWN_LIST[0]), 
-    state(HS_stand_down), blockState(block_none),
-    triggeredBox(nullptr)
+    : Sprite(x, y, STAND_DOWN_LIST[0]),
+      state(HS_stand_down), blockState(block_none),
+      triggeredBox(nullptr)
 {
     this->setType(ET_hero);
     triggerTimer.start();
@@ -23,31 +23,35 @@ void Hero::update()
     Sprite::update();
     anima[state].update();
     // Reset the collider
-    collider = QRect(position.x(), position.y()+30, pixmap.width(), pixmap.height()-30);
-    
+    collider = QRect(position.x(), position.y() + 30, pixmap.width(), pixmap.height() - 30);
+
     // edge block
-    if(this->position.y()<0) blockState = block_up;
-    if(this->position.y()>BACKGROUND_HRIGHT*CUBE_LENGTH) blockState = block_down;
-    if(this->position.x()<0) blockState = block_left;
-    if(this->position.x()>BACKGROUND_WIDTH*CUBE_LENGTH) blockState = block_right;
+    if (this->position.y()+30 < MAP_BLOCK_UP)
+        blockState = block_up;
+    if (this->position.y() + pixmap.height() > MAP_BLOCK_DOWN)
+        blockState = block_down;
+    if (this->position.x() < MAP_BLOCK_LEFT)
+        blockState = block_left;
+    if (this->position.x() + pixmap.width() > MAP_BLOCK_RIGHT)
+        blockState = block_right;
 
     // limit the position of the Hero
     switch (blockState)
     {
     case block_up:
-        position.setY(position.y()+speed);
+        position.setY(position.y() + speed);
         blockState = block_none;
         break;
     case block_down:
-        position.setY(position.y()-speed);
+        position.setY(position.y() - speed);
         blockState = block_none;
         break;
     case block_left:
-        position.setX(position.x()+speed);
+        position.setX(position.x() + speed);
         blockState = block_none;
         break;
     case block_right:
-        position.setX(position.x()-speed);
+        position.setX(position.x() - speed);
         blockState = block_none;
         break;
     }
@@ -80,9 +84,10 @@ void Hero::collideEvent()
 
 void Hero::addTriggeredBox(Box *box)
 {
-    if(triggerTimer.elapsed()<500) return;
+    if (triggerTimer.elapsed() < 500)
+        return;
 
-    if(triggeredBox==nullptr)
+    if (triggeredBox == nullptr)
     {
         triggeredBox = box;
     }
