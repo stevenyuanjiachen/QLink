@@ -3,7 +3,7 @@
 
 #include "Entity.h"
 #include "Animation.h"
-#include "ResourceList.h"
+#include "EntityResList.h"
 #include <QVector2D>
 #include <QPixmap>
 #include <QRect>

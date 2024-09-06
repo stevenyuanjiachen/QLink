@@ -4,7 +4,7 @@
 #include "Sprite.h"
 #include "Box.h"
 #include "Animation.h"
-#include "ResourceList.h"
+#include "EntityResList.h"
 #include <QElapsedTimer>
 
 const int HERO_STATE_NUM = 8;

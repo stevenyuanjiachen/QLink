@@ -2,7 +2,7 @@
 #define MAP_H
 
 #include "Entity.h"
-#include "ResourceList.h"
+#include "EntityResList.h"
 const int CUBE_LENGTH = 32;
 const int MAP_WIDTH = 20;
 const int MAP_HRIGHT = 22;

@@ -30,7 +30,6 @@ void Game::run()
 {
     int winWidth = MAP_WIDTH * CUBE_LENGTH;
     int winHeight = MAP_HRIGHT * CUBE_LENGTH;
-
     initGame(winWidth, winHeight, "QLink", QIcon(GAME_ICON));
     this->show();
 }

@@ -1,5 +1,5 @@
-#ifndef RES_LIST
-#define RES_LIST
+#ifndef ENTITY_RES_LIST
+#define ENTITY_RES_LIST
 
 // QLink Icon
 const QString GAME_ICON = "../images/Icon/QLink_icon.png";
