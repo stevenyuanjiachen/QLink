@@ -51,7 +51,7 @@ void Game::initGame(int w, int h,
     Mgr->addEntity(gameMap);
 
     // generate player
-    player1 = new Hero(MAP_BLOCK_LEFT+5, MAP_BLOCK_UP+5);
+    player1 = new Hero(MAP_BLOCK_LEFT + 5, MAP_BLOCK_UP + 5);
     Mgr->addEntity(player1);
 
     // generate Box matric
@@ -162,8 +162,8 @@ void Game::generateBox()
             boxMatrix[i][j] = QRandomGenerator::global()->bounded(BOX_COLOR_NUM) + 1;
 
     // generate Box
-    int startX = (MAP_WIDTH * CUBE_LENGTH - N * CUBE_LENGTH) / 2;
-    int startY = (MAP_HRIGHT * CUBE_LENGTH - M * CUBE_LENGTH) / 2;
+    int startX = MAP_BLOCK_LEFT + (MAP_BLOCK_RIGHT - MAP_BLOCK_LEFT - N * CUBE_LENGTH) / 2;
+    int startY = MAP_BLOCK_UP + (MAP_BLOCK_DOWN - MAP_BLOCK_UP - M * CUBE_LENGTH) / 2;
     int x, y;
 
     for (int i = 0; i < M; ++i)
@@ -173,7 +173,7 @@ void Game::generateBox()
         {
             x = startX + j * CUBE_LENGTH;
             Box *box = new Box(x, y, (BoxColor)boxMatrix[i + 1][j + 1]);
-            box->setMatrixPosition(i+1, j+1);
+            box->setMatrixPosition(i + 1, j + 1);
             Mgr->addEntity(box);
         }
     }
@@ -237,8 +237,7 @@ void Game::ElimateBox(Box *playerBox, Box *box)
     if (playerBox->getColor() == box->getColor())
     {
         // no corner
-        if(horizonElimatable(playerBox, box) || verticalElimatable(playerBox, box)
-            || oneCornerElimatable(playerBox, box) || twoCornerElimatable(playerBox, box))
+        if (horizonElimatable(playerBox, box) || verticalElimatable(playerBox, box) || oneCornerElimatable(playerBox, box) || twoCornerElimatable(playerBox, box))
         {
             qInfo() << "elimate Box:" << playerBox;
             qInfo() << "elimate Box:" << box;
@@ -255,12 +254,12 @@ void Game::ElimateBox(Box *playerBox, Box *box)
     }
 }
 
-bool Game::horizonElimatable(int r1, int c1,int r2,int c2)
+bool Game::horizonElimatable(int r1, int c1, int r2, int c2)
 {
     if (r1 != r2)
         return false;
-    
-    //ensure c1<c2
+
+    // ensure c1<c2
     if (c1 > c2)
     {
         int foo = c1;
@@ -268,9 +267,10 @@ bool Game::horizonElimatable(int r1, int c1,int r2,int c2)
         c2 = foo;
     }
 
-    for(int i=c1+1; i<c2; ++i)
+    for (int i = c1 + 1; i < c2; ++i)
     {
-        if(boxMatrix[r1][i] != 0) return false;
+        if (boxMatrix[r1][i] != 0)
+            return false;
     }
 
     return true;
@@ -291,8 +291,8 @@ bool Game::verticalElimatable(int r1, int c1, int r2, int c2)
 {
     if (c1 != c2)
         return false;
-    
-    //ensure c1<c2
+
+    // ensure c1<c2
     if (r1 > r2)
     {
         int foo = r1;
@@ -300,9 +300,10 @@ bool Game::verticalElimatable(int r1, int c1, int r2, int c2)
         r2 = foo;
     }
 
-    for(int i=r1+1; i<r2; ++i)
+    for (int i = r1 + 1; i < r2; ++i)
     {
-        if(boxMatrix[i][c1] != 0) return false;
+        if (boxMatrix[i][c1] != 0)
+            return false;
     }
 
     return true;
@@ -329,18 +330,22 @@ bool Game::oneCornerElimatable(const Box *box1, const Box *box2)
     // 2     2
     // |--1--|
     // 2     2
-    for(int i=c1+1; i<=N && boxMatrix[r1][i]==0 ; ++i)
-        if(verticalElimatable(r1, i, r2, c2)) return true;
-    for(int i=c1-1; i>=1 && boxMatrix[r1][i]==0 ; --i)
-        if(verticalElimatable(r1, i, r2, c2)) return true;
+    for (int i = c1 + 1; i <= N && boxMatrix[r1][i] == 0; ++i)
+        if (verticalElimatable(r1, i, r2, c2))
+            return true;
+    for (int i = c1 - 1; i >= 1 && boxMatrix[r1][i] == 0; --i)
+        if (verticalElimatable(r1, i, r2, c2))
+            return true;
     // find the corner in the same c with box1
     //  2---2
     //    1
     //  2---2
-    for(int i=r1+1; i<=M && boxMatrix[i][c1]==0 ; ++i)
-        if(horizonElimatable(i, c1, r2, c2)) return true;
-    for(int i=r1-1; i>=1 && boxMatrix[i][c1]==0 ; --i)
-        if(horizonElimatable(i, c1, r2, c2)) return true;
+    for (int i = r1 + 1; i <= M && boxMatrix[i][c1] == 0; ++i)
+        if (horizonElimatable(i, c1, r2, c2))
+            return true;
+    for (int i = r1 - 1; i >= 1 && boxMatrix[i][c1] == 0; --i)
+        if (horizonElimatable(i, c1, r2, c2))
+            return true;
 
     return false;
 }
@@ -351,26 +356,28 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2)
     int c1 = box1->getC();
     int r2 = box2->getR();
     int c2 = box2->getC();
-    
+
     // find the corner in same r with box1
-    //  2-.-2      
-    //    |       
-    // 1--.      
-    //    |       
-    //  2-.-2      
-    for(int i=c1+1; i<=N+1 && boxMatrix[r1][i]==0 ; ++i){
-        // corner1(r1, i), corner2(r2, i) 
-        if(verticalElimatable(r1, i, r2, i) && horizonElimatable(r2, i, r2, c2))
+    //  2-.-2
+    //    |
+    // 1--.
+    //    |
+    //  2-.-2
+    for (int i = c1 + 1; i <= N + 1 && boxMatrix[r1][i] == 0; ++i)
+    {
+        // corner1(r1, i), corner2(r2, i)
+        if (verticalElimatable(r1, i, r2, i) && horizonElimatable(r2, i, r2, c2))
             return true;
     }
-    //  2-.-2      
-    //    |       
-    //    .--1      
-    //    |       
-    //  2-.-2      
-    for(int i=c1-1; i>=0 && boxMatrix[r1][i]==0 ; --i){
-        // corner1(r1, i), corner2(r2, i) 
-        if(verticalElimatable(r1, i, r2, i) && horizonElimatable(r2, i, r2, c2))
+    //  2-.-2
+    //    |
+    //    .--1
+    //    |
+    //  2-.-2
+    for (int i = c1 - 1; i >= 0 && boxMatrix[r1][i] == 0; --i)
+    {
+        // corner1(r1, i), corner2(r2, i)
+        if (verticalElimatable(r1, i, r2, i) && horizonElimatable(r2, i, r2, c2))
             return true;
     }
 
@@ -379,18 +386,20 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2)
     // .--.--.
     // 2  |  2
     //    1
-    for(int i=r1-1; i>=0 && boxMatrix[i][c1]==0 ; --i){
+    for (int i = r1 - 1; i >= 0 && boxMatrix[i][c1] == 0; --i)
+    {
         // corner1(i, c1) corner2(i, c2)
-        if(horizonElimatable(i, c1, i, c2) && verticalElimatable(i, c2, r2, c2)) 
+        if (horizonElimatable(i, c1, i, c2) && verticalElimatable(i, c2, r2, c2))
             return true;
     }
     //    1
     // 2  |  2
     // .--.--.
     // 2     2
-    for(int i=r1+1; i<=M+1 && boxMatrix[i][c1]==0 ; ++i){
+    for (int i = r1 + 1; i <= M + 1 && boxMatrix[i][c1] == 0; ++i)
+    {
         // corner1(i, c1) corner2(i, c2)
-        if(horizonElimatable(i, c1, i, c2) && verticalElimatable(i, c2, r2, c2)) 
+        if (horizonElimatable(i, c1, i, c2) && verticalElimatable(i, c2, r2, c2))
             return true;
     }
 
