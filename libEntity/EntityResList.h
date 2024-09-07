@@ -1,8 +1,10 @@
 #ifndef ENTITY_RES_LIST
 #define ENTITY_RES_LIST
 
+#include <QString>
+
 // QLink Icon
-const QString GAME_ICON = "../res/res/icon/QLink_icon.png";
+const QString GAME_ICON = "../res/icon/QLink_icon.png";
 
 // Hero Resource List
 const QStringList STAND_UP_LIST = 

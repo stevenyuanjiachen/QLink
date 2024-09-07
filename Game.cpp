@@ -61,7 +61,7 @@ void Game::initGame(int w, int h,
     triggerElapsedTimer.start();
 
     // generate the Progress Bar
-    progressBar = new MyProgressBar(CUBE_LENGTH, CUBE_LENGTH, 10*CUBE_LENGTH, 0.8*CUBE_LENGTH, 60);
+    progressBar = new MyProgressBar(CUBE_LENGTH, CUBE_LENGTH, 5);
 }
 
 void Game::drawGame(QPainter *painter)

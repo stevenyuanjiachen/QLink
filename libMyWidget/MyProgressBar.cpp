@@ -1,35 +1,32 @@
 #include "MyProgressBar.h"
+#include "MyWidgetResList.h"
 
-MyProgressBar::MyProgressBar(int x, int y, int w, int h, double time):
-    QObject(nullptr), x(x), y(y), width(w), height(h), frameWidth(4),
-    time(time*1000), value(time*1000)
+MyProgressBar::MyProgressBar(int x, int y, double time)
+    : QObject(nullptr), x(x), y(y),
+      time(time * 1000), value(time * 1000)
 {
-    // set the location
-    frame1Rect.setRect(x, y, w, h);
-    frame2Rect.setRect(x+frameWidth, y+frameWidth, w-2*frameWidth, h-2*frameWidth);
-    barRect.setRect(x+frameWidth+2, y+frameWidth+2, w-2*frameWidth-4, h-2*frameWidth-4);
-
-
     // set the frame
-    frame1Pen.setWidth(2);
-    frame1Pen.setColor(QColor(160, 82, 45));   
-    frame1Pen.setStyle(Qt::SolidLine);     
-    frame1Brush.setColor(QColor(233, 137, 62));
-    frame1Brush.setStyle(Qt::SolidPattern);
-
-    frame2Pen.setWidth(2);
-    frame2Pen.setColor(QColor(160, 82, 45));   
-    frame2Pen.setStyle(Qt::SolidLine);     
-    frame2Brush.setColor(QColor(222, 184, 135));
-    frame2Brush.setStyle(Qt::SolidPattern);
+    frame = PROGRESSBAR_IMAGE;
 
     // set the bar
+    barX = x + FRAME_INTERVAL_LEFT;
+    barY = y + FRAME_INTERVAL_UP;
+    barWidth = frame.width() - 2 * FRAME_INTERVAL_LEFT;
+    barHeight = frame.height() - 2 * FRAME_INTERVAL_UP;
+    barRect.setRect(barX, barY, barWidth, barHeight);
     barPen.setStyle(Qt::NoPen);
-    barBrush.setColor(QColor(34,139,34));
+    barBrush.setColor(QColor(237, 216, 91));
     barBrush.setStyle(Qt::SolidPattern);
 
+    // set the text
+    textX = x + frame.width() + 5;
+    textY = y;
+    textFont.setFamily("宋体");
+    textFont.setPixelSize(12);
+
     // timer start
-    timer.callOnTimeout(this, [=]{ MyProgressBar::update(); });
+    timer.callOnTimeout(this, [=]
+                        { MyProgressBar::update(); });
     timer.start(1);
 }
 
@@ -39,24 +36,36 @@ void MyProgressBar::draw(QPainter *painter)
     painter->setRenderHint(QPainter::TextAntialiasing, false);
 
     // draw the frame
-    painter->setPen(frame1Pen);
-    painter->setBrush(frame1Brush);
-    painter->drawRoundedRect(frame1Rect, 5, 5);
-    painter->setPen(frame2Pen);
-    painter->setBrush(frame2Brush);
-    painter->drawRoundedRect(frame2Rect, 5, 5); 
+    painter->drawPixmap(x, y, frame);
 
     // draw the bar
-    if(value==0) return;
-    painter->setPen(barPen);
-    painter->setBrush(barBrush);
-    painter->drawRoundedRect(barRect, 3, 3);
+    if (value > 0)
+    {
+        painter->setPen(barPen);
+        painter->setBrush(barBrush);
+        painter->drawRoundedRect(barRect, 3, 3);
+    }
 
+    // draw the text
+    painter->setPen(textPen);
+    painter->setFont(textFont);
+    painter->drawText(textX, textY, timeText);
 }
 
 void MyProgressBar::update()
 {
-    value-=1;
-    double barLength = (width-2*frameWidth-4)*value/time;
-    barRect.setRect(x+frameWidth+2, y+frameWidth+2, barLength, height-2*frameWidth-4);
+    value -= 1;
+
+    // update the bar
+    double barLength = barWidth * value / time;
+    barRect.setRect(barX, barY, barLength, barHeight);
+
+    // update the text
+    int totalSeconds = value / 1000;
+    int minutes = totalSeconds / 60;
+    int seconds = totalSeconds % 60;
+    // Format time as mm:ss
+    QString timeText = QString("%1:%2")
+                           .arg(minutes, 2, 10, QChar('0'))  // Ensure two digits for minutes
+                           .arg(seconds, 2, 10, QChar('0')); // Ensure two digits for seconds
 }
