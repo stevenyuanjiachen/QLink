@@ -11,7 +11,7 @@ MyProgressBar::MyProgressBar(int x, int y, double time)
     // set the bar
     barX = x + FRAME_INTERVAL_LEFT;
     barY = y + FRAME_INTERVAL_UP;
-    barWidth = frame.width() - 2 * FRAME_INTERVAL_LEFT;
+    barWidth = frame.width() - FRAME_INTERVAL_LEFT -12;
     barHeight = frame.height() - 2 * FRAME_INTERVAL_UP;
     barRect.setRect(barX, barY, barWidth, barHeight);
     barPen.setStyle(Qt::NoPen);
@@ -19,11 +19,13 @@ MyProgressBar::MyProgressBar(int x, int y, double time)
     barBrush.setStyle(Qt::SolidPattern);
 
     // set the text
-    textX = x + frame.width() + 10;
-    textY = y + frame.height()/2 + 5;
-    textPen.setColor(Qt::black);
-    textFont.setFamily("宋体");
-    textFont.setPixelSize(15);
+    textX = x + frame.width()/2-6;
+    textY = y + frame.height()/2 + 7;
+    textPen.setColor(QColor(81, 47, 54));
+    int fontId = QFontDatabase::addApplicationFont(PIXEL_FONT);
+    QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
+    textFont.setFamily(fontFamily);
+    textFont.setPixelSize(12);
 
     // timer start
     timer.callOnTimeout(this, [=]
@@ -69,4 +71,5 @@ void MyProgressBar::update()
     timeText = QString("%1:%2")
                            .arg(minutes, 2, 10, QChar('0'))  // Ensure two digits for minutes
                            .arg(seconds, 2, 10, QChar('0')); // Ensure two digits for seconds
+    if(value<=0) timeText = "00:00";
 }
