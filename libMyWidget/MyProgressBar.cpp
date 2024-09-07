@@ -19,10 +19,11 @@ MyProgressBar::MyProgressBar(int x, int y, double time)
     barBrush.setStyle(Qt::SolidPattern);
 
     // set the text
-    textX = x + frame.width() + 5;
-    textY = y;
+    textX = x + frame.width() + 10;
+    textY = y + frame.height()/2 + 5;
+    textPen.setColor(Qt::black);
     textFont.setFamily("宋体");
-    textFont.setPixelSize(12);
+    textFont.setPixelSize(15);
 
     // timer start
     timer.callOnTimeout(this, [=]
@@ -65,7 +66,7 @@ void MyProgressBar::update()
     int minutes = totalSeconds / 60;
     int seconds = totalSeconds % 60;
     // Format time as mm:ss
-    QString timeText = QString("%1:%2")
+    timeText = QString("%1:%2")
                            .arg(minutes, 2, 10, QChar('0'))  // Ensure two digits for minutes
                            .arg(seconds, 2, 10, QChar('0')); // Ensure two digits for seconds
 }
