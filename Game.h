@@ -37,6 +37,10 @@ public:
     bool verticalElimatable(const Box* box1, const Box* box2);
     bool oneCornerElimatable(const Box* box1, const Box* box2);
     bool twoCornerElimatable(const Box* box1, const Box* box2);
+    void score(int x);
+
+signals:
+    void signalScore(int x);
 
 protected:
     // 事件处理

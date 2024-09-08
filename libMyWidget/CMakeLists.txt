@@ -4,6 +4,7 @@ set(CMAKE_AUTORCC ON)
 
 add_library(MyWidget
     MyProgressBar.cpp
+    ScoreBoard.cpp
 )
 
 target_include_directories(MyWidget

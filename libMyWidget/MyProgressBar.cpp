@@ -9,10 +9,10 @@ MyProgressBar::MyProgressBar(int x, int y, double time)
     frame = PROGRESSBAR_IMAGE;
 
     // set the bar
-    barX = x + FRAME_INTERVAL_LEFT;
-    barY = y + FRAME_INTERVAL_UP;
-    barWidth = frame.width() - FRAME_INTERVAL_LEFT -12;
-    barHeight = frame.height() - 2 * FRAME_INTERVAL_UP;
+    barX = x + BAR_INTERVAL_LEFT;
+    barY = y + BAR_INTERVAL_UP;
+    barWidth = frame.width() - BAR_INTERVAL_LEFT -12;
+    barHeight = frame.height() - 2 * BAR_INTERVAL_UP;
     barRect.setRect(barX, barY, barWidth, barHeight);
     barPen.setStyle(Qt::NoPen);
     barBrush.setColor(QColor(237, 216, 91));
@@ -27,9 +27,8 @@ MyProgressBar::MyProgressBar(int x, int y, double time)
     textFont.setFamily(fontFamily);
     textFont.setPixelSize(12);
 
-    // timer start
-    timer.callOnTimeout(this, [=]
-                        { MyProgressBar::update(); });
+    // auto update
+    timer.callOnTimeout(this, &MyProgressBar::update);
     timer.start(1);
 }
 

@@ -8,7 +8,8 @@
 #include <QPainter>
 #include <QTimer>
 
-const int PROGRESS_BAR_FPS = 60;
+const int MY_PROGRESS_BAR_WIDTH = 346;
+const int MY_PROGRESS_BAR_HEIGHT = 36;
 
 class MyProgressBar : public QObject
 {

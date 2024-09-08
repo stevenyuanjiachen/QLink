@@ -2,7 +2,8 @@
 #include "Hero.h"
 #include "Manager.h"
 #include "Map.h"
-#include <MyProgressBar.h>
+#include "MyProgressBar.h"
+#include "ScoreBoard.h"
 #include <QRandomGenerator>
 #include <QSet>
 #include <QIcon>
@@ -15,6 +16,7 @@ int M = 8, N = 6;
 Hero *player1;
 Map *gameMap;
 MyProgressBar* progressBar;
+ScoreBoard* scoreBoard1;
 
 // 游戏实现
 Game::Game(QWidget *parent)
@@ -61,13 +63,18 @@ void Game::initGame(int w, int h,
     triggerElapsedTimer.start();
 
     // generate the Progress Bar
-    progressBar = new MyProgressBar(CUBE_LENGTH, CUBE_LENGTH, 60);
+    progressBar = new MyProgressBar((CUBE_LENGTH*MAP_WIDTH-MY_PROGRESS_BAR_WIDTH)/2, CUBE_LENGTH, 60);
+
+    // generate the scoreBoard
+    scoreBoard1 = new ScoreBoard(0, 0);
+    connect(this, &Game::signalScore, scoreBoard1, &ScoreBoard::addScore);
 }
 
 void Game::drawGame(QPainter *painter)
 {
     Mgr->draw(painter);
     progressBar->draw(painter);
+    scoreBoard1->draw(painter);
 }
 
 void Game::updateGame()
@@ -240,7 +247,7 @@ void Game::ElimateBox(Box *playerBox, Box *box)
     // the same color
     if (playerBox->getColor() == box->getColor())
     {
-        // no corner
+    
         if (horizonElimatable(playerBox, box) || verticalElimatable(playerBox, box) || oneCornerElimatable(playerBox, box) || twoCornerElimatable(playerBox, box))
         {
             qInfo() << "elimate Box:" << playerBox;
@@ -249,6 +256,9 @@ void Game::ElimateBox(Box *playerBox, Box *box)
             connect(box, &Box::signalElimate, box, &Box::elimate);
             boxMatrix[playerBox->getR()][playerBox->getC()] = 0;
             boxMatrix[box->getR()][box->getC()] = 0;
+
+            // score
+            score(2);
         }
         else
         {
@@ -408,4 +418,9 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2)
     }
 
     return false;
+}
+
+void Game::score(int x)
+{
+    emit signalScore(x);
 }
