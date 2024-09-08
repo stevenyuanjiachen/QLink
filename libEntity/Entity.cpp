@@ -1,10 +1,10 @@
 #include "Entity.h"
 
 
-
-Entity::Entity():
-    QObject(nullptr)
+Entity::Entity(EntityType type):
+    QObject(nullptr), type(type)
 {
+    
 }
 
 Entity::~Entity()

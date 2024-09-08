@@ -1,18 +1,20 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "Entity.h"
 #include "EntityResList.h"
+#include <QPainter>
+#include <QPixmap>
+
 const int CUBE_LENGTH = 32;
 const int MAP_WIDTH = 20;
 const int MAP_HRIGHT = 22;
 
-class Map : public Entity
+class Map  
 {
 public:
     Map();
-    void draw(QPainter *painter) override;
-    void update() override;
+    void draw(QPainter *painter) ;
+    void update() ;
 
 private:
     QPixmap gameMap[MAP_HRIGHT][MAP_WIDTH];

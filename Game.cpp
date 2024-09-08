@@ -50,7 +50,6 @@ void Game::initGame(int w, int h,
 
     // generate map
     gameMap = new Map();
-    Mgr->addEntity(gameMap);
 
     // generate player
     player1 = new Hero(MAP_BLOCK_LEFT + 5, MAP_BLOCK_UP + 5);
@@ -63,7 +62,7 @@ void Game::initGame(int w, int h,
     triggerElapsedTimer.start();
 
     // generate the Progress Bar
-    progressBar = new MyProgressBar((CUBE_LENGTH*MAP_WIDTH-MY_PROGRESS_BAR_WIDTH)/2, CUBE_LENGTH, 5);
+    progressBar = new MyProgressBar((CUBE_LENGTH*MAP_WIDTH-MY_PROGRESS_BAR_WIDTH)/2, CUBE_LENGTH, 60);
     connect(progressBar, &MyProgressBar::signalEnd, this, &Game::finishGame);
 
     // generate the scoreBoard
@@ -73,9 +72,10 @@ void Game::initGame(int w, int h,
 
 void Game::drawGame(QPainter *painter)
 {
-    Mgr->draw(painter);
+    gameMap->draw(painter);
     progressBar->draw(painter);
     scoreBoard1->draw(painter);
+    Mgr->draw(painter);
 }
 
 void Game::finishGame()

@@ -6,14 +6,14 @@
 
 const int ENTITY_TYPR_NUM = 3;
 enum EntityType{
-    ET_none, ET_box, ET_hero
+    ET_none, ET_box, ET_hero, ET_item
 };
 
 class Entity: public QObject
 {
     Q_OBJECT
 public:
-    Entity();
+    Entity(EntityType type = ET_none);
     virtual ~Entity();
     virtual void update() = 0;
     virtual void draw(QPainter* painter) = 0;

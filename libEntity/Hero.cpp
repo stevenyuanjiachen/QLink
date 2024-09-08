@@ -2,7 +2,7 @@
 #include "Map.h"
 
 Hero::Hero(double x, double y)
-    : Sprite(x, y, STAND_DOWN_LIST[0]),
+    : Sprite(ET_hero, x, y, STAND_DOWN_LIST[0]),
       state(HS_stand_down), blockState(block_none),
       triggeredBox(nullptr)
 {

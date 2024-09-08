@@ -1,7 +1,7 @@
 #include "Sprite.h"
 
-Sprite::Sprite(double x, double y, const QString &image):
-    position(x, y), speed(2), velocity(0,0)
+Sprite::Sprite(EntityType type, double x, double y, const QString &image):
+    Entity(type), position(x, y), speed(2), velocity(0,0)
 {
     pixmap.load(image);
 }

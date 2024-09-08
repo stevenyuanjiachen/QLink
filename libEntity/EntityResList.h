@@ -2,6 +2,7 @@
 #define ENTITY_RES_LIST
 
 #include <QString>
+#include <QStringList>
 
 // QLink Icon
 const QString GAME_ICON = "../res/icon/QLink_icon.png";

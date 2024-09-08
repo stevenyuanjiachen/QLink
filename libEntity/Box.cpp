@@ -1,9 +1,9 @@
 #include "Box.h"
 
 Box::Box(int x, int y, BoxColor color):
-    position(x, y), color(color), state(BS_normal), pixmap(BOX_RED_LIST[0])
+    Entity(ET_box), state(BS_normal), 
+    position(x, y), color(color), pixmap(BOX_RED_LIST[0])
 {
-    this->setType(ET_box);
     // load the animation
     switch (color)
     {
