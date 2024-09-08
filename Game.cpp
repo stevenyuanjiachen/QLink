@@ -11,7 +11,7 @@
 #include <QDebug>
 
 // the Box Matrix is M*N
-int M = 8, N = 6;
+int M = 3, N = 3;
 
 Hero *player1;
 Map *gameMap;
@@ -94,6 +94,7 @@ void Game::updateGame()
     case GS_running:
         Mgr->update();
         collitionDetect();
+        solubleCheck();
         break;
     case GS_pause:
         state = GS_running;
@@ -289,7 +290,47 @@ void Game::ElimateBox(Box *playerBox, Box *box)
     }
 }
 
+void Game::score(int x)
+{
+    emit signalScore(x);
+}
+
+void Game::solubleCheck()
+{
+    int r, c;
+    Box* box;
+    QSet<Box*> boxes;
+    
+    for(auto i: Mgr->getEntity(ET_box))
+    {
+        box  = (Box*) i;
+        r = box->getR();
+        c = box->getC();
+
+        // 边缘检测
+        if(boxMatrix[r-1][c]!=0 && boxMatrix[r+1][c]!=0 && boxMatrix[r][c-1]!=0 && boxMatrix[r][c+1]!=0)
+            continue;
+        
+        if(boxes.count() != 0)
+        {
+            for(auto j: boxes)
+            {
+                if(elimatable(j, box)) return;
+            }
+        }
+        boxes.insert(box);
+    }
+
+    finishGame();
+}
+
 // 判定函数
+bool Game::elimatable(const Box *box1, const Box *box2)
+{
+    return horizonElimatable(box1, box2) || verticalElimatable(box1, box2) 
+        || oneCornerElimatable(box1, box2) || twoCornerElimatable(box1, box2);
+}
+
 bool Game::horizonElimatable(int r1, int c1, int r2, int c2)
 {
     if (r1 != r2)
@@ -440,10 +481,4 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2)
     }
 
     return false;
-}
-
-// slots
-void Game::score(int x)
-{
-    emit signalScore(x);
 }
