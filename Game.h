@@ -1,5 +1,4 @@
-#ifndef GAME_H
-#define GAME_H
+#pragma once 
 
 #include <QWidget>
 #include <QIcon>
@@ -7,6 +6,7 @@
 #include <QKeyEvent>
 #include "Box.h"
 #include <QElapsedTimer>
+#include <QTimer>
 
 const int GAME_FPS = 60;
 const int MAX_M = 10;
@@ -35,7 +35,9 @@ public:
 public:
     // 功能函数
     void generateBox();
-    void collitionDetect();
+    void generateItem();
+    void boxCollitionDect();
+    void itemCollitionDect();
     void ElimateBox(Box *playerBox, Box *box);
     void score(int x);
     void solubleCheck();
@@ -61,8 +63,7 @@ protected:
 
 private:
     QElapsedTimer triggerElapsedTimer;
+    QTimer itemGenerateTimer;
     int boxMatrix[MAX_M+2][MAX_N+2] = {};
     GameState state;
 };
-
-#endif

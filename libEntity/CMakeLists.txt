@@ -10,6 +10,7 @@ add_library(Entity
     Animation.cpp 
     Hero.cpp
     Box.cpp
+    Shuffle.cpp
 )
 
 target_include_directories(Entity 

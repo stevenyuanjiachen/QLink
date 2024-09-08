@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Hero.h"
 #include "Manager.h"
+#include "Shuffle.h"
 #include "Map.h"
 #include "MyProgressBar.h"
 #include "ScoreBoard.h"
@@ -22,12 +23,16 @@ ScoreBoard *scoreBoard1;
 Game::Game(QWidget *parent)
     : QWidget(parent), state(GS_start)
 {
+    // game timer
     QTimer *timer = new QTimer(this);
     timer->callOnTimeout(this, [=]()
                          {
         updateGame();
         update(); });
     timer->start(1000 / GAME_FPS);
+
+    itemGenerateTimer.callOnTimeout(this, &Game::generateItem);
+    itemGenerateTimer.start(5000);
 }
 
 void Game::run()
@@ -93,7 +98,7 @@ void Game::updateGame()
         break;
     case GS_running:
         Mgr->update();
-        collitionDetect();
+        boxCollitionDect();
         solubleCheck();
         break;
     case GS_pause:
@@ -212,7 +217,21 @@ void Game::generateBox()
     }
 }
 
-void Game::collitionDetect()
+void Game::generateItem()
+{
+    int itemType = QRandomGenerator::global()->bounded(1)+1;
+
+    switch (itemType)
+    {
+    case 1:
+        Mgr->addEntity(new Shuffle(80, 300));
+        break;
+    }
+
+    itemGenerateTimer.setInterval(1000* QRandomGenerator::global()->bounded(3, 8));
+}
+
+void Game::boxCollitionDect()
 {
     QSet<Box *> triggeredBoxes;
     // dect all the collision

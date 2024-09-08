@@ -6,6 +6,7 @@
 
 class  Shuffle: public Entity
 {
+    Q_OBJECT
 public:
     Shuffle(int x, int y);
     ~Shuffle();
