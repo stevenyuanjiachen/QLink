@@ -99,6 +99,7 @@ void Game::updateGame()
     case GS_running:
         Mgr->update();
         boxCollitionDect();
+        itemCollitionDect();
         solubleCheck();
         break;
     case GS_pause:
@@ -289,6 +290,19 @@ void Game::boxCollitionDect()
         qInfo() << "player1 abandon:" << player1->getTriggeredBox();
         ElimateBox(player1->getTriggeredBox(), foo);
         player1->resetTriggeredBox();
+    }
+}
+
+void Game::itemCollitionDect()
+{
+    // dect shuffle 
+    for(auto i: Mgr->getEntity(ET_shuffle))
+    {
+        Shuffle* shuffle = (Shuffle*) i;
+        if(player1->intersects(shuffle->getCollider())){
+            connect(shuffle, &Shuffle::signalAddTime, progressBar, &MyProgressBar::addTime);
+            shuffle->pickUp();
+        }
     }
 }
 

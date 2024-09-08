@@ -9,7 +9,7 @@ Item::Item(EntityType type, int x, int y):
 
 void Item::update()
 {
-    
+    collider.setRect(x, y, pixmap.width(), pixmap.height());
 }
 
 void Item::draw(QPainter *painter)

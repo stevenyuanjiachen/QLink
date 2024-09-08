@@ -19,6 +19,6 @@ public:
     
 private:
     Manager(){}
-    QSet<Entity*> entities[ENTITY_TYPR_NUM];
+    QSet<Entity*> entities[ENTITY_TYPE_NUM];
 };
 #endif

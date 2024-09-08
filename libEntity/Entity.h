@@ -4,9 +4,9 @@
 #include <QObject>
 #include <QPainter>
 
-const int ENTITY_TYPR_NUM = 4;
+const int ENTITY_TYPE_NUM = 4;
 enum EntityType{
-    ET_none, ET_box, ET_hero, ET_shuffle
+    ET_none, ET_box, ET_shuffle, ET_hero
 };
 
 class Entity: public QObject
