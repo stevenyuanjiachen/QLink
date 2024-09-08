@@ -15,15 +15,16 @@ int M = 8, N = 6;
 
 Hero *player1;
 Map *gameMap;
-MyProgressBar* progressBar;
-ScoreBoard* scoreBoard1;
+MyProgressBar *progressBar;
+ScoreBoard *scoreBoard1;
 
 // 游戏实现
 Game::Game(QWidget *parent)
-    : QWidget(parent)
+    : QWidget(parent), state(GS_start)
 {
     QTimer *timer = new QTimer(this);
-    timer->callOnTimeout(this, [=](){
+    timer->callOnTimeout(this, [=]()
+                         {
         updateGame();
         update(); });
     timer->start(1000 / GAME_FPS);
@@ -62,7 +63,7 @@ void Game::initGame(int w, int h,
     triggerElapsedTimer.start();
 
     // generate the Progress Bar
-    progressBar = new MyProgressBar((CUBE_LENGTH*MAP_WIDTH-MY_PROGRESS_BAR_WIDTH)/2, CUBE_LENGTH, 60);
+    progressBar = new MyProgressBar((CUBE_LENGTH * MAP_WIDTH - MY_PROGRESS_BAR_WIDTH) / 2, CUBE_LENGTH, 60);
     connect(progressBar, &MyProgressBar::signalEnd, this, &Game::finishGame);
 
     // generate the scoreBoard
@@ -80,13 +81,27 @@ void Game::drawGame(QPainter *painter)
 
 void Game::finishGame()
 {
-    qInfo() << "GOOD GAME!";
+    state = GS_finish;
 }
 
 void Game::updateGame()
 {
-    Mgr->update();
-    collitionDetect();
+    switch (state)
+    {
+    case GS_start:
+        state = GS_running;
+        break;
+    case GS_running:
+        Mgr->update();
+        collitionDetect();
+        break;
+    case GS_pause:
+        state = GS_running;
+        break;
+    case GS_finish:
+        qInfo() << "Game Finish";
+        break;
+    }
 }
 
 void Game::cleanGame()
@@ -253,7 +268,7 @@ void Game::ElimateBox(Box *playerBox, Box *box)
     // the same color
     if (playerBox->getColor() == box->getColor())
     {
-    
+
         if (horizonElimatable(playerBox, box) || verticalElimatable(playerBox, box) || oneCornerElimatable(playerBox, box) || twoCornerElimatable(playerBox, box))
         {
             qInfo() << "elimate Box:" << playerBox;
