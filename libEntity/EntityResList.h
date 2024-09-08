@@ -1,5 +1,4 @@
-#ifndef ENTITY_RES_LIST
-#define ENTITY_RES_LIST
+#pragma once
 
 #include <QString>
 #include <QStringList>
@@ -133,4 +132,5 @@ const QStringList BOX_PINK_LIST =
     "../res/images/Box/box_pink5.png",
     "../res/images/Box/box_pink6.png"
 };
-#endif
+
+const QString SHUFFLE_IMAGE = "../res/images/Item/clock.png";

@@ -82,3 +82,8 @@ void MyProgressBar::update()
                            .arg(minutes, 2, 10, QChar('0'))  // Ensure two digits for minutes
                            .arg(seconds, 2, 10, QChar('0')); // Ensure two digits for seconds
 }
+
+void MyProgressBar::addTime(int time)
+{
+    value += 1000* time;
+}

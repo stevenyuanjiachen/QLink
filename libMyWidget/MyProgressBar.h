@@ -21,6 +21,7 @@ public:
     void update() ;
     void setTime(double time);
     void setValue(double value);
+    void addTime(int time);
 
 signals:
     void signalEnd();
