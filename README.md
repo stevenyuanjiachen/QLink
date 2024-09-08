@@ -6,6 +6,11 @@ d:\qt\6.7.2\mingw_64\bin\windeployqt.exe ./build/QLink.exe
 
 # About Collider
 the Hero's collider is on feet
-![](images\README\Hero_colldier.png)
+![](res\images\README\Hero_colldier.png)
 the Boxes' collider is the whole one
-![](images\README\Box_collider.png)
+![](\res\images\README\Box_collider.png)
+
+# About Item
+### generate place
+the item generate in the red
+![](res\images\README\Item_place.png)
