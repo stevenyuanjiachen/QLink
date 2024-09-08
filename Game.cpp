@@ -63,7 +63,8 @@ void Game::initGame(int w, int h,
     triggerElapsedTimer.start();
 
     // generate the Progress Bar
-    progressBar = new MyProgressBar((CUBE_LENGTH*MAP_WIDTH-MY_PROGRESS_BAR_WIDTH)/2, CUBE_LENGTH, 60);
+    progressBar = new MyProgressBar((CUBE_LENGTH*MAP_WIDTH-MY_PROGRESS_BAR_WIDTH)/2, CUBE_LENGTH, 5);
+    connect(progressBar, &MyProgressBar::signalEnd, this, &Game::finishGame);
 
     // generate the scoreBoard
     scoreBoard1 = new ScoreBoard(0, 0);
@@ -75,6 +76,11 @@ void Game::drawGame(QPainter *painter)
     Mgr->draw(painter);
     progressBar->draw(painter);
     scoreBoard1->draw(painter);
+}
+
+void Game::finishGame()
+{
+    qInfo() << "GOOD GAME!";
 }
 
 void Game::updateGame()
@@ -268,6 +274,7 @@ void Game::ElimateBox(Box *playerBox, Box *box)
     }
 }
 
+// 判定函数
 bool Game::horizonElimatable(int r1, int c1, int r2, int c2)
 {
     if (r1 != r2)
@@ -420,6 +427,7 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2)
     return false;
 }
 
+// slots
 void Game::score(int x)
 {
     emit signalScore(x);

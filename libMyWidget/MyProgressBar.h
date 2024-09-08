@@ -13,14 +13,18 @@ const int MY_PROGRESS_BAR_HEIGHT = 36;
 
 class MyProgressBar : public QObject
 {
+    Q_OBJECT
 public:
     MyProgressBar(int x, int y ,double time);
     ~MyProgressBar(){};
     void draw(QPainter* painter) ;
     void update() ;
-public:
     void setTime(double time);
     void setValue(double value);
+
+signals:
+    void signalEnd();
+
 private:
     int x, y;
     int time, value;

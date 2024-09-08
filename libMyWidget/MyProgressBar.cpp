@@ -62,6 +62,12 @@ void MyProgressBar::draw(QPainter *painter)
 void MyProgressBar::update()
 {
     value -= 1;
+    if(value<=0)
+    {
+        emit signalEnd();
+        timeText = "00:00";
+        return ;
+    }
 
     // update the bar
     double barLength = barWidth * value / time;
@@ -75,5 +81,4 @@ void MyProgressBar::update()
     timeText = QString("%1:%2")
                            .arg(minutes, 2, 10, QChar('0'))  // Ensure two digits for minutes
                            .arg(seconds, 2, 10, QChar('0')); // Ensure two digits for seconds
-    if(value<=0) timeText = "00:00";
 }

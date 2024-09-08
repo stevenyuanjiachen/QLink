@@ -24,6 +24,7 @@ public:
     void initGame(const int w,const int h, const QString &title, const QIcon & = QIcon());
     void updateGame();
     void drawGame(QPainter *painter);
+    void finishGame();
     void cleanGame();
 
 public:
@@ -31,6 +32,7 @@ public:
     void generateBox();
     void collitionDetect();
     void ElimateBox(Box *playerBox, Box *box);
+    // 判定函数
     bool horizonElimatable(int r1, int c1, int r2, int c2);
     bool horizonElimatable(const Box* box1, const Box* box2);
     bool verticalElimatable(int r1, int c1, int r2, int c2);
