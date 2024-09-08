@@ -1,23 +1,15 @@
 #pragma once
 
-#include "Entity.h"
-#include <QPixmap>
-#include <QPainter>
+#include "Item.h"
 
-class  Shuffle: public Entity
+class Shuffle: public Item
 {
     Q_OBJECT
 public:
-    Shuffle(int x, int y);
-    ~Shuffle();
-    void update() override;
-    void draw(QPainter* painter);
-    void pickUp();
+    Shuffle(int x=0, int y=0);
+    ~Shuffle() {};
+    void pickUp() override;
 
 signals:
-    void signalAddTime(int time = 1);
-
-private:
-    int x, y;
-    QPixmap pixmap;
+    void signalAddTime(int time);
 };

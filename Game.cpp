@@ -219,15 +219,37 @@ void Game::generateBox()
 
 void Game::generateItem()
 {
-    int itemType = QRandomGenerator::global()->bounded(1)+1;
+    Item* item;
 
+    //random the type
+    int itemType = QRandomGenerator::global()->bounded(1)+1;
     switch (itemType)
     {
     case 1:
-        Mgr->addEntity(new Shuffle(80, 300));
+        item = new Shuffle();
         break;
     }
 
+    // random the location
+    int x, y;
+    QRect outRect(MAP_BLOCK_LEFT, MAP_BLOCK_UP,         // postion
+        MAP_BLOCK_RIGHT-MAP_BLOCK_LEFT-item->width(),   // width
+        MAP_BLOCK_DOWN-MAP_BLOCK_UP-item->height());    // height
+    QRect inRect(MAP_BLOCK_LEFT + (MAP_BLOCK_RIGHT-MAP_BLOCK_LEFT-N*CUBE_LENGTH)/2 - item->width(), 
+        MAP_BLOCK_UP + (MAP_BLOCK_DOWN-MAP_BLOCK_UP-M*CUBE_LENGTH)/2 - item->height(),
+        item->width() + N*CUBE_LENGTH,
+        item->height() + M*CUBE_LENGTH);
+    while(true)
+    {
+        x = outRect.x() + QRandomGenerator::global()->bounded(outRect.width());
+        y = outRect.y() + QRandomGenerator::global()->bounded(outRect.height());
+        if(!inRect.contains(x, y)) break;
+    }
+    item->setPosition(x, y);
+
+    Mgr->addEntity(item);
+
+    // random the time 
     itemGenerateTimer.setInterval(1000* QRandomGenerator::global()->bounded(3, 8));
 }
 

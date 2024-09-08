@@ -6,7 +6,7 @@
 
 const int ENTITY_TYPR_NUM = 4;
 enum EntityType{
-    ET_none, ET_box, ET_hero, ET_item
+    ET_none, ET_box, ET_hero, ET_shuffle
 };
 
 class Entity: public QObject

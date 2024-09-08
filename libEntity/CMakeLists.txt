@@ -10,6 +10,7 @@ add_library(Entity
     Animation.cpp 
     Hero.cpp
     Box.cpp
+    Item.cpp
     Shuffle.cpp
 )
 
