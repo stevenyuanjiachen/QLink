@@ -7,6 +7,7 @@
 #include "Box.h"
 #include <QElapsedTimer>
 #include <QTimer>
+#include <QLine>
 
 const int GAME_FPS = 60;
 const int MAX_M = 10;
@@ -41,6 +42,8 @@ public:
     void ElimateBox(Box *playerBox, Box *box);
     void score(int x);
     void solubleCheck();
+    void addLine(int r1, int c1, int r2, int c2);
+    void drawPath(QPainter* painter);
 
     // 判定函数
     bool elimatable(const Box* box1, const Box* box2, bool showPath = false);
@@ -53,6 +56,7 @@ public:
     
 signals:
     void signalScore(int x);
+    void signalAddLine(int r1, int c1, int r2, int c2);
 
 protected:
     // 事件处理
@@ -62,8 +66,11 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) override;
 
 private:
-    QElapsedTimer triggerElapsedTimer;
-    QTimer itemGenerateTimer;
-    int boxMatrix[MAX_M+2][MAX_N+2] = {};
     GameState state;
+    int boxMatrix[MAX_M+2][MAX_N+2] = {};
+    QElapsedTimer triggerElapsedTimer;
+    QElapsedTimer showPathElapsedTimer;
+    QTimer itemGenerateTimer; 
+    QSet<QLine*> lineSet;  
+
 };

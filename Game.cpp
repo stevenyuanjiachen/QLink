@@ -12,7 +12,7 @@
 #include <QDebug>
 
 // the Box Matrix is M*N
-int M = 3, N = 3;
+int M = 8, N = 8;
 
 Hero *player1;
 Map *gameMap;
@@ -82,6 +82,7 @@ void Game::drawGame(QPainter *painter)
     progressBar->draw(painter);
     scoreBoard1->draw(painter);
     Mgr->draw(painter);
+    drawPath(painter);
 }
 
 void Game::finishGame()
@@ -325,7 +326,7 @@ void Game::ElimateBox(Box *playerBox, Box *box)
     if (playerBox->getColor() == box->getColor())
     {
 
-        if (elimatable(playerBox, box))
+        if (elimatable(playerBox, box, true))
         {
             qInfo() << "elimate Box:" << playerBox;
             qInfo() << "elimate Box:" << box;
@@ -379,6 +380,38 @@ void Game::solubleCheck()
     finishGame();
 }
 
+void Game::addLine(int r1, int c1, int r2, int c2)
+{
+    int startX = MAP_BLOCK_LEFT + (MAP_BLOCK_RIGHT-MAP_BLOCK_LEFT-N*CUBE_LENGTH)/2; 
+    int startY = MAP_BLOCK_UP + (MAP_BLOCK_DOWN-MAP_BLOCK_UP-M*CUBE_LENGTH)/2; 
+    int x1 = startX + (c1-0.5)*CUBE_LENGTH;
+    int y1 = startY + (r1-0.5)*CUBE_LENGTH;
+    int x2 = startX + (c2-0.5)*CUBE_LENGTH;
+    int y2 = startY + (r2-0.5)*CUBE_LENGTH;
+
+    lineSet.insert(new QLine(x1, y1, x2, y2));
+    showPathElapsedTimer.restart();
+}
+
+void Game::drawPath(QPainter* painter)
+{
+    if(lineSet.isEmpty()) return;
+    
+    QPen pen;
+    pen.setColor(QColor(173, 216, 230, 256*0.8));
+    pen.setWidth(8);
+    pen.setCapStyle(Qt::RoundCap);
+    painter->setPen(pen);
+
+    for(auto i: lineSet)
+        painter->drawLine(*i);
+
+    if(showPathElapsedTimer.elapsed()>500)
+        for(auto i:lineSet)
+            lineSet.remove(i);
+
+}
+
 // 判定函数
 bool Game::elimatable(const Box *box1, const Box *box2, bool showPath)
 {
@@ -404,6 +437,9 @@ bool Game::horizonElimatable(int r1, int c1, int r2, int c2, bool showPath)
         if (boxMatrix[r1][i] != 0)
             return false;
     }
+
+    // draw path
+    if(showPath == true) addLine(r1, c1, r2, c2);
 
     return true;
 }
@@ -437,6 +473,9 @@ bool Game::verticalElimatable(int r1, int c1, int r2, int c2, bool showPath)
             return false;
     }
 
+    // draw path
+    if(showPath == true) addLine(r1, c1, r2, c2);
+
     return true;
 }
 
@@ -463,21 +502,47 @@ bool Game::oneCornerElimatable(const Box *box1, const Box *box2, bool showPath)
     // 2     2
     for (int i = c1 + 1; i <= N && boxMatrix[r1][i] == 0; ++i)
         if (verticalElimatable(r1, i, r2, c2))
+        {
+            if(showPath == true)
+            {
+                addLine(r1, i, r2, c2);
+                addLine(r1, c1, r1, i);
+            }
             return true;
+        }
     for (int i = c1 - 1; i >= 1 && boxMatrix[r1][i] == 0; --i)
         if (verticalElimatable(r1, i, r2, c2))
+        {
+            if(showPath == true)
+            {
+                addLine(r1, i, r2, c2);
+                addLine(r1, c1, r1, i);
+            }
             return true;
+        }
     // find the corner in the same c with box1
     //  2---2
     //    1
     //  2---2
     for (int i = r1 + 1; i <= M && boxMatrix[i][c1] == 0; ++i)
-        if (horizonElimatable(i, c1, r2, c2))
+        if (horizonElimatable(i, c1, r2, c2)){
+            if(showPath == true)
+            {
+                addLine(i, c1, r2, c2);
+                addLine(r1, c1, i, c1);
+            }
             return true;
+        }
     for (int i = r1 - 1; i >= 1 && boxMatrix[i][c1] == 0; --i)
         if (horizonElimatable(i, c1, r2, c2))
+        {
+            if(showPath == true)
+            {
+                addLine(i, c1, r2, c2);
+                addLine(r1, c1, i, c1);
+            }
             return true;
-
+        }
     return false;
 }
 
@@ -498,7 +563,15 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2, bool showPath)
     {
         // corner1(r1, i), corner2(r2, i)
         if (verticalElimatable(r1, i, r2, i) && horizonElimatable(r2, i, r2, c2))
+        {
+            if(showPath == true)
+            {
+                addLine(r1, c1, r1, i);
+                addLine(r1, i, r2, i);
+                addLine(r2, i, r2, c2);
+            }
             return true;
+        }
     }
     //  2-.-2
     //    |
@@ -509,7 +582,15 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2, bool showPath)
     {
         // corner1(r1, i), corner2(r2, i)
         if (verticalElimatable(r1, i, r2, i) && horizonElimatable(r2, i, r2, c2))
+        {
+            if(showPath == true)
+            {
+                addLine(r1, c1, r1, i);
+                addLine(r1, i, r2, i);
+                addLine(r2, i, r2, c2);
+            }
             return true;
+        }
     }
 
     // find the corner in the same c with box1
@@ -521,7 +602,15 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2, bool showPath)
     {
         // corner1(i, c1) corner2(i, c2)
         if (horizonElimatable(i, c1, i, c2) && verticalElimatable(i, c2, r2, c2))
+        {
+            if(showPath == true)
+            {
+                addLine(r1, c1, i, c1);
+                addLine(i, c1, i, c2);
+                addLine(i, c2, r2, c2);
+            }
             return true;
+        }
     }
     //    1
     // 2  |  2
@@ -531,8 +620,18 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2, bool showPath)
     {
         // corner1(i, c1) corner2(i, c2)
         if (horizonElimatable(i, c1, i, c2) && verticalElimatable(i, c2, r2, c2))
+        {
+            if(showPath == true)
+            {
+                addLine(r1, c1, i, c1);
+                addLine(i, c1, i, c2);
+                addLine(i, c2, r2, c2);
+            }
             return true;
+        }
     }
 
     return false;
 }
+
+
