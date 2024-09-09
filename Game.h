@@ -43,13 +43,13 @@ public:
     void solubleCheck();
 
     // 判定函数
-    bool elimatable(const Box* box1, const Box* box2);
-    bool horizonElimatable(int r1, int c1, int r2, int c2);
-    bool horizonElimatable(const Box* box1, const Box* box2);
-    bool verticalElimatable(int r1, int c1, int r2, int c2);
-    bool verticalElimatable(const Box* box1, const Box* box2);
-    bool oneCornerElimatable(const Box* box1, const Box* box2);
-    bool twoCornerElimatable(const Box* box1, const Box* box2);
+    bool elimatable(const Box* box1, const Box* box2, bool showPath = false);
+    bool horizonElimatable(int r1, int c1, int r2, int c2, bool showPath = false);
+    bool horizonElimatable(const Box* box1, const Box* box2, bool showPath = false);
+    bool verticalElimatable(int r1, int c1, int r2, int c2, bool showPath = false);
+    bool verticalElimatable(const Box* box1, const Box* box2, bool showPath = false);
+    bool oneCornerElimatable(const Box* box1, const Box* box2, bool showPath = false);
+    bool twoCornerElimatable(const Box* box1, const Box* box2, bool showPath = false);
     
 signals:
     void signalScore(int x);

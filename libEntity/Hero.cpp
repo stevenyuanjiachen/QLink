@@ -23,7 +23,7 @@ void Hero::update()
     Sprite::update();
     anima[state].update();
     // Reset the collider
-    collider = QRect(position.x(), position.y() + 30, pixmap.width(), pixmap.height() - 30);
+    collider = QRect(position.x()+3, position.y() + 30, pixmap.width()-6, pixmap.height() - 30);
 
     // edge block
     if (this->position.y()+30 < MAP_BLOCK_UP)

@@ -325,7 +325,7 @@ void Game::ElimateBox(Box *playerBox, Box *box)
     if (playerBox->getColor() == box->getColor())
     {
 
-        if (horizonElimatable(playerBox, box) || verticalElimatable(playerBox, box) || oneCornerElimatable(playerBox, box) || twoCornerElimatable(playerBox, box))
+        if (elimatable(playerBox, box))
         {
             qInfo() << "elimate Box:" << playerBox;
             qInfo() << "elimate Box:" << box;
@@ -380,13 +380,13 @@ void Game::solubleCheck()
 }
 
 // 判定函数
-bool Game::elimatable(const Box *box1, const Box *box2)
+bool Game::elimatable(const Box *box1, const Box *box2, bool showPath)
 {
-    return horizonElimatable(box1, box2) || verticalElimatable(box1, box2) 
-        || oneCornerElimatable(box1, box2) || twoCornerElimatable(box1, box2);
+    return horizonElimatable(box1, box2, showPath) || verticalElimatable(box1, box2, showPath) 
+        || oneCornerElimatable(box1, box2, showPath) || twoCornerElimatable(box1, box2, showPath);
 }
 
-bool Game::horizonElimatable(int r1, int c1, int r2, int c2)
+bool Game::horizonElimatable(int r1, int c1, int r2, int c2, bool showPath)
 {
     if (r1 != r2)
         return false;
@@ -406,20 +406,19 @@ bool Game::horizonElimatable(int r1, int c1, int r2, int c2)
     }
 
     return true;
-    return false;
 }
 
-bool Game::horizonElimatable(const Box *box1, const Box *box2)
+bool Game::horizonElimatable(const Box *box1, const Box *box2, bool showPath)
 {
     int r1 = box1->getR();
     int c1 = box1->getC();
     int r2 = box2->getR();
     int c2 = box2->getC();
 
-    return horizonElimatable(r1, c1, r2, c2);
+    return horizonElimatable(r1, c1, r2, c2, showPath);
 }
 
-bool Game::verticalElimatable(int r1, int c1, int r2, int c2)
+bool Game::verticalElimatable(int r1, int c1, int r2, int c2, bool showPath)
 {
     if (c1 != c2)
         return false;
@@ -441,17 +440,17 @@ bool Game::verticalElimatable(int r1, int c1, int r2, int c2)
     return true;
 }
 
-bool Game::verticalElimatable(const Box *box1, const Box *box2)
+bool Game::verticalElimatable(const Box *box1, const Box *box2, bool showPath)
 {
     int r1 = box1->getR();
     int c1 = box1->getC();
     int r2 = box2->getR();
     int c2 = box2->getC();
 
-    return verticalElimatable(r1, c1, r2, c2);
+    return verticalElimatable(r1, c1, r2, c2, showPath);
 }
 
-bool Game::oneCornerElimatable(const Box *box1, const Box *box2)
+bool Game::oneCornerElimatable(const Box *box1, const Box *box2, bool showPath)
 {
     int r1 = box1->getR();
     int c1 = box1->getC();
@@ -482,7 +481,7 @@ bool Game::oneCornerElimatable(const Box *box1, const Box *box2)
     return false;
 }
 
-bool Game::twoCornerElimatable(const Box *box1, const Box *box2)
+bool Game::twoCornerElimatable(const Box *box1, const Box *box2, bool showPath)
 {
     int r1 = box1->getR();
     int c1 = box1->getC();
