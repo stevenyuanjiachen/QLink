@@ -6,6 +6,7 @@
 #include "Animation.h"
 #include "EntityResList.h"
 #include <QElapsedTimer>
+#include <QSet>
 
 const int HERO_STATE_NUM = 8;
 enum HeroState
@@ -20,6 +21,12 @@ enum HeroBlockState
     block_down,
     block_left,
     block_right
+};
+enum BuffType
+{
+    BT_none,
+    BT_flash,
+    BT_hint
 };
 
 class Hero : public Sprite
@@ -39,9 +46,13 @@ public:
     Box *getTriggeredBox() const { return triggeredBox; }
     void resetTriggeredBox() { triggeredBox = nullptr; }
 
+    bool haveFlash() { return buffSet.contains(BT_flash); }
+    void addBuff(BuffType buff);
+
 private:
     HeroState state;
     HeroBlockState blockState;
+    QSet<BuffType> buffSet;
     QVector<Animation> anima;
     Box *triggeredBox;
     QElapsedTimer triggerTimer;

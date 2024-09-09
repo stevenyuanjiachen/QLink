@@ -7,9 +7,3 @@ Shuffle::Shuffle(int x, int y):
 {
     pixmap.load(SHUFFLE_IMAGE);
 }
-
-void Shuffle::pickUp()
-{
-    emit signalAddTime(1);
-    Item::pickUp();
-}

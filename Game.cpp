@@ -2,6 +2,7 @@
 #include "Hero.h"
 #include "Manager.h"
 #include "Shuffle.h"
+#include "Flash.h"
 #include "Map.h"
 #include "MyProgressBar.h"
 #include "ScoreBoard.h"
@@ -301,8 +302,16 @@ void Game::itemCollitionDect()
     {
         Shuffle* shuffle = (Shuffle*) i;
         if(player1->intersects(shuffle->getCollider())){
-            connect(shuffle, &Shuffle::signalAddTime, progressBar, &MyProgressBar::addTime);
-            shuffle->pickUp();
+            progressBar->addTime(1);
+        }
+    }
+
+    // dect flash
+    for(auto i: Mgr->getEntity(ET_flash))
+    {
+        Flash* flash = (Flash*) i;
+        if(player1->intersects(flash->getCollider())){
+            player1->addBuff(BT_flash);
         }
     }
 }
@@ -408,7 +417,10 @@ void Game::drawPath(QPainter* painter)
 
     if(showPathElapsedTimer.elapsed()>500)
         for(auto i:lineSet)
+        {
             lineSet.remove(i);
+            delete i;
+        }
 
 }
 

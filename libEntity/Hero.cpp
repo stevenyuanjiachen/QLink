@@ -97,3 +97,9 @@ void Hero::addTriggeredBox(Box *box)
     }
     triggerTimer.restart();
 }
+
+void Hero::addBuff(BuffType buff)
+{
+    if(!buffSet.contains(buff)) buffSet.insert(buff);
+}
+
