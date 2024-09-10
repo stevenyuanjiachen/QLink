@@ -6,6 +6,7 @@
 #include "Map.h"
 #include "MyProgressBar.h"
 #include "ScoreBoard.h"
+#include <PauseMenu.h>
 #include <QRandomGenerator>
 #include <QSet>
 #include <QIcon>
@@ -20,6 +21,7 @@ Hero *player1;
 Map *gameMap;
 MyProgressBar *progressBar;
 ScoreBoard *scoreBoard1;
+PauseMenu* pauseMenu;
 
 // 游戏实现
 Game::Game(QWidget *parent)
@@ -40,7 +42,7 @@ Game::Game(QWidget *parent)
 void Game::run()
 {
     int winWidth = MAP_WIDTH * CUBE_LENGTH;
-    int winHeight = MAP_HRIGHT * CUBE_LENGTH;
+    int winHeight = MAP_HEIGHT * CUBE_LENGTH;
     initGame(winWidth, winHeight, "QLink", QIcon(GAME_ICON));
     this->show();
 }
@@ -78,6 +80,10 @@ void Game::initGame(int w, int h,
     // generate the scoreBoard
     scoreBoard1 = new ScoreBoard(0, 0);
     connect(this, &Game::signalScore, scoreBoard1, &ScoreBoard::addScore);
+
+    // generate the puase menu
+    pauseMenu = new PauseMenu(this, (MAP_WIDTH*CUBE_LENGTH-PAUSE_MENU_WIDTH)/2, (MAP_HEIGHT*CUBE_LENGTH-PAUSE_MENU_HEIGHT)/2);
+    connect(pauseMenu, &PauseMenu::signalContinue, this, &Game::continueGame);
 }
 
 void Game::drawGame(QPainter *painter)
@@ -97,7 +103,9 @@ void Game::drawGame(QPainter *painter)
         scoreBoard1->draw(painter);
         Mgr->draw(painter);
         drawPath(painter);
+        // pauseMenu
         drawPauseMenu(painter);
+        pauseMenu->draw(painter);
         break;
     }
     
@@ -124,7 +132,6 @@ void Game::updateGame()
     case GS_pause:
         emit signalPause();
         itemGenerateTimer.start(5000);
-        // state = GS_running;
         break;
     case GS_finish:
         qInfo() << "Game Finish";
@@ -134,6 +141,13 @@ void Game::updateGame()
 
 void Game::cleanGame()
 {
+}
+
+void Game::continueGame()
+{
+    emit signalContinue();
+    state = GS_running;
+    pauseMenu->hide();
 }
 
 void Game::paintEvent(QPaintEvent *event)
@@ -485,7 +499,7 @@ void Game::drawPath(QPainter *painter)
 
 void Game::drawPauseMenu(QPainter* painter)
 {
-    QRect rect(0, 0, MAP_WIDTH*CUBE_LENGTH, MAP_HRIGHT*CUBE_LENGTH);
+    QRect rect(0, 0, MAP_WIDTH*CUBE_LENGTH, MAP_HEIGHT*CUBE_LENGTH);
     painter->setPen(Qt::NoPen);
     painter->setBrush(QColor(0, 0, 0, 100));
     painter->drawRect(rect);

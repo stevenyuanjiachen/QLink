@@ -33,6 +33,8 @@ public:
     void drawGame(QPainter *painter);
     void finishGame();
     void cleanGame();
+    void pauseGame();
+    void continueGame();
 
 public:
     // 功能函数

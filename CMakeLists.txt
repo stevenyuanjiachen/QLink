@@ -18,7 +18,6 @@ add_executable(QLink
     main.cpp
     Game.h
     Game.cpp
-    PauseMenu.ui
 )
 
 #Add include file

@@ -20,3 +20,8 @@ const int SCOREBOARD_INTERVAL_UP = 6;
 const int SCOREBOARD_INTERVAL_DOWN = 37;
 const int SCOREBOARD_INTERVAL_LEFT = 44;
 const int SCOREBOARD_INTERVAL_RIGHT = 99;
+
+// image of the pause menu
+const QString PAUSE_MENU_IMAGE = "../res/images/UI/pause_menu.png";
+const int PAUSE_MENU_WIDTH = 572;
+const int PAUSE_MENU_HEIGHT = 493;
