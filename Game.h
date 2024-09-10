@@ -45,6 +45,7 @@ public:
     void solubleCheck();
     void addLine(int r1, int c1, int r2, int c2);
     void drawPath(QPainter* painter);
+    void drawPauseMenu(QPainter* painter);
 
     // 判定函数
     bool elimatable(const Box* box1, const Box* box2, bool showPath = false);
@@ -56,6 +57,8 @@ public:
     bool twoCornerElimatable(const Box* box1, const Box* box2, bool showPath = false);
     
 signals:
+    void signalPause();
+    void signalContinue();
     void signalScore(int x);
     void signalAddLine(int r1, int c1, int r2, int c2);
 

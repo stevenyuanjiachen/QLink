@@ -72,6 +72,8 @@ void Game::initGame(int w, int h,
     // generate the Progress Bar
     progressBar = new MyProgressBar((CUBE_LENGTH * MAP_WIDTH - MY_PROGRESS_BAR_WIDTH) / 2, CUBE_LENGTH, 60);
     connect(progressBar, &MyProgressBar::signalEnd, this, &Game::finishGame);
+    connect(this, &Game::signalPause, progressBar, &MyProgressBar::pauseBar);
+    connect(this, &Game::signalContinue, progressBar, &MyProgressBar::contineBar);
 
     // generate the scoreBoard
     scoreBoard1 = new ScoreBoard(0, 0);
@@ -80,11 +82,25 @@ void Game::initGame(int w, int h,
 
 void Game::drawGame(QPainter *painter)
 {
-    gameMap->draw(painter);
-    progressBar->draw(painter);
-    scoreBoard1->draw(painter);
-    Mgr->draw(painter);
-    drawPath(painter);
+    switch (state)
+    {
+    case GS_running:
+        gameMap->draw(painter);
+        progressBar->draw(painter);
+        scoreBoard1->draw(painter);
+        Mgr->draw(painter);
+        drawPath(painter);
+        break;
+    case GS_pause:
+        gameMap->draw(painter);
+        progressBar->draw(painter);
+        scoreBoard1->draw(painter);
+        Mgr->draw(painter);
+        drawPath(painter);
+        drawPauseMenu(painter);
+        break;
+    }
+    
 }
 
 void Game::finishGame()
@@ -106,7 +122,9 @@ void Game::updateGame()
         solubleCheck();
         break;
     case GS_pause:
-        state = GS_running;
+        emit signalPause();
+        itemGenerateTimer.start(5000);
+        // state = GS_running;
         break;
     case GS_finish:
         qInfo() << "Game Finish";
@@ -131,6 +149,8 @@ void Game::closeEvent(QCloseEvent *event)
 
 void Game::keyPressEvent(QKeyEvent *event)
 {
+    if(state == GS_pause) return;
+
     if (player1->getState() == HS_stand_down ||
         player1->getState() == HS_stand_up ||
         player1->getState() == HS_stand_left ||
@@ -164,6 +184,7 @@ void Game::keyPressEvent(QKeyEvent *event)
 
 void Game::keyReleaseEvent(QKeyEvent *event)
 {
+    // player
     if (player1->getState() == HS_move_down ||
         player1->getState() == HS_move_up ||
         player1->getState() == HS_move_left ||
@@ -193,6 +214,13 @@ void Game::keyReleaseEvent(QKeyEvent *event)
             break;
         }
     }
+
+    // pause
+    if(event->key() == Qt::Key_Escape)
+    {
+        state = GS_pause;
+    }
+
 }
 
 void Game::mouseReleaseEvent(QMouseEvent *event)
@@ -453,6 +481,14 @@ void Game::drawPath(QPainter *painter)
             lineSet.remove(i);
             delete i;
         }
+}
+
+void Game::drawPauseMenu(QPainter* painter)
+{
+    QRect rect(0, 0, MAP_WIDTH*CUBE_LENGTH, MAP_HRIGHT*CUBE_LENGTH);
+    painter->setPen(Qt::NoPen);
+    painter->setBrush(QColor(0, 0, 0, 100));
+    painter->drawRect(rect);
 }
 
 // 判定函数

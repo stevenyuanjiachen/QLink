@@ -22,11 +22,14 @@ public:
     void setTime(double time);
     void setValue(double value);
     void addTime(int time);
+    void pauseBar();
+    void contineBar();
 
 signals:
     void signalEnd();
 
 private:
+    bool pause;
     int x, y;
     int time, value;
     QTimer timer;

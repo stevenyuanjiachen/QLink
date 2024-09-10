@@ -3,7 +3,7 @@
 #include <QFontMetrics>
 
 MyProgressBar::MyProgressBar(int x, int y, double time)
-    : QObject(nullptr), x(x), y(y),
+    : QObject(nullptr), x(x), y(y), pause(false),
       time(time * 1000), value(time * 1000), timeText("00:00")
 {
     // set the frame
@@ -61,6 +61,8 @@ void MyProgressBar::draw(QPainter *painter)
 
 void MyProgressBar::update()
 {
+    if(pause == true) return;
+
     value -= 1;
     if(value<=0)
     {
@@ -86,4 +88,14 @@ void MyProgressBar::update()
 void MyProgressBar::addTime(int time)
 {
     value += 1000* time;
+}
+
+void MyProgressBar::pauseBar()
+{
+    pause = true;
+}
+
+void MyProgressBar::contineBar()
+{
+    pause = false;
 }

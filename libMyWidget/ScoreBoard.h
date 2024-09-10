@@ -19,7 +19,7 @@ public:
     void update();
     void addScore(int x);
 
-private:
+private: 
     int x, y, score;
     bool flip;
     // the frame

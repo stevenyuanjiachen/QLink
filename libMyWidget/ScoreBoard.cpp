@@ -2,7 +2,8 @@
 #include <QPainterPath>
 #include <QFontMetrics>
 
-ScoreBoard::ScoreBoard(int x, int y, bool flip) : x(x), y(y), flip(flip), score(0)
+ScoreBoard::ScoreBoard(int x, int y, bool flip) :
+     x(x), y(y), flip(flip), score(0)
 {
     // set the frame
     scoreBoardFrame.load(SCOREBOARD_IMAGE);
