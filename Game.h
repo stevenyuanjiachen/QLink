@@ -4,6 +4,7 @@
 #include <QIcon>
 #include <QPainter>
 #include <QKeyEvent>
+#include <QMouseEvent>
 #include "Box.h"
 #include <QElapsedTimer>
 #include <QTimer>
@@ -64,6 +65,7 @@ protected:
     void closeEvent(QCloseEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
     GameState state;

@@ -62,6 +62,12 @@ void Hero::draw(QPainter *painter)
     anima[state].draw(painter, position);
 }
 
+void Hero::setPosition(int x, int y)
+{
+    position.setX(x);
+    position.setY(y);
+}
+
 void Hero::collideEvent()
 {
     // limit the position

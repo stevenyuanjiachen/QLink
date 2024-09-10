@@ -40,6 +40,7 @@ public:
 public:
     void setState(HeroState state) { this->state = state; }
     HeroState getState() const { return this->state; }
+    void setPosition(int x, int y);
     bool intersects(const QRect &coll) { return collider.intersects(coll); }
     void collideEvent();
     void addTriggeredBox(Box *box);

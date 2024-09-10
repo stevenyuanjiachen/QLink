@@ -12,6 +12,7 @@ add_library(Entity
     Box.cpp
     Item.cpp
     Shuffle.cpp
+    Flash.cpp
 )
 
 target_include_directories(Entity 

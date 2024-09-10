@@ -13,10 +13,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_subdirectory(libEntity)
 add_subdirectory(libMyWidget)
 
-# Add executable 
+
+
+# Add src file
 add_executable(QLink
     main.cpp
     Game.cpp
+)
+
+#Add include file
+target_include_directories(QLink
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 # link the libs
