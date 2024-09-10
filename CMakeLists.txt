@@ -13,12 +13,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_subdirectory(libEntity)
 add_subdirectory(libMyWidget)
 
-
-
 # Add src file
 add_executable(QLink
     main.cpp
+    Game.h
     Game.cpp
+    PauseMenu.ui
 )
 
 #Add include file

@@ -5,7 +5,7 @@
 #include <QDebug>
 
 // pixel font
-const QString PIXEL_FONT = "../res/font/PressStart2P.ttf";
+const QString PIXEL_FONT = "../res/fonts/PressStart2P.ttf";
 
 // image of the progress bar
 const QString PROGRESSBAR_IMAGE = "../res/images/UI/progressBar_frame.png";

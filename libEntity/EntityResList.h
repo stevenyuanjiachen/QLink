@@ -4,7 +4,7 @@
 #include <QStringList>
 
 // QLink Icon
-const QString GAME_ICON = "../res/icon/QLink_icon.png";
+const QString GAME_ICON = "../res/icons/QLink_icon.png";
 
 // Hero Resource List
 const QStringList STAND_UP_LIST = 
