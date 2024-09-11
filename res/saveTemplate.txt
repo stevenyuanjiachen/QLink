@@ -15,4 +15,9 @@ hero.triggerBoxC: 0
 # Item
 item.num: 0
 
+# ProgressBar
+progressBar.time: 0
+progressBar.value: 0
 
+# ScoreBoard
+scoreBoard.score: 0

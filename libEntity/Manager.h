@@ -16,6 +16,7 @@ public:
     void update();
     void draw(QPainter* painter);
     void refresh();
+    void clean();
     
 private:
     Manager(){}

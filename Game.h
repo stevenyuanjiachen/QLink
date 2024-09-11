@@ -40,7 +40,7 @@ public:
 
 public:
     // 功能函数
-    void generateBox();
+    void generateBox(bool generateMatrix = true);
     void generateItem();
     void boxCollitionDect();
     void itemCollitionDect();
@@ -50,8 +50,10 @@ public:
     void addLine(int r1, int c1, int r2, int c2);
     void drawPath(QPainter* painter);
     void drawPauseMenu(QPainter* painter);
-    void saveMap(const QString& filePath);
+    void saveBoxes(const QString& filePath);
+    void loadBoxes(const QString& filePath);
     void saveItems(const QString& filePath);
+    void loadItems(const QString& filePath);
 
     // 判定函数
     bool elimatable(const Box* box1, const Box* box2, bool showPath = false);

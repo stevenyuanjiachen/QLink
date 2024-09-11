@@ -56,3 +56,15 @@ void Manager::refresh()
         });
     }
 }
+
+void Manager::clean()
+{
+    for(int i=0 ; i<ENTITY_TYPE_NUM; ++i)
+    {
+        for(auto j: entities[i])
+        {
+            j->destroy();
+        }
+    }
+    refresh();
+}

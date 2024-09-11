@@ -130,11 +130,12 @@ void Game::updateGame()
         Mgr->update();
         boxCollitionDect();
         itemCollitionDect();
-        solubleCheck();
+//        solubleCheck();
         break;
     case GS_pause:
         emit signalPause();
         itemGenerateTimer.start(5000);
+        
         break;
     case GS_finish:
         qInfo() << "Game Finish";
@@ -173,7 +174,7 @@ void Game::saveGame()
     }
 
     // save the map state
-    saveMap(filePath);
+    saveBoxes(filePath);
     
     // save the hero state
     player1->saveHeroState(filePath);    
@@ -186,7 +187,21 @@ void Game::loadGame()
 {
     const QString& filePath = "../saves/test.txt";
 
+    // clean Game
+    Mgr->clean();
+
+    // load boxes
+    loadBoxes(filePath);
+
+    // load player
+    player1 = new Hero(0, 0);
     player1->loadHeroState(filePath);
+    Mgr->addEntity(player1);
+
+    // load items
+    loadItems(filePath);
+
+    continueGame();
 }
 
 void Game::paintEvent(QPaintEvent *event)
@@ -298,12 +313,13 @@ void Game::mouseReleaseEvent(QMouseEvent *event)
 }
 
 // 功能函数
-void Game::generateBox()
+void Game::generateBox(bool generateMatrix)
 {
     // generate Box matrix
-    for (int i = 1; i <= M; ++i)
-        for (int j = 1; j <= N; ++j)
-            boxMatrix[i][j] = QRandomGenerator::global()->bounded(BOX_COLOR_NUM) + 1;
+    if(generateMatrix == true)
+        for (int i = 1; i <= M; ++i)
+            for (int j = 1; j <= N; ++j)
+                boxMatrix[i][j] = QRandomGenerator::global()->bounded(BOX_COLOR_NUM)+1;
 
     // generate Box
     int startX = MAP_BLOCK_LEFT + (MAP_BLOCK_RIGHT - MAP_BLOCK_LEFT - N * CUBE_LENGTH) / 2;
@@ -315,6 +331,7 @@ void Game::generateBox()
         y = startY + i * CUBE_LENGTH;
         for (int j = 0; j < N; ++j)
         {
+            if(boxMatrix[i+1][j+1]==0) continue;
             x = startX + j * CUBE_LENGTH;
             Box *box = new Box(x, y, (BoxColor)boxMatrix[i + 1][j + 1]);
             box->setMatrixPosition(i + 1, j + 1);
@@ -533,7 +550,7 @@ void Game::drawPauseMenu(QPainter* painter)
     painter->drawRect(rect);
 }
 
-void Game::saveMap(const QString &filePath)
+void Game::saveBoxes(const QString &filePath)
 {
     QFile file(filePath);
 
@@ -593,6 +610,51 @@ void Game::saveMap(const QString &filePath)
     qDebug() << "# Map 更新成功!";
 }
 
+void Game::loadBoxes(const QString &filePath)
+{
+    QFile file(filePath);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "无法打开文件:" << file.errorString();
+        return;
+    }
+
+    QTextStream in(&file);
+    QString line;
+
+    // 读取 M 和 N
+    while (!in.atEnd()) {
+        line = in.readLine().trimmed();
+        if (line.startsWith("M:")) {
+            M = line.section(':', 1, 1).toInt();
+        } else if (line.startsWith("N:")) {
+            N = line.section(':', 1, 1).toInt();
+        } else if (line == "map:") {
+            break;
+        }
+    }
+
+    // 清除原矩阵
+    for(int i=0; i<MAX_M; ++i)
+        for(int j=0; j<MAX_M; ++j)
+            boxMatrix[i][j] = 0;
+
+    // 读取 map 矩阵
+    for (int i = 1; i <= M && !in.atEnd(); ++i) {
+        line = in.readLine().trimmed();
+        QStringList numbers = line.split(QRegularExpression("\\s+"));
+        for (int j = 1; j <= N && j <= numbers.size(); ++j) {
+            boxMatrix[i][j] = numbers[j-1].toInt();
+        }
+    }
+
+    // generate Box
+    generateBox(false);
+
+    file.close();
+    qInfo() << "load Boxes Successfully !";
+}
+
 void Game::saveItems(const QString &filePath)
 {   
     QFile file(filePath);
@@ -649,6 +711,40 @@ void Game::saveItems(const QString &filePath)
     file.close();
 
     qDebug() << "Item 更新成功!";
+}
+
+void Game::loadItems(const QString& filePath)
+{
+    QFile file(filePath);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "无法打开文件:" << file.errorString();
+        return;
+    }
+
+    QTextStream in(&file);
+    QString line;
+    int num=0;
+
+    // 读取 item.num
+    while (!in.atEnd()) {
+        line = in.readLine().trimmed();
+        if (line.startsWith("item.num:")) {
+            num = line.section(':', 1, 1).toInt();
+            break;
+        }
+    }
+
+    // 读取 item
+    for (int i = 0; i < num  && !in.atEnd(); ++i) {
+        line = in.readLine().trimmed();
+        QStringList numbers = line.split(QRegularExpression("\\s+"));
+        Mgr->addEntity(new Item((ItemType)numbers[0].toInt(), numbers[1].toInt(), numbers[2].toInt()));
+    }
+
+    file.close();
+    qInfo() << "load Boxes Successfully !";
+
 }
 
 // 判定函数
@@ -803,6 +899,7 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2, bool showPath)
     for (int i = c1 + 1; i <= N + 1 && boxMatrix[r1][i] == 0; ++i)
     {
         // corner1(r1, i), corner2(r2, i)
+        if(boxMatrix[r2][i]!=0) continue;
         if (verticalElimatable(r1, i, r2, i) && horizonElimatable(r2, i, r2, c2))
         {
             if (showPath == true)
@@ -822,6 +919,7 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2, bool showPath)
     for (int i = c1 - 1; i >= 0 && boxMatrix[r1][i] == 0; --i)
     {
         // corner1(r1, i), corner2(r2, i)
+        if(boxMatrix[r2][i]!=0) continue;
         if (verticalElimatable(r1, i, r2, i) && horizonElimatable(r2, i, r2, c2))
         {
             if (showPath == true)
@@ -842,6 +940,7 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2, bool showPath)
     for (int i = r1 - 1; i >= 0 && boxMatrix[i][c1] == 0; --i)
     {
         // corner1(i, c1) corner2(i, c2)
+        if(boxMatrix[i][c2]!=0) continue;
         if (horizonElimatable(i, c1, i, c2) && verticalElimatable(i, c2, r2, c2))
         {
             if (showPath == true)
@@ -860,7 +959,8 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2, bool showPath)
     for (int i = r1 + 1; i <= M + 1 && boxMatrix[i][c1] == 0; ++i)
     {
         // corner1(i, c1) corner2(i, c2)
-        if (horizonElimatable(i, c1, i, c2) && verticalElimatable(i, c2, r2, c2))
+        if(boxMatrix[i][c2]!=0) continue;;
+        if (horizonElimatable(i, c1, i, c2) && verticalElimatable(i, c2, r2, c2) )
         {
             if (showPath == true)
             {
