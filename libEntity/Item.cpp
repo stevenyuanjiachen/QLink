@@ -1,10 +1,18 @@
 #include "Item.h"
 #include "EntityResList.h"
 
-Item::Item(EntityType type, int x, int y):
-    Entity(type), x(x), y(y)
+Item::Item(ItemType itemType, int x, int y):
+    Entity(ET_item),itemType(itemType), x(x), y(y)
 {
-    
+    switch (itemType)
+    {
+    case IT_shuffle:
+        pixmap.load(SHUFFLE_IMAGE);
+        break;
+    case IT_hint:
+        pixmap.load(HINT_IMAGE);
+        break;
+    }
 }
 
 void Item::update()

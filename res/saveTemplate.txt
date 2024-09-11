@@ -12,9 +12,7 @@ hero.haveTriggerBox: false
 hero.triggerBoxR: 0
 hero.triggerBoxC: 0
 
-# Shuffle
-shuffle.num: 0
+# Item
+item.num: 0
 
-# Flash
-flash.num: 0
 

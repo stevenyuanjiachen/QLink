@@ -1,8 +1,7 @@
 #include "Game.h"
 #include "Hero.h"
 #include "Manager.h"
-#include "Shuffle.h"
-#include "Flash.h"
+#include "Item.h"
 #include "Map.h"
 #include "MyProgressBar.h"
 #include "ScoreBoard.h"
@@ -326,16 +325,8 @@ void Game::generateItem()
     Item *item;
 
     // random the type
-    int itemType = QRandomGenerator::global()->bounded(2) + 1;
-    switch (itemType)
-    {
-    case 1:
-        item = new Shuffle();
-        break;
-    case 2:
-        item = new Flash();
-        break;
-    }
+    int itemType = QRandomGenerator::global()->bounded(ITEM_TYPE_NUM);
+    item = new Item((ItemType)itemType);
 
     // random the location
     int x, y;
@@ -403,24 +394,21 @@ void Game::boxCollitionDect()
 void Game::itemCollitionDect()
 {
     // dect shuffle
-    for (auto i : Mgr->getEntity(ET_shuffle))
+    for (auto i : Mgr->getEntity(ET_item))
     {
-        Shuffle *shuffle = (Shuffle *)i;
-        if (player1->intersects(shuffle->getCollider()))
+        Item *item = (Item *)i;
+        if (player1->intersects(item->getCollider()))
         {
-            progressBar->addTime(1);
-            shuffle->pickUp();
-        }
-    }
-
-    // dect flash
-    for (auto i : Mgr->getEntity(ET_flash))
-    {
-        Flash *flash = (Flash *)i;
-        if (player1->intersects(flash->getCollider()))
-        {
-            player1->addBuff(BT_flash);
-            flash->pickUp();
+            switch (item->getItemType())
+            {
+            case IT_shuffle:
+                progressBar->addTime(1);
+                break;
+            case IT_hint:
+                player1->addBuff(BT_hint);
+                break;
+            }
+            item->pickUp();
         }
     }
 }
@@ -613,36 +601,38 @@ void Game::saveItems(const QString &filePath)
         return;
     }
 
-    // shuffle
-    QString beforeShuffleContent;  // 保存 shuffle.num 和 shuffle.num: 之前的内容
-    QString shufflePartContent;    // 保存 shuffle.num 之后的内容
-    bool foundShuffle = false;
+    // item
+    QString beforeItemContent;  // 保存 item.num 和 item.num: 之前的内容
+    QString itemPartContent;    // 保存 item.num 之后的内容
+    bool foundItem = false;
     QTextStream in(&file);
 
     while (!in.atEnd()) {
         QString line = in.readLine();
-        if (line.startsWith("shuffle.num:")) {
-            foundShuffle = true;
-            beforeShuffleContent += line + "\n";  // 保存 shuffle.num: 这一行
+        if (line.startsWith("item.num:")) {
+            foundItem = true;
+            beforeItemContent += line + "\n";  // 保存 item.num: 这一行
             continue;
         }
 
-        if (foundShuffle)  shufflePartContent += line + "\n";  // 保留 shuffle.num 后的其它内容
-        else beforeShuffleContent += line + "\n";  // 保存 shuffle.num 之前的内容
+        if (foundItem)  itemPartContent += line + "\n";  // 保留 item.num 后的其它内容
+        else beforeItemContent += line + "\n";  // 保存 item.num 之前的内容
     }
     file.close();
 
-    // 更新 shuffle.num
-    num = Mgr->getEntity(ET_shuffle).count();
-    QRegularExpression regex("shuffle\\.num:\\s*\\d*");
-    beforeShuffleContent.replace(regex, QString("shuffle.num: %1").arg(num));
+    // 更新 item.num
+    num = Mgr->getEntity(ET_item).count();
+    QRegularExpression regex("item\\.num:\\s*\\d*");
+    beforeItemContent.replace(regex, QString("item.num: %1").arg(num));
 
-    // 生成 shuffle
-    QString shuffleData;
+    // 生成 item
+    QString itemData;
     Item* item;
-    for (auto i:Mgr->getEntity(ET_shuffle)) {
+    for (auto i:Mgr->getEntity(ET_item)) {
         item = (Item*) i;
-        shuffleData += QString::number(item->getX()) + " " + QString::number(item->getY()) + "\n";
+        itemData +=QString::number(item->getItemType()) + " " 
+            + QString::number(item->getX()) + " " 
+            + QString::number(item->getY()) + "\n";
     }
 
     // 以写入模式重新打开文件
@@ -652,7 +642,7 @@ void Game::saveItems(const QString &filePath)
     }
 
     QTextStream out(&file);
-    out << beforeShuffleContent << shuffleData << shufflePartContent;    
+    out << beforeItemContent << itemData << itemPartContent;    
     file.close();
 }
 
