@@ -50,13 +50,14 @@ public:
     bool haveFlash() { return buffSet.contains(BT_flash); }
     void addBuff(BuffType buff);
 
+    void saveHeroState(const QString& filePath);
+    void loadHeroState();
 private:
     HeroState state;
     HeroBlockState blockState;
     QSet<BuffType> buffSet;
     QVector<Animation> anima;
     Box *triggeredBox;
-    QElapsedTimer triggerTimer;
 };
 
 #endif

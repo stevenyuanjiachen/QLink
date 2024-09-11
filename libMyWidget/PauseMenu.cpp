@@ -25,10 +25,10 @@ PauseMenu::PauseMenu(QWidget *parent, int x, int y) : QWidget(nullptr), x(x), y(
     });
 
     // save button
-    saveButton.setGeometry(x + 205, y + 139, 160, 160);
+    saveButton.setGeometry(x + 205, y + 139, 170, 170);
     saveButton.setStyleSheet(
         "QPushButton {"
-        "    border-radius: 80px;"
+        "    border-radius: 85px;"
         "    background-color: transparent;"
         "    background-image: url(../res/images/UI/save_button.png);" /* 将按钮背景设为图片 */
         "    background-position: center;"
@@ -38,12 +38,15 @@ PauseMenu::PauseMenu(QWidget *parent, int x, int y) : QWidget(nullptr), x(x), y(
         "    background-color: rgba(0, 0, 0, 0.1);" /* 按下时添加半透明效果 */
         "}");
     saveButton.hide();
+    connect(&saveButton, &QPushButton::clicked, this, [=](){
+        emit signalSaveGame();
+    });
 
     // load button
-    loadButton.setGeometry(x + 380, y + 139, 160, 160);
+    loadButton.setGeometry(x + 380, y + 139, 170, 170);
     loadButton.setStyleSheet(
         "QPushButton {"
-        "    border-radius: 80px;"
+        "    border-radius: 85px;"
         "    background-color: transparent;"
         "    background-image: url(../res/images/UI/load_button.png);" /* 将按钮背景设为图片 */
         "    background-position: center;"
@@ -55,7 +58,7 @@ PauseMenu::PauseMenu(QWidget *parent, int x, int y) : QWidget(nullptr), x(x), y(
     loadButton.hide();
 
     // quit button
-    quitButton.setGeometry(x + 175, y + 339, 221, 101);
+    quitButton.setGeometry(x + 175, y + 339, 231, 111);
     quitButton.setStyleSheet(
         "QPushButton {"
         "border-radius: 5px;"

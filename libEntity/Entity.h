@@ -25,7 +25,7 @@ public:
     // the type of the Entity
     inline EntityType getType() { return type; }
     inline void setType(EntityType type) { this->type = type; }
-private:
+protected:
     bool active = true;
     EntityType type = ET_none;
 };

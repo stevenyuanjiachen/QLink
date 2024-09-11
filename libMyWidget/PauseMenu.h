@@ -13,6 +13,7 @@ public:
     void hide();
 signals:
     void signalContinue();
+    void signalSaveGame();
 
 private:
     int x, y;

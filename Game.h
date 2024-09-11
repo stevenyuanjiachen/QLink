@@ -35,6 +35,8 @@ public:
     void cleanGame();
     void pauseGame();
     void continueGame();
+    void saveGame();
+    void loadGame();
 
 public:
     // 功能函数
@@ -48,6 +50,7 @@ public:
     void addLine(int r1, int c1, int r2, int c2);
     void drawPath(QPainter* painter);
     void drawPauseMenu(QPainter* painter);
+    void saveMap(const QString& filePath);
 
     // 判定函数
     bool elimatable(const Box* box1, const Box* box2, bool showPath = false);

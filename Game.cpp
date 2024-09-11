@@ -8,8 +8,10 @@
 #include "ScoreBoard.h"
 #include <PauseMenu.h>
 #include <QRandomGenerator>
+#include <QRegularExpression>
 #include <QSet>
 #include <QIcon>
+#include <QFile>
 #include <QTimer>
 #include <QDebug>
 #include <QPoint>
@@ -84,6 +86,7 @@ void Game::initGame(int w, int h,
     // generate the puase menu
     pauseMenu = new PauseMenu(this, (MAP_WIDTH*CUBE_LENGTH-PAUSE_MENU_WIDTH)/2, (MAP_HEIGHT*CUBE_LENGTH-PAUSE_MENU_HEIGHT)/2);
     connect(pauseMenu, &PauseMenu::signalContinue, this, &Game::continueGame);
+    connect(pauseMenu, &PauseMenu::signalSaveGame, this, &Game::saveGame);
 }
 
 void Game::drawGame(QPainter *painter)
@@ -148,6 +151,37 @@ void Game::continueGame()
     emit signalContinue();
     state = GS_running;
     pauseMenu->hide();
+}
+
+void Game::saveGame()
+{
+    const QString filePath = "../saves/test.txt";
+
+    // if save exist, then remove it
+    if (QFile::exists(filePath)) {
+        if (!QFile::remove(filePath)) {
+            qDebug() << "无法删除目标文件!";
+            return;
+        }
+    }
+
+    // copy the template
+    if(QFile::copy("../res/saveTemplate.txt", filePath)){
+        qDebug() << "文件复制成功!";
+    } else {
+        qDebug() << "文件复制失败!";
+    }
+
+    // save the hero state
+    player1->saveHeroState(filePath);
+
+    // save the map state
+    saveMap(filePath);
+}
+
+void Game::loadGame()
+{
+
 }
 
 void Game::paintEvent(QPaintEvent *event)
@@ -503,6 +537,66 @@ void Game::drawPauseMenu(QPainter* painter)
     painter->setPen(Qt::NoPen);
     painter->setBrush(QColor(0, 0, 0, 100));
     painter->drawRect(rect);
+}
+
+void Game::saveMap(const QString &filePath)
+{
+     QFile file(filePath);
+
+    // 读取文件内容
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "无法打开文件:" << file.errorString();
+        return;
+    }
+
+    QString beforeMapContent;  // 保存 map: 之前的内容
+    QString mapPartContent;    // 保存 map: 和 map 之后的内容
+    bool foundMap = false;
+
+    QTextStream in(&file);
+
+    // 逐行读取文件
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        if (line.startsWith("map:")) {
+            foundMap = true;
+            beforeMapContent += line + "\n";  // 保存 map: 这一行
+            continue;
+        }
+
+        if (foundMap)  mapPartContent += line + "\n";  // 保留 map 后的其它内容
+        else beforeMapContent += line + "\n";  // 保存 map: 之前的内容
+    }
+    file.close();
+
+    // 更新 M 和 N 的值
+    QRegularExpression regexM("M:\\s*\\d*");
+    QRegularExpression regexN("N:\\s*\\d*");
+    beforeMapContent.replace(regexM, QString("M: %1").arg(M));
+    beforeMapContent.replace(regexN, QString("N: %1").arg(N));
+
+    // 生成 map 的数据内容
+    QString mapData;
+    for (int i = 1; i <= M; ++i) {
+        for (int j = 1; j <= N; ++j) {
+            mapData += QString::number(boxMatrix[i][j]) + " ";
+        }
+        mapData += "\n";  // 每行结束换行
+    }
+
+    // 以写入模式重新打开文件
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qDebug() << "无法写入文件:" << file.errorString();
+        return;
+    }
+
+    QTextStream out(&file);
+    out << beforeMapContent;  // 写入 map: 之前的内容
+    out << mapData;           // 写入更新后的 map 数据
+    out << mapPartContent;    // 写入 map: 之后的内容
+    file.close();
+
+    qDebug() << "# Map 更新成功!";
 }
 
 // 判定函数
