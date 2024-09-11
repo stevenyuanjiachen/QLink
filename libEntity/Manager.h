@@ -1,5 +1,4 @@
-#ifndef MANAGER_H
-#define MANAGER_H
+#pragma once
 
 #include "Entity.h"
 #include <QSet>
@@ -22,4 +21,3 @@ private:
     Manager(){}
     QSet<Entity*> entities[ENTITY_TYPE_NUM];
 };
-#endif

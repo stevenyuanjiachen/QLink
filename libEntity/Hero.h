@@ -1,5 +1,4 @@
-#ifndef HERO_H
-#define HERO_H
+#pragma once
 
 #include "Sprite.h"
 #include "Box.h"
@@ -58,5 +57,3 @@ private:
     QVector<Animation> anima;
     Box *triggeredBox;
 };
-
-#endif

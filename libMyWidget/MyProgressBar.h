@@ -1,5 +1,4 @@
-#ifndef MYPROGRESSBAR_H
-#define MYPROGRESSBAR_H
+#pragma once
 
 #include <QObject>
 #include <QPixmap>
@@ -49,4 +48,3 @@ private:
     QPen textPen;
     QFont textFont;
 };
-#endif

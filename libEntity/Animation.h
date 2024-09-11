@@ -1,5 +1,4 @@
-#ifndef ANIMATION_H
-#define ANIMATION_H
+#pragma once
 
 #include <QPixmap>
 #include <QVector2D>
@@ -26,4 +25,3 @@ private:
     int animation_speed;
     int counter;
 };
-#endif

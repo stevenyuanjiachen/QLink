@@ -1,5 +1,4 @@
-#ifndef ENTITY_H
-#define ENTITY_H
+#pragma once
 
 #include <QObject>
 #include <QPainter>
@@ -29,5 +28,3 @@ protected:
     bool active = true;
     EntityType type = ET_none;
 };
-
-#endif

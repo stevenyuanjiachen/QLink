@@ -1,5 +1,4 @@
-#ifndef SPRITE_H
-#define SPRITE_H
+#pragma once
 
 #include "Entity.h"
 #include <QVector2D>
@@ -22,8 +21,3 @@ public:
     //碰撞箱
     QRect collider;
 };
-
-
-
-
-#endif

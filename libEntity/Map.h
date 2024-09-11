@@ -1,5 +1,4 @@
-#ifndef MAP_H
-#define MAP_H
+#pragma once
 
 #include "EntityResList.h"
 #include <QPainter>
@@ -49,5 +48,3 @@ const int MAP_BLOCK_LEFT = 1.5 * CUBE_LENGTH;
 const int MAP_BLOCK_RIGHT = (MAP_WIDTH - 1.5) * CUBE_LENGTH;
 const int MAP_BLOCK_UP = 3.5 * CUBE_LENGTH;
 const int MAP_BLOCK_DOWN = (MAP_HEIGHT - 1.5) * CUBE_LENGTH;
-
-#endif

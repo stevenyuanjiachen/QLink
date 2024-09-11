@@ -1,5 +1,4 @@
-#ifndef BOX_H
-#define BOX_H
+#pragma once
 
 #include "Entity.h"
 #include "Animation.h"
@@ -60,5 +59,3 @@ private:
     BoxColor color;
     BoxState state;
 };
-
-#endif

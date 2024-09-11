@@ -19,16 +19,13 @@
 		"scope": "cpp",
 		"prefix": "nc",
 		"body": [
-			"#ifndef $1",
-			"#define $1",
+			"#pragma once",
 			"",
-			"class ",
+			"class $1",
 			"{",
 			"public:",
-			"\t",
+			"\t$1();",
 			"};",
-			
-			"#endif"
 		]
 	}
 }
