@@ -86,6 +86,7 @@ void Game::initGame(int w, int h,
     pauseMenu = new PauseMenu(this, (MAP_WIDTH*CUBE_LENGTH-PAUSE_MENU_WIDTH)/2, (MAP_HEIGHT*CUBE_LENGTH-PAUSE_MENU_HEIGHT)/2);
     connect(pauseMenu, &PauseMenu::signalContinue, this, &Game::continueGame);
     connect(pauseMenu, &PauseMenu::signalSaveGame, this, &Game::saveGame);
+    connect(pauseMenu, &PauseMenu::signalLoadGame, this, &Game::loadGame);
 }
 
 void Game::drawGame(QPainter *painter)
@@ -171,11 +172,11 @@ void Game::saveGame()
         qDebug() << "文件复制失败!";
     }
 
-    // save the hero state
-    player1->saveHeroState(filePath);
-
     // save the map state
     saveMap(filePath);
+    
+    // save the hero state
+    player1->saveHeroState(filePath);    
 
     // save the item state
     saveItems(filePath);
@@ -183,7 +184,9 @@ void Game::saveGame()
 
 void Game::loadGame()
 {
+    const QString& filePath = "../saves/test.txt";
 
+    player1->loadHeroState(filePath);
 }
 
 void Game::paintEvent(QPaintEvent *event)
@@ -404,8 +407,8 @@ void Game::itemCollitionDect()
             case IT_shuffle:
                 progressBar->addTime(1);
                 break;
-            case IT_hint:
-                player1->addBuff(BT_hint);
+            case IT_flash:
+                player1->addBuff(BT_flash);
                 break;
             }
             item->pickUp();
@@ -644,6 +647,8 @@ void Game::saveItems(const QString &filePath)
     QTextStream out(&file);
     out << beforeItemContent << itemData << itemPartContent;    
     file.close();
+
+    qDebug() << "Item 更新成功!";
 }
 
 // 判定函数

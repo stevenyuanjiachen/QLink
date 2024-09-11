@@ -26,7 +26,6 @@ enum BuffType
 {
     BT_none,
     BT_flash,
-    BT_hint
 };
 
 class Hero : public Sprite
@@ -51,7 +50,7 @@ public:
     void addBuff(BuffType buff);
 
     void saveHeroState(const QString& filePath);
-    void loadHeroState();
+    void loadHeroState(const QString& filePath);
 private:
     HeroState state;
     HeroBlockState blockState;

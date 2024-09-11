@@ -56,6 +56,9 @@ PauseMenu::PauseMenu(QWidget *parent, int x, int y) : QWidget(nullptr), x(x), y(
         "    background-color: rgba(0, 0, 0, 0.1);" /* 按下时添加半透明效果 */
         "}");
     loadButton.hide();
+    connect(&loadButton, &QPushButton::clicked, this, [=](){
+        emit signalLoadGame();
+    });
 
     // quit button
     quitButton.setGeometry(x + 175, y + 339, 231, 111);

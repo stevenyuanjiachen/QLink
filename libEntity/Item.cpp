@@ -9,8 +9,8 @@ Item::Item(ItemType itemType, int x, int y):
     case IT_shuffle:
         pixmap.load(SHUFFLE_IMAGE);
         break;
-    case IT_hint:
-        pixmap.load(HINT_IMAGE);
+    case IT_flash:
+        pixmap.load(FLASH_IMAGE);
         break;
     }
 }

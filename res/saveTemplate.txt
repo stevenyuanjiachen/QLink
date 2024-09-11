@@ -7,7 +7,7 @@ map:
 hero.x: 0
 hero.y: 0
 hero.state: 0
-hero.hint: false
+hero.flash: false
 hero.haveTriggerBox: false 
 hero.triggerBoxR: 0
 hero.triggerBoxC: 0

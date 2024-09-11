@@ -14,6 +14,7 @@ public:
 signals:
     void signalContinue();
     void signalSaveGame();
+    void signalLoadGame();
 
 private:
     int x, y;

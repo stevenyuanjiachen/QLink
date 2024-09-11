@@ -1,5 +1,6 @@
 #include "Hero.h"
 #include "Map.h"
+#include "Manager.h"
 #include <QFile>
 #include <QDebug>
 #include <QRegularExpression>
@@ -92,14 +93,7 @@ void Hero::collideEvent()
 
 void Hero::addTriggeredBox(Box *box)
 {
-    if (triggeredBox == nullptr)
-    {
-        triggeredBox = box;
-    }
-    else
-    {
-        throw "Hero have had a triggeredBox";
-    }
+    triggeredBox = box;
 }
 
 void Hero::addBuff(BuffType buff)
@@ -136,12 +130,12 @@ void Hero::saveHeroState(const QString &filePath)
     fileContent.replace(regex, "hero.state: " + QString::number(int(state)));
     
     // 更新 buff
-    if(buffSet.contains(BT_hint)){
-        regex.setPattern("hero\\.state:\\s*\\S+");
-        fileContent.replace(regex, "hero.state: true");
+    if(buffSet.contains(BT_flash)){
+        regex.setPattern("hero\\.flash:\\s*\\S+");
+        fileContent.replace(regex, "hero.flash: true");
     } else {
         regex.setPattern("hero\\.state:\\s*\\S+");
-        fileContent.replace(regex, "hero.state: false");
+        fileContent.replace(regex, "hero.flash: false");
     }
 
     // 更新triggerBox
@@ -168,4 +162,74 @@ void Hero::saveHeroState(const QString &filePath)
     QTextStream out(&file);
     out << fileContent;  // 写入修改后的内容
     file.close();  // 关闭文件
+
+    qDebug() << "# Hero 更新成功!";
+}
+
+void Hero::loadHeroState(const QString &filePath)
+{
+    QFile file(filePath);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "无法打开文件:" << file.errorString();
+        return;
+    }
+
+    QTextStream in(&file);
+    bool foundHero = false;
+    bool haveTriggerBox = false;
+    int r, c;
+    QRegularExpression heroRegex(R"((hero\.(x|y|state|flash|haveTriggerBox|triggerBoxR|triggerBoxC)):\s*(\w+))");
+
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+
+        // 找到 # Hero 部分
+        if (line.startsWith("# Hero")) {
+            foundHero = true;
+            continue;  // 跳过 # Hero 行
+        }
+
+        // 匹配 hero 属性
+        if (foundHero) {
+            QRegularExpressionMatch match = heroRegex.match(line);
+            if (match.hasMatch()) {
+                QString key = match.captured(2);  // 属性名，如 x, y, state
+                QString value = match.captured(3);  // 属性值
+
+                // 根据属性名解析并赋值
+                if (key == "x") {
+                    position.setX(value.toInt());
+                } else if (key == "y") {
+                    position.setY(value.toInt());
+                } else if (key == "state") {
+                    state = (HeroState) value.toInt();
+                } else if (key == "flash") {
+                    if(value=="true") addBuff(BT_flash);
+                } else if (key == "haveTriggerBox") {
+                    haveTriggerBox = (value=="true");
+                } else if (key == "triggerBoxR") {
+                    r = value.toInt();
+                } else if (key == "triggerBoxC") {
+                    c = value.toInt();
+                }
+            }
+        }
+    }
+
+    if(haveTriggerBox)
+    {
+        for(auto i: Mgr->getEntity(ET_box))
+        {
+            Box* box = (Box*) i;
+            if(box->getR()==r && box->getC()==c)
+            {
+                this->addTriggeredBox(box);
+                box->trigger();
+                break;
+            }
+        }
+    }
+
+    file.close();
 }
