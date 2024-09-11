@@ -16,6 +16,8 @@ public:
     int height() { return pixmap.height(); }
     void setPosition(int x, int y);
     virtual void pickUp();
+    int getX() const { return x; }
+    int getY() const { return y; }
 
 protected:
     int x, y;

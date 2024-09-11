@@ -51,6 +51,7 @@ public:
     void drawPath(QPainter* painter);
     void drawPauseMenu(QPainter* painter);
     void saveMap(const QString& filePath);
+    void saveItems(const QString& filePath);
 
     // 判定函数
     bool elimatable(const Box* box1, const Box* box2, bool showPath = false);

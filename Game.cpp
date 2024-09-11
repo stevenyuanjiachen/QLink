@@ -177,6 +177,9 @@ void Game::saveGame()
 
     // save the map state
     saveMap(filePath);
+
+    // save the item state
+    saveItems(filePath);
 }
 
 void Game::loadGame()
@@ -541,7 +544,7 @@ void Game::drawPauseMenu(QPainter* painter)
 
 void Game::saveMap(const QString &filePath)
 {
-     QFile file(filePath);
+    QFile file(filePath);
 
     // 读取文件内容
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -597,6 +600,60 @@ void Game::saveMap(const QString &filePath)
     file.close();
 
     qDebug() << "# Map 更新成功!";
+}
+
+void Game::saveItems(const QString &filePath)
+{   
+    QFile file(filePath);
+    int num;
+
+    // 读取文件内容
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "无法打开文件:" << file.errorString();
+        return;
+    }
+
+    // shuffle
+    QString beforeShuffleContent;  // 保存 shuffle.num 和 shuffle.num: 之前的内容
+    QString shufflePartContent;    // 保存 shuffle.num 之后的内容
+    bool foundShuffle = false;
+    QTextStream in(&file);
+
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        if (line.startsWith("shuffle.num:")) {
+            foundShuffle = true;
+            beforeShuffleContent += line + "\n";  // 保存 shuffle.num: 这一行
+            continue;
+        }
+
+        if (foundShuffle)  shufflePartContent += line + "\n";  // 保留 shuffle.num 后的其它内容
+        else beforeShuffleContent += line + "\n";  // 保存 shuffle.num 之前的内容
+    }
+    file.close();
+
+    // 更新 shuffle.num
+    num = Mgr->getEntity(ET_shuffle).count();
+    QRegularExpression regex("shuffle\\.num:\\s*\\d*");
+    beforeShuffleContent.replace(regex, QString("shuffle.num: %1").arg(num));
+
+    // 生成 shuffle
+    QString shuffleData;
+    Item* item;
+    for (auto i:Mgr->getEntity(ET_shuffle)) {
+        item = (Item*) i;
+        shuffleData += QString::number(item->getX()) + " " + QString::number(item->getY()) + "\n";
+    }
+
+    // 以写入模式重新打开文件
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qDebug() << "无法写入文件:" << file.errorString();
+        return;
+    }
+
+    QTextStream out(&file);
+    out << beforeShuffleContent << shuffleData << shufflePartContent;    
+    file.close();
 }
 
 // 判定函数
