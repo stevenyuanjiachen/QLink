@@ -15,16 +15,20 @@
 #include <QTimer>
 #include <QDebug>
 #include <QPoint>
+#include <QScreen>
+#include <QApplication>
 
 // the Box Matrix is M*N
 int M = 8, N = 8;
 
 Hero *player1;
+Hero *player2;
 Map *gameMap;
 MyProgressBar *progressBar;
 ScoreBoard *scoreBoard1;
-PauseMenu* pauseMenu;
-StartMenu* startMenu;
+ScoreBoard *scoreBoard2;
+PauseMenu *pauseMenu;
+StartMenu *startMenu;
 
 // 游戏实现
 Game::Game(QWidget *parent)
@@ -66,6 +70,7 @@ void Game::initGame(int w, int h,
 
     // generate player
     player1 = new Hero(MAP_BLOCK_LEFT + 5, MAP_BLOCK_UP + 5);
+    player2 = new Hero(MAP_BLOCK_RIGHT - 5, MAP_BLOCK_DOWN - 5);
     Mgr->addEntity(player1);
 
     // generate Box matric
@@ -82,24 +87,25 @@ void Game::initGame(int w, int h,
 
     // generate the scoreBoard
     scoreBoard1 = new ScoreBoard(0, 0);
-    connect(this, &Game::signalScore, scoreBoard1, &ScoreBoard::addScore);
+    scoreBoard2 = new ScoreBoard(0, 20);
+    connect(this, &Game::signalScore1, scoreBoard1, &ScoreBoard::addScore);
+    connect(this, &Game::signalScore2, scoreBoard2, &ScoreBoard::addScore);
 
     // generate the puase menu
-    pauseMenu = new PauseMenu(this, (MAP_WIDTH*CUBE_LENGTH-PAUSE_MENU_WIDTH)/2, (MAP_HEIGHT*CUBE_LENGTH-PAUSE_MENU_HEIGHT)/2);
+    pauseMenu = new PauseMenu(this, (MAP_WIDTH * CUBE_LENGTH - PAUSE_MENU_WIDTH) / 2, (MAP_HEIGHT * CUBE_LENGTH - PAUSE_MENU_HEIGHT) / 2);
     connect(pauseMenu, &PauseMenu::signalContinue, this, &Game::continueGame);
     connect(pauseMenu, &PauseMenu::signalSaveGame, this, &Game::saveGame);
     connect(pauseMenu, &PauseMenu::signalLoadGame, this, &Game::loadGame);
 
-    //generate the start menu
+    // generate the start menu
     startMenu = new StartMenu(this);
     connect(startMenu, &StartMenu::signalSingleMode, this, [=](){
         state = GS_single_mode;
-        startMenu->hide();
-    });
+        startMenu->hide(); });
     connect(startMenu, &StartMenu::signalDoubleMode, this, [=](){
+        Mgr->addEntity(player2);
         state = GS_double_mode;
-        startMenu->hide();
-    });
+        startMenu->hide(); });
 }
 
 void Game::drawGame(QPainter *painter)
@@ -116,18 +122,21 @@ void Game::drawGame(QPainter *painter)
         Mgr->draw(painter);
         drawPath(painter);
         break;
-    case GS_pause:
+    case GS_double_mode:
         gameMap->draw(painter);
         progressBar->draw(painter);
         scoreBoard1->draw(painter);
+        scoreBoard2->draw(painter);
         Mgr->draw(painter);
         drawPath(painter);
+        break;
+    case GS_pause:
+        painter->drawPixmap(0, 0, screenshot);
         // pauseMenu
         drawPauseMenu(painter);
         pauseMenu->draw(painter);
         break;
     }
-    
 }
 
 void Game::finishGame()
@@ -147,7 +156,7 @@ void Game::updateGame()
         Mgr->update();
         boxCollitionDect();
         itemCollitionDect();
-//        solubleCheck();
+        //        solubleCheck();
         break;
     case GS_pause:
         emit signalPause();
@@ -163,6 +172,13 @@ void Game::cleanGame()
 {
 }
 
+void Game::pauseGame()
+{
+    QScreen* screen = QGuiApplication::primaryScreen();
+    screenshot = screen->grabWindow(this->winId());
+    state = GS_pause;
+}
+
 void Game::continueGame()
 {
     emit signalContinue();
@@ -175,38 +191,42 @@ void Game::saveGame()
     const QString filePath = "../saves/test.txt";
 
     // if save exist, then remove it
-    if (QFile::exists(filePath)) {
-        if (!QFile::remove(filePath)) {
+    if (QFile::exists(filePath))
+    {
+        if (!QFile::remove(filePath))
+        {
             qDebug() << "无法删除目标文件!";
             return;
         }
     }
 
     // copy the template
-    if(QFile::copy("../res/saveTemplate.txt", filePath)){
+    if (QFile::copy("../res/saveTemplate.txt", filePath))
+    {
         qDebug() << "文件复制成功!";
-    } else {
+    }
+    else
+    {
         qDebug() << "文件复制失败!";
     }
 
-    saveBoxes(filePath);                // save box
-    player1->saveHeroState(filePath);   // save hero
-    saveItems(filePath);                // save item
-    progressBar->saveState(filePath);   // save progressBar
-    scoreBoard1->saveState(filePath);   // save scoreBoard
+    saveBoxes(filePath);              // save box
+    player1->saveHeroState(filePath); // save hero
+    saveItems(filePath);              // save item
+    progressBar->saveState(filePath); // save progressBar
+    scoreBoard1->saveState(filePath); // save scoreBoard
 }
 
 void Game::loadGame()
 {
-    const QString& filePath = "../saves/test.txt";
+    const QString &filePath = "../saves/test.txt";
 
-    
-    Mgr->clean();            // clean Game
-    loadBoxes(filePath);     // load boxes
+    Mgr->clean();        // clean Game
+    loadBoxes(filePath); // load boxes
     player1 = new Hero(0, 0);
     player1->loadHeroState(filePath);
-    Mgr->addEntity(player1); // load player
-    loadItems(filePath);     // load items
+    Mgr->addEntity(player1);          // load player
+    loadItems(filePath);              // load items
     progressBar->loadState(filePath); // load progressBar
     scoreBoard1->loadState(filePath); // load scoreBoard1
 
@@ -226,8 +246,10 @@ void Game::closeEvent(QCloseEvent *event)
 
 void Game::keyPressEvent(QKeyEvent *event)
 {
-    if(state == GS_pause) return;
+    if (state == GS_pause)
+        return;
 
+    // player 1
     if (player1->getState() == HS_stand_down ||
         player1->getState() == HS_stand_up ||
         player1->getState() == HS_stand_left ||
@@ -257,11 +279,49 @@ void Game::keyPressEvent(QKeyEvent *event)
             break;
         }
     }
+
+    // player 2
+    if(this->state != GS_double_mode) return;
+    if (player2->getState() == HS_stand_down ||
+        player2->getState() == HS_stand_up ||
+        player2->getState() == HS_stand_left ||
+        player2->getState() == HS_stand_right)
+    {
+        switch (event->key())
+        {
+        case Qt::Key_Up:
+            player2->setState(HS_move_up);
+            player2->velocity.setX(0);
+            player2->velocity.setY(-1);
+            break;
+        case Qt::Key_Left:
+            player2->setState(HS_move_left);
+            player2->velocity.setX(-1);
+            player2->velocity.setY(0);
+            break;
+        case Qt::Key_Down:
+            player2->setState(HS_move_down);
+            player2->velocity.setX(0);
+            player2->velocity.setY(1);
+            break;
+        case Qt::Key_Right:
+            player2->setState(HS_move_right);
+            player2->velocity.setX(1);
+            player2->velocity.setY(0);
+            break;
+        }
+    }
 }
 
 void Game::keyReleaseEvent(QKeyEvent *event)
-{
-    // player
+{   
+    // pause
+    if (event->key() == Qt::Key_Escape)
+    {
+        pauseGame();
+    }
+    
+    // player 1
     if (player1->getState() == HS_move_down ||
         player1->getState() == HS_move_up ||
         player1->getState() == HS_move_left ||
@@ -292,12 +352,38 @@ void Game::keyReleaseEvent(QKeyEvent *event)
         }
     }
 
-    // pause
-    if(event->key() == Qt::Key_Escape)
+    // player2
+    if(this->state != GS_double_mode) return;
+    if (player2->getState() == HS_move_down ||
+        player2->getState() == HS_move_up ||
+        player2->getState() == HS_move_left ||
+        player2->getState() == HS_move_right)
     {
-        state = GS_pause;
+        switch (event->key())
+        {
+        case Qt::Key_Up:
+            player2->setState(HS_stand_up);
+            player2->velocity.setX(0);
+            player2->velocity.setY(0);
+            break;
+        case Qt::Key_Left:
+            player2->setState(HS_stand_left);
+            player2->velocity.setX(0);
+            player2->velocity.setY(0);
+            break;
+        case Qt::Key_Down:
+            player2->setState(HS_stand_down);
+            player2->velocity.setX(0);
+            player2->velocity.setY(0);
+            break;
+        case Qt::Key_Right:
+            player2->setState(HS_stand_right);
+            player2->velocity.setX(0);
+            player2->velocity.setY(0);
+            break;
+        }
     }
-
+    
 }
 
 void Game::mouseReleaseEvent(QMouseEvent *event)
@@ -325,10 +411,10 @@ void Game::mouseReleaseEvent(QMouseEvent *event)
 void Game::generateBox(bool generateMatrix)
 {
     // generate Box matrix
-    if(generateMatrix == true)
+    if (generateMatrix == true)
         for (int i = 1; i <= M; ++i)
             for (int j = 1; j <= N; ++j)
-                boxMatrix[i][j] = QRandomGenerator::global()->bounded(BOX_COLOR_NUM)+1;
+                boxMatrix[i][j] = QRandomGenerator::global()->bounded(BOX_COLOR_NUM) + 1;
 
     // generate Box
     int startX = MAP_BLOCK_LEFT + (MAP_BLOCK_RIGHT - MAP_BLOCK_LEFT - N * CUBE_LENGTH) / 2;
@@ -340,7 +426,8 @@ void Game::generateBox(bool generateMatrix)
         y = startY + i * CUBE_LENGTH;
         for (int j = 0; j < N; ++j)
         {
-            if(boxMatrix[i+1][j+1]==0) continue;
+            if (boxMatrix[i + 1][j + 1] == 0)
+                continue;
             x = startX + j * CUBE_LENGTH;
             Box *box = new Box(x, y, (BoxColor)boxMatrix[i + 1][j + 1]);
             box->setMatrixPosition(i + 1, j + 1);
@@ -483,7 +570,7 @@ void Game::ElimateBox(Box *playerBox, Box *box)
 
 void Game::score(int x)
 {
-    emit signalScore(x);
+    emit signalScore1(x);
 }
 
 void Game::solubleCheck()
@@ -551,9 +638,9 @@ void Game::drawPath(QPainter *painter)
         }
 }
 
-void Game::drawPauseMenu(QPainter* painter)
+void Game::drawPauseMenu(QPainter *painter)
 {
-    QRect rect(0, 0, MAP_WIDTH*CUBE_LENGTH, MAP_HEIGHT*CUBE_LENGTH);
+    QRect rect(0, 0, MAP_WIDTH * CUBE_LENGTH, MAP_HEIGHT * CUBE_LENGTH);
     painter->setPen(Qt::NoPen);
     painter->setBrush(QColor(0, 0, 0, 100));
     painter->drawRect(rect);
@@ -564,28 +651,33 @@ void Game::saveBoxes(const QString &filePath)
     QFile file(filePath);
 
     // 读取文件内容
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
         qDebug() << "无法打开文件:" << file.errorString();
         return;
     }
 
-    QString beforeMapContent;  // 保存 map: 之前的内容
-    QString mapPartContent;    // 保存 map: 和 map 之后的内容
+    QString beforeMapContent; // 保存 map: 之前的内容
+    QString mapPartContent;   // 保存 map: 和 map 之后的内容
     bool foundMap = false;
 
     QTextStream in(&file);
 
     // 逐行读取文件
-    while (!in.atEnd()) {
+    while (!in.atEnd())
+    {
         QString line = in.readLine();
-        if (line.startsWith("map:")) {
+        if (line.startsWith("map:"))
+        {
             foundMap = true;
-            beforeMapContent += line + "\n";  // 保存 map: 这一行
+            beforeMapContent += line + "\n"; // 保存 map: 这一行
             continue;
         }
 
-        if (foundMap)  mapPartContent += line + "\n";  // 保留 map 后的其它内容
-        else beforeMapContent += line + "\n";  // 保存 map: 之前的内容
+        if (foundMap)
+            mapPartContent += line + "\n"; // 保留 map 后的其它内容
+        else
+            beforeMapContent += line + "\n"; // 保存 map: 之前的内容
     }
     file.close();
 
@@ -597,23 +689,26 @@ void Game::saveBoxes(const QString &filePath)
 
     // 生成 map 的数据内容
     QString mapData;
-    for (int i = 1; i <= M; ++i) {
-        for (int j = 1; j <= N; ++j) {
+    for (int i = 1; i <= M; ++i)
+    {
+        for (int j = 1; j <= N; ++j)
+        {
             mapData += QString::number(boxMatrix[i][j]) + " ";
         }
-        mapData += "\n";  // 每行结束换行
+        mapData += "\n"; // 每行结束换行
     }
 
     // 以写入模式重新打开文件
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
         qDebug() << "无法写入文件:" << file.errorString();
         return;
     }
 
     QTextStream out(&file);
-    out << beforeMapContent;  // 写入 map: 之前的内容
-    out << mapData;           // 写入更新后的 map 数据
-    out << mapPartContent;    // 写入 map: 之后的内容
+    out << beforeMapContent; // 写入 map: 之前的内容
+    out << mapData;          // 写入更新后的 map 数据
+    out << mapPartContent;   // 写入 map: 之后的内容
     file.close();
 
     qDebug() << "# Map 更新成功!";
@@ -623,7 +718,8 @@ void Game::loadBoxes(const QString &filePath)
 {
     QFile file(filePath);
 
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
         qDebug() << "无法打开文件:" << file.errorString();
         return;
     }
@@ -632,28 +728,36 @@ void Game::loadBoxes(const QString &filePath)
     QString line;
 
     // 读取 M 和 N
-    while (!in.atEnd()) {
+    while (!in.atEnd())
+    {
         line = in.readLine().trimmed();
-        if (line.startsWith("M:")) {
+        if (line.startsWith("M:"))
+        {
             M = line.section(':', 1, 1).toInt();
-        } else if (line.startsWith("N:")) {
+        }
+        else if (line.startsWith("N:"))
+        {
             N = line.section(':', 1, 1).toInt();
-        } else if (line == "map:") {
+        }
+        else if (line == "map:")
+        {
             break;
         }
     }
 
     // 清除原矩阵
-    for(int i=0; i<MAX_M; ++i)
-        for(int j=0; j<MAX_M; ++j)
+    for (int i = 0; i < MAX_M; ++i)
+        for (int j = 0; j < MAX_M; ++j)
             boxMatrix[i][j] = 0;
 
     // 读取 map 矩阵
-    for (int i = 1; i <= M && !in.atEnd(); ++i) {
+    for (int i = 1; i <= M && !in.atEnd(); ++i)
+    {
         line = in.readLine().trimmed();
         QStringList numbers = line.split(QRegularExpression("\\s+"));
-        for (int j = 1; j <= N && j <= numbers.size(); ++j) {
-            boxMatrix[i][j] = numbers[j-1].toInt();
+        for (int j = 1; j <= N && j <= numbers.size(); ++j)
+        {
+            boxMatrix[i][j] = numbers[j - 1].toInt();
         }
     }
 
@@ -665,32 +769,37 @@ void Game::loadBoxes(const QString &filePath)
 }
 
 void Game::saveItems(const QString &filePath)
-{   
+{
     QFile file(filePath);
     int num;
 
     // 读取文件内容
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
         qDebug() << "无法打开文件:" << file.errorString();
         return;
     }
 
     // item
-    QString beforeItemContent;  // 保存 item.num 和 item.num: 之前的内容
-    QString itemPartContent;    // 保存 item.num 之后的内容
+    QString beforeItemContent; // 保存 item.num 和 item.num: 之前的内容
+    QString itemPartContent;   // 保存 item.num 之后的内容
     bool foundItem = false;
     QTextStream in(&file);
 
-    while (!in.atEnd()) {
+    while (!in.atEnd())
+    {
         QString line = in.readLine();
-        if (line.startsWith("item.num:")) {
+        if (line.startsWith("item.num:"))
+        {
             foundItem = true;
-            beforeItemContent += line + "\n";  // 保存 item.num: 这一行
+            beforeItemContent += line + "\n"; // 保存 item.num: 这一行
             continue;
         }
 
-        if (foundItem)  itemPartContent += line + "\n";  // 保留 item.num 后的其它内容
-        else beforeItemContent += line + "\n";  // 保存 item.num 之前的内容
+        if (foundItem)
+            itemPartContent += line + "\n"; // 保留 item.num 后的其它内容
+        else
+            beforeItemContent += line + "\n"; // 保存 item.num 之前的内容
     }
     file.close();
 
@@ -701,51 +810,55 @@ void Game::saveItems(const QString &filePath)
 
     // 生成 item
     QString itemData;
-    Item* item;
-    for (auto i:Mgr->getEntity(ET_item)) {
-        item = (Item*) i;
-        itemData +=QString::number(item->getItemType()) + " " 
-            + QString::number(item->getX()) + " " 
-            + QString::number(item->getY()) + "\n";
+    Item *item;
+    for (auto i : Mgr->getEntity(ET_item))
+    {
+        item = (Item *)i;
+        itemData += QString::number(item->getItemType()) + " " + QString::number(item->getX()) + " " + QString::number(item->getY()) + "\n";
     }
 
     // 以写入模式重新打开文件
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
         qDebug() << "无法写入文件:" << file.errorString();
         return;
     }
 
     QTextStream out(&file);
-    out << beforeItemContent << itemData << itemPartContent;    
+    out << beforeItemContent << itemData << itemPartContent;
     file.close();
 
     qDebug() << "Item 更新成功!";
 }
 
-void Game::loadItems(const QString& filePath)
+void Game::loadItems(const QString &filePath)
 {
     QFile file(filePath);
 
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
         qDebug() << "无法打开文件:" << file.errorString();
         return;
     }
 
     QTextStream in(&file);
     QString line;
-    int num=0;
+    int num = 0;
 
     // 读取 item.num
-    while (!in.atEnd()) {
+    while (!in.atEnd())
+    {
         line = in.readLine().trimmed();
-        if (line.startsWith("item.num:")) {
+        if (line.startsWith("item.num:"))
+        {
             num = line.section(':', 1, 1).toInt();
             break;
         }
     }
 
     // 读取 item
-    for (int i = 0; i < num  && !in.atEnd(); ++i) {
+    for (int i = 0; i < num && !in.atEnd(); ++i)
+    {
         line = in.readLine().trimmed();
         QStringList numbers = line.split(QRegularExpression("\\s+"));
         Mgr->addEntity(new Item((ItemType)numbers[0].toInt(), numbers[1].toInt(), numbers[2].toInt()));
@@ -753,7 +866,6 @@ void Game::loadItems(const QString& filePath)
 
     file.close();
     qInfo() << "load Boxes Successfully !";
-
 }
 
 // 判定函数
@@ -908,7 +1020,8 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2, bool showPath)
     for (int i = c1 + 1; i <= N + 1 && boxMatrix[r1][i] == 0; ++i)
     {
         // corner1(r1, i), corner2(r2, i)
-        if(boxMatrix[r2][i]!=0) continue;
+        if (boxMatrix[r2][i] != 0)
+            continue;
         if (verticalElimatable(r1, i, r2, i) && horizonElimatable(r2, i, r2, c2))
         {
             if (showPath == true)
@@ -928,7 +1041,8 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2, bool showPath)
     for (int i = c1 - 1; i >= 0 && boxMatrix[r1][i] == 0; --i)
     {
         // corner1(r1, i), corner2(r2, i)
-        if(boxMatrix[r2][i]!=0) continue;
+        if (boxMatrix[r2][i] != 0)
+            continue;
         if (verticalElimatable(r1, i, r2, i) && horizonElimatable(r2, i, r2, c2))
         {
             if (showPath == true)
@@ -949,7 +1063,8 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2, bool showPath)
     for (int i = r1 - 1; i >= 0 && boxMatrix[i][c1] == 0; --i)
     {
         // corner1(i, c1) corner2(i, c2)
-        if(boxMatrix[i][c2]!=0) continue;
+        if (boxMatrix[i][c2] != 0)
+            continue;
         if (horizonElimatable(i, c1, i, c2) && verticalElimatable(i, c2, r2, c2))
         {
             if (showPath == true)
@@ -968,8 +1083,10 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2, bool showPath)
     for (int i = r1 + 1; i <= M + 1 && boxMatrix[i][c1] == 0; ++i)
     {
         // corner1(i, c1) corner2(i, c2)
-        if(boxMatrix[i][c2]!=0) continue;;
-        if (horizonElimatable(i, c1, i, c2) && verticalElimatable(i, c2, r2, c2) )
+        if (boxMatrix[i][c2] != 0)
+            continue;
+        ;
+        if (horizonElimatable(i, c1, i, c2) && verticalElimatable(i, c2, r2, c2))
         {
             if (showPath == true)
             {

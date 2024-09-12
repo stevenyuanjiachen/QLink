@@ -68,8 +68,10 @@ public:
 signals:
     void signalPause();
     void signalContinue();
-    void signalScore(int x);
-    void signalAddLine(int r1, int c1, int r2, int c2);
+    void signalScore1(int x);
+    void signalScore2(int x);
+    void signalAddLine1(int r1, int c1, int r2, int c2);
+    void signalAddLine2(int r1, int c1, int r2, int c2);
 
 protected:
     // 事件处理
@@ -86,5 +88,5 @@ private:
     QElapsedTimer showPathElapsedTimer;
     QTimer itemGenerateTimer; 
     QSet<QLine*> lineSet;  
-
+    QPixmap screenshot;
 };
