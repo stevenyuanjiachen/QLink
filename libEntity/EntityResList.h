@@ -133,6 +133,6 @@ const QStringList BOX_PINK_LIST =
     "../res/images/Box/box_pink6.png"
 };
 
-const QString SHUFFLE_IMAGE = "../res/images/Item/clock.png";
+const QString ADD1S_IMAGE = "../res/images/Item/clock.png";
 
 const QString FLASH_IMAGE = "../res/images/Item/mouse_arrow.png";

@@ -7,7 +7,7 @@
 
 const int ITEM_TYPE_NUM = 2;
 enum ItemType {
-    IT_shuffle,
+    IT_add1s,
     IT_flash
 };
 

@@ -18,6 +18,8 @@ public:
     void draw(QPainter* painter);
     void update();
     void addScore(int x);
+    void saveState(const QString& filePath);
+    void loadState(const QString& filePath);
 
 private: 
     int x, y, score;

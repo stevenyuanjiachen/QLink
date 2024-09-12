@@ -5,7 +5,8 @@
 #include "Map.h"
 #include "MyProgressBar.h"
 #include "ScoreBoard.h"
-#include <PauseMenu.h>
+#include "PauseMenu.h"
+#include "StartMenu.h"
 #include <QRandomGenerator>
 #include <QRegularExpression>
 #include <QSet>
@@ -23,6 +24,7 @@ Map *gameMap;
 MyProgressBar *progressBar;
 ScoreBoard *scoreBoard1;
 PauseMenu* pauseMenu;
+StartMenu* startMenu;
 
 // 游戏实现
 Game::Game(QWidget *parent)
@@ -87,13 +89,27 @@ void Game::initGame(int w, int h,
     connect(pauseMenu, &PauseMenu::signalContinue, this, &Game::continueGame);
     connect(pauseMenu, &PauseMenu::signalSaveGame, this, &Game::saveGame);
     connect(pauseMenu, &PauseMenu::signalLoadGame, this, &Game::loadGame);
+
+    //generate the start menu
+    startMenu = new StartMenu(this);
+    connect(startMenu, &StartMenu::signalSingleMode, this, [=](){
+        state = GS_single_mode;
+        startMenu->hide();
+    });
+    connect(startMenu, &StartMenu::signalDoubleMode, this, [=](){
+        state = GS_double_mode;
+        startMenu->hide();
+    });
 }
 
 void Game::drawGame(QPainter *painter)
 {
     switch (state)
     {
-    case GS_running:
+    case GS_start:
+        startMenu->draw(painter);
+        break;
+    case GS_single_mode:
         gameMap->draw(painter);
         progressBar->draw(painter);
         scoreBoard1->draw(painter);
@@ -124,9 +140,10 @@ void Game::updateGame()
     switch (state)
     {
     case GS_start:
-        state = GS_running;
+        emit signalPause();
+        itemGenerateTimer.start(5000);
         break;
-    case GS_running:
+    case GS_single_mode:
         Mgr->update();
         boxCollitionDect();
         itemCollitionDect();
@@ -135,7 +152,6 @@ void Game::updateGame()
     case GS_pause:
         emit signalPause();
         itemGenerateTimer.start(5000);
-        
         break;
     case GS_finish:
         qInfo() << "Game Finish";
@@ -150,7 +166,7 @@ void Game::cleanGame()
 void Game::continueGame()
 {
     emit signalContinue();
-    state = GS_running;
+    state = GS_single_mode;
     pauseMenu->hide();
 }
 
@@ -173,33 +189,26 @@ void Game::saveGame()
         qDebug() << "文件复制失败!";
     }
 
-    // save the map state
-    saveBoxes(filePath);
-    
-    // save the hero state
-    player1->saveHeroState(filePath);    
-
-    // save the item state
-    saveItems(filePath);
+    saveBoxes(filePath);                // save box
+    player1->saveHeroState(filePath);   // save hero
+    saveItems(filePath);                // save item
+    progressBar->saveState(filePath);   // save progressBar
+    scoreBoard1->saveState(filePath);   // save scoreBoard
 }
 
 void Game::loadGame()
 {
     const QString& filePath = "../saves/test.txt";
 
-    // clean Game
-    Mgr->clean();
-
-    // load boxes
-    loadBoxes(filePath);
-
-    // load player
+    
+    Mgr->clean();            // clean Game
+    loadBoxes(filePath);     // load boxes
     player1 = new Hero(0, 0);
     player1->loadHeroState(filePath);
-    Mgr->addEntity(player1);
-
-    // load items
-    loadItems(filePath);
+    Mgr->addEntity(player1); // load player
+    loadItems(filePath);     // load items
+    progressBar->loadState(filePath); // load progressBar
+    scoreBoard1->loadState(filePath); // load scoreBoard1
 
     continueGame();
 }
@@ -413,7 +422,7 @@ void Game::boxCollitionDect()
 
 void Game::itemCollitionDect()
 {
-    // dect shuffle
+    // dect add1s
     for (auto i : Mgr->getEntity(ET_item))
     {
         Item *item = (Item *)i;
@@ -421,7 +430,7 @@ void Game::itemCollitionDect()
         {
             switch (item->getItemType())
             {
-            case IT_shuffle:
+            case IT_add1s:
                 progressBar->addTime(1);
                 break;
             case IT_flash:

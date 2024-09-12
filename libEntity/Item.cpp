@@ -6,8 +6,8 @@ Item::Item(ItemType itemType, int x, int y):
 {
     switch (itemType)
     {
-    case IT_shuffle:
-        pixmap.load(SHUFFLE_IMAGE);
+    case IT_add1s:
+        pixmap.load(ADD1S_IMAGE);
         break;
     case IT_flash:
         pixmap.load(FLASH_IMAGE);

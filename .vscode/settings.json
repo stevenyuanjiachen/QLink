@@ -5,6 +5,7 @@
         "qvector2d": "cpp",
         "qrect": "cpp",
         "qrandomgenerator": "cpp",
-        "qfontdatabase": "cpp"
+        "qfontdatabase": "cpp",
+        "qimage": "cpp"
     }
 }

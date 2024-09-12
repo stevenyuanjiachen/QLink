@@ -1,6 +1,8 @@
 #include "MyProgressBar.h"
 #include "MyWidgetResList.h"
 #include <QFontMetrics>
+#include <QFile>
+#include <QRegularExpression>
 
 MyProgressBar::MyProgressBar(int x, int y, double time)
     : QObject(nullptr), x(x), y(y), pause(false),
@@ -98,4 +100,67 @@ void MyProgressBar::pauseBar()
 void MyProgressBar::contineBar()
 {
     pause = false;
+}
+
+void MyProgressBar::saveState(const QString &filePath)
+{
+    QFile file(filePath);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "无法打开文件:" << file.errorString();
+        return;
+    }
+
+    // 读取文件内容
+    QString fileContent;
+    QTextStream in(&file);
+    fileContent = in.readAll();
+    file.close();
+
+    QRegularExpression regex;
+    QString newLine;
+    // time
+    regex.setPattern("progressBar\\.time:\\s*\\d+");
+    newLine = QString("progressBar.time: %1").arg(time);
+    fileContent.replace(regex, newLine);
+    // value
+    regex.setPattern("progressBar\\.value:\\s*\\d+");
+    newLine = QString("progressBar.value: %1").arg(value);
+    fileContent.replace(regex, newLine);
+
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qDebug() << "无法写入文件:" << file.errorString();
+        return ;
+    }
+
+    QTextStream out(&file);
+    out << fileContent;
+    file.close();
+}
+
+void MyProgressBar::loadState(const QString &filePath)
+{
+    QFile file(filePath);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "无法打开文件:" << file.errorString();
+        return; 
+    }
+
+    QTextStream in(&file);
+    QString fileContent = in.readAll();
+    file.close();
+
+    QRegularExpression regex;
+    QRegularExpressionMatch match;
+
+    regex.setPattern("progressBar\\.time:\\s*(\\d+)");
+    match = regex.match(fileContent);
+    if (match.hasMatch()) time = match.captured(1).toInt();
+    else qDebug() << "未找到 progressBar.time 行";
+
+    regex.setPattern("progressBar\\.value:\\s*(\\d+)");
+    match = regex.match(fileContent);
+    if (match.hasMatch()) value = match.captured(1).toInt();
+    else qDebug() << "未找到 progressBar.value 行";
 }

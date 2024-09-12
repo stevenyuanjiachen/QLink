@@ -1,6 +1,8 @@
 #include "ScoreBoard.h"
 #include <QPainterPath>
 #include <QFontMetrics>
+#include <QFile>
+#include <QRegularExpression>
 
 ScoreBoard::ScoreBoard(int x, int y, bool flip) :
      x(x), y(y), flip(flip), score(0)
@@ -58,4 +60,57 @@ void ScoreBoard::update()
 void ScoreBoard::addScore(int x)
 {
     score += x;
+}
+
+void ScoreBoard::saveState(const QString &filePath)
+{
+    QFile file(filePath);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "无法打开文件:" << file.errorString();
+        return;
+    }
+
+    // 读取文件内容
+    QString fileContent;
+    QTextStream in(&file);
+    fileContent = in.readAll();
+    file.close();
+
+    QRegularExpression regex("scoreBoard\\.score:\\s*\\d+");
+    QString newScoreLine = QString("scoreBoard.score: %1").arg(score);
+    fileContent.replace(regex, newScoreLine);
+
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qDebug() << "无法写入文件:" << file.errorString();
+        return ;
+    }
+
+    QTextStream out(&file);
+    out << fileContent;
+    file.close();
+}
+
+void ScoreBoard::loadState(const QString &filePath)
+{
+    QFile file(filePath);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "无法打开文件:" << file.errorString();
+        return; 
+    }
+
+    QTextStream in(&file);
+    QString fileContent = in.readAll();
+    file.close();
+
+    QRegularExpression regex("scoreBoard\\.score:\\s*(\\d+)");
+    QRegularExpressionMatch match = regex.match(fileContent);
+
+    if (match.hasMatch()) {
+        // 提取括号内捕获的分数
+        score = match.captured(1).toInt();
+    } else {
+        qDebug() << "未找到 scoreBoard.score 行";
+    }
 }

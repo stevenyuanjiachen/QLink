@@ -16,7 +16,8 @@ const int MAX_N = 10;
 
 enum GameState{
     GS_start,
-    GS_running,
+    GS_single_mode,
+    GS_double_mode,
     GS_pause,
     GS_finish  
 };

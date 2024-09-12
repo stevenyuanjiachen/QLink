@@ -18,11 +18,12 @@ public:
     ~MyProgressBar(){};
     void draw(QPainter* painter) ;
     void update() ;
-    void setTime(double time);
-    void setValue(double value);
     void addTime(int time);
     void pauseBar();
     void contineBar();
+    void saveState(const QString& filePath);
+    void loadState(const QString& filePath);
+
 
 signals:
     void signalEnd();

@@ -25,3 +25,6 @@ const int SCOREBOARD_INTERVAL_RIGHT = 99;
 const QString PAUSE_MENU_IMAGE = "../res/images/UI/pause_menu.png";
 const int PAUSE_MENU_WIDTH = 572;
 const int PAUSE_MENU_HEIGHT = 493;
+
+// gif of the start menu
+const QString START_MENU_GIF = "../res/images/UI/start_menu.gif";
