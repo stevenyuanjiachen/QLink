@@ -31,13 +31,14 @@ class Hero : public Sprite
 {
     Q_OBJECT
 public:
-    Hero(double x, double y);
+    Hero(double x, double y, int id=1);
     void update() override;
     void draw(QPainter *painter) override;
 
 public:
     void setState(HeroState state) { this->state = state; }
     HeroState getState() const { return this->state; }
+    int getID() const { return playerID; }
     void setPosition(int x, int y);
     bool intersects(const QRect &coll) { return collider.intersects(coll); }
     void collideEvent();
@@ -51,6 +52,7 @@ public:
     void saveHeroState(const QString& filePath);
     void loadHeroState(const QString& filePath);
 private:
+    int playerID;
     HeroState state;
     HeroBlockState blockState;
     QSet<BuffType> buffSet;

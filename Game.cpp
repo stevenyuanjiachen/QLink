@@ -36,14 +36,15 @@ Game::Game(QWidget *parent)
 {
     // game timer
     QTimer *timer = new QTimer(this);
-    timer->callOnTimeout(this, [=]()
-                         {
+    timer->callOnTimeout(this, [=](){
         updateGame();
         update(); });
     timer->start(1000 / GAME_FPS);
 
     itemGenerateTimer.callOnTimeout(this, &Game::generateItem);
     itemGenerateTimer.start(5000);
+
+    setFocusPolicy(Qt::StrongFocus);
 }
 
 void Game::run()
@@ -69,15 +70,15 @@ void Game::initGame(int w, int h,
     gameMap = new Map();
 
     // generate player
-    player1 = new Hero(MAP_BLOCK_LEFT + 5, MAP_BLOCK_UP + 5);
-    player2 = new Hero(MAP_BLOCK_RIGHT - 5, MAP_BLOCK_DOWN - 5);
+    player1 = new Hero(MAP_BLOCK_LEFT + 10, MAP_BLOCK_UP + 10);
+    player2 = new Hero(MAP_BLOCK_RIGHT - player1->pixmap.width() - 10,
+                        MAP_BLOCK_DOWN - player1->pixmap.height() - 10, 2);
     Mgr->addEntity(player1);
+    triggerElapsedTimer1.start();
+    triggerElapsedTimer2.start();
 
     // generate Box matric
     generateBox();
-
-    // trigger timer start
-    triggerElapsedTimer.start();
 
     // generate the Progress Bar
     progressBar = new MyProgressBar((CUBE_LENGTH * MAP_WIDTH - MY_PROGRESS_BAR_WIDTH) / 2, CUBE_LENGTH, 60);
@@ -87,7 +88,7 @@ void Game::initGame(int w, int h,
 
     // generate the scoreBoard
     scoreBoard1 = new ScoreBoard(0, 0);
-    scoreBoard2 = new ScoreBoard(0, 20);
+    scoreBoard2 = new ScoreBoard(0, 50);
     connect(this, &Game::signalScore1, scoreBoard1, &ScoreBoard::addScore);
     connect(this, &Game::signalScore2, scoreBoard2, &ScoreBoard::addScore);
 
@@ -131,8 +132,6 @@ void Game::drawGame(QPainter *painter)
         drawPath(painter);
         break;
     case GS_pause:
-        painter->drawPixmap(0, 0, screenshot);
-        // pauseMenu
         drawPauseMenu(painter);
         pauseMenu->draw(painter);
         break;
@@ -154,7 +153,14 @@ void Game::updateGame()
         break;
     case GS_single_mode:
         Mgr->update();
-        boxCollitionDect();
+        boxCollitionDect1();
+        itemCollitionDect();
+        //        solubleCheck();
+        break;
+    case GS_double_mode:
+        Mgr->update();
+        boxCollitionDect1();
+        boxCollitionDect2();
         itemCollitionDect();
         //        solubleCheck();
         break;
@@ -320,7 +326,7 @@ void Game::keyReleaseEvent(QKeyEvent *event)
     {
         pauseGame();
     }
-    
+
     // player 1
     if (player1->getState() == HS_move_down ||
         player1->getState() == HS_move_up ||
@@ -468,7 +474,7 @@ void Game::generateItem()
     itemGenerateTimer.setInterval(1000 * QRandomGenerator::global()->bounded(3, 8));
 }
 
-void Game::boxCollitionDect()
+void Game::boxCollitionDect1()
 {
     QSet<Box *> triggeredBoxes;
     // dect all the collision
@@ -485,9 +491,9 @@ void Game::boxCollitionDect()
     // if only one collision && trigger elapse>500 , then triggered
     if (triggeredBoxes.size() != 1)
         return;
-    if (triggerElapsedTimer.elapsed() < 500)
+    if (triggerElapsedTimer1.elapsed() < 500)
         return;
-    triggerElapsedTimer.restart();
+    triggerElapsedTimer1.restart();
 
     // boxes' trigger event
     Box *foo = *triggeredBoxes.begin();
@@ -507,12 +513,52 @@ void Game::boxCollitionDect()
     }
 }
 
+void Game::boxCollitionDect2()
+{
+    QSet<Box *> triggeredBoxes;
+    // dect all the collision
+    for (auto i : Mgr->getEntity(ET_box))
+    {
+        Box *foo = (Box *)i;
+        if (player2->intersects(foo->getCollider()))
+        {
+            player2->collideEvent();
+            triggeredBoxes.insert(foo);
+        }
+    }
+
+    // if only one collision && trigger elapse>500 , then triggered
+    if (triggeredBoxes.size() != 1)
+        return;
+    if (triggerElapsedTimer2.elapsed() < 500)
+        return;
+    triggerElapsedTimer2.restart();
+
+    // boxes' trigger event
+    Box *foo = *triggeredBoxes.begin();
+    foo->trigger();
+
+    // player's trigger event
+    if (player2->getTriggeredBox() == nullptr)
+    {
+        player2->addTriggeredBox(foo);
+        qInfo() << "player2 get:" << player2->getTriggeredBox();
+    }
+    else
+    {
+        qInfo() << "player2 abandon:" << player2->getTriggeredBox();
+        ElimateBox(player2->getTriggeredBox(), foo, 2);
+        player2->resetTriggeredBox();
+    }
+}
+
 void Game::itemCollitionDect()
 {
-    // dect add1s
     for (auto i : Mgr->getEntity(ET_item))
     {
         Item *item = (Item *)i;
+
+        // player 1
         if (player1->intersects(item->getCollider()))
         {
             switch (item->getItemType())
@@ -526,10 +572,25 @@ void Game::itemCollitionDect()
             }
             item->pickUp();
         }
+
+        // player 2
+        if (player2->intersects(item->getCollider()))
+        {
+            switch (item->getItemType())
+            {
+            case IT_add1s:
+                progressBar->addTime(1);
+                break;
+            case IT_flash:
+                player2->addBuff(BT_flash);
+                break;
+            }
+            item->pickUp();
+        }
     }
 }
 
-void Game::ElimateBox(Box *playerBox, Box *box)
+void Game::ElimateBox(Box* playerBox, Box *box, int playerID)
 {
     // the same box
     if (playerBox == box)
@@ -558,7 +619,7 @@ void Game::ElimateBox(Box *playerBox, Box *box)
             boxMatrix[box->getR()][box->getC()] = 0;
 
             // score
-            score(2);
+            score(2, playerID);
         }
         else
         {
@@ -568,9 +629,12 @@ void Game::ElimateBox(Box *playerBox, Box *box)
     }
 }
 
-void Game::score(int x)
+void Game::score(int x, int playerID)
 {
-    emit signalScore1(x);
+    if(playerID == 1)
+        emit signalScore1(x);
+    if(playerID == 2)
+        emit signalScore2(x);
 }
 
 void Game::solubleCheck()
@@ -640,6 +704,8 @@ void Game::drawPath(QPainter *painter)
 
 void Game::drawPauseMenu(QPainter *painter)
 {
+    painter->drawPixmap(0, 0, screenshot);
+    
     QRect rect(0, 0, MAP_WIDTH * CUBE_LENGTH, MAP_HEIGHT * CUBE_LENGTH);
     painter->setPen(Qt::NoPen);
     painter->setBrush(QColor(0, 0, 0, 100));

@@ -43,10 +43,11 @@ public:
     // 功能函数
     void generateBox(bool generateMatrix = true);
     void generateItem();
-    void boxCollitionDect();
+    void boxCollitionDect1();
+    void boxCollitionDect2();
     void itemCollitionDect();
-    void ElimateBox(Box *playerBox, Box *box);
-    void score(int x);
+    void ElimateBox(Box *playerBox, Box *box, int playerID = 1);
+    void score(int x, int playerID);
     void solubleCheck();
     void addLine(int r1, int c1, int r2, int c2);
     void drawPath(QPainter* painter);
@@ -84,7 +85,8 @@ protected:
 private:
     GameState state;
     int boxMatrix[MAX_M+2][MAX_N+2] = {};
-    QElapsedTimer triggerElapsedTimer;
+    QElapsedTimer triggerElapsedTimer1;
+    QElapsedTimer triggerElapsedTimer2;
     QElapsedTimer showPathElapsedTimer;
     QTimer itemGenerateTimer; 
     QSet<QLine*> lineSet;  

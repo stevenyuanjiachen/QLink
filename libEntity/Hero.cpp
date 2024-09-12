@@ -5,10 +5,11 @@
 #include <QDebug>
 #include <QRegularExpression>
 
-Hero::Hero(double x, double y)
+Hero::Hero(double x, double y, int id)
     : Sprite(ET_hero, x, y, STAND_DOWN_LIST[0]),
       state(HS_stand_down), blockState(block_none),
-      triggeredBox(nullptr)
+      triggeredBox(nullptr),
+      playerID(id)
 {
     this->setType(ET_hero);
     anima.append(Animation(STAND_UP_LIST));
