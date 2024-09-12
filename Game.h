@@ -49,8 +49,9 @@ public:
     void ElimateBox(Box *playerBox, Box *box, int playerID = 1);
     void score(int x, int playerID);
     void solubleCheck();
-    void addLine(int r1, int c1, int r2, int c2);
-    void drawPath(QPainter* painter);
+    void addLine(int r1, int c1, int r2, int c2, int playerID=0);
+    void drawPath1(QPainter* painter);
+    void drawPath2(QPainter* painter);
     void drawPauseMenu(QPainter* painter);
     void saveBoxes(const QString& filePath);
     void loadBoxes(const QString& filePath);
@@ -58,21 +59,19 @@ public:
     void loadItems(const QString& filePath);
 
     // 判定函数
-    bool elimatable(const Box* box1, const Box* box2, bool showPath = false);
-    bool horizonElimatable(int r1, int c1, int r2, int c2, bool showPath = false);
-    bool horizonElimatable(const Box* box1, const Box* box2, bool showPath = false);
-    bool verticalElimatable(int r1, int c1, int r2, int c2, bool showPath = false);
-    bool verticalElimatable(const Box* box1, const Box* box2, bool showPath = false);
-    bool oneCornerElimatable(const Box* box1, const Box* box2, bool showPath = false);
-    bool twoCornerElimatable(const Box* box1, const Box* box2, bool showPath = false);
+    bool elimatable(const Box* box1, const Box* box2, int showPath = 0);
+    bool horizonElimatable(int r1, int c1, int r2, int c2, int showPath = 0);
+    bool horizonElimatable(const Box* box1, const Box* box2, int showPath = 0);
+    bool verticalElimatable(int r1, int c1, int r2, int c2, int showPath = 0);
+    bool verticalElimatable(const Box* box1, const Box* box2, int showPath = 0);
+    bool oneCornerElimatable(const Box* box1, const Box* box2, int showPath = 0);
+    bool twoCornerElimatable(const Box* box1, const Box* box2, int showPath = 0);
     
 signals:
     void signalPause();
     void signalContinue();
     void signalScore1(int x);
     void signalScore2(int x);
-    void signalAddLine1(int r1, int c1, int r2, int c2);
-    void signalAddLine2(int r1, int c1, int r2, int c2);
 
 protected:
     // 事件处理
@@ -87,8 +86,10 @@ private:
     int boxMatrix[MAX_M+2][MAX_N+2] = {};
     QElapsedTimer triggerElapsedTimer1;
     QElapsedTimer triggerElapsedTimer2;
-    QElapsedTimer showPathElapsedTimer;
+    QElapsedTimer showPathElapsedTimer1;
+    QElapsedTimer showPathElapsedTimer2;
     QTimer itemGenerateTimer; 
-    QSet<QLine*> lineSet;  
+    QSet<QLine*> lineSet1;
+    QSet<QLine*> lineSet2;
     QPixmap screenshot;
 };
