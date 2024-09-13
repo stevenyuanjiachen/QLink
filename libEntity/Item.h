@@ -7,9 +7,9 @@
 
 const int ITEM_TYPE_NUM = 3;
 enum ItemType {
-    IT_add1s,
     IT_flash,
-    IT_shuffle
+    IT_shuffle,
+    IT_add1s
 };
 
 class Item : public Entity

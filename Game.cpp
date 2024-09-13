@@ -38,7 +38,8 @@ Game::Game(QWidget *parent)
 {
     // game timer
     QTimer *timer = new QTimer(this);
-    timer->callOnTimeout(this, [=](){
+    timer->callOnTimeout(this, [=]()
+                         {
         updateGame();
         update(); });
     timer->start(1000 / GAME_FPS);
@@ -74,7 +75,7 @@ void Game::initGame(int w, int h,
     // generate player
     player1 = new Hero(MAP_BLOCK_LEFT + 10, MAP_BLOCK_UP + 10);
     player2 = new Hero(MAP_BLOCK_RIGHT - player1->pixmap.width() - 10,
-                        MAP_BLOCK_DOWN - player1->pixmap.height() - 10, 2);
+                       MAP_BLOCK_DOWN - player1->pixmap.height() - 10, 2);
     Mgr->addEntity(player1);
     triggerElapsedTimer1.start();
     triggerElapsedTimer2.start();
@@ -102,12 +103,14 @@ void Game::initGame(int w, int h,
 
     // generate the start menu
     startMenu = new StartMenu(this);
-    connect(startMenu, &StartMenu::signalSingleMode, this, [=](){
+    connect(startMenu, &StartMenu::signalSingleMode, this, [=]()
+            {
         state = GS_single_mode;
         gameMode = GS_single_mode;
         continueGame();
         startMenu->hide(); });
-    connect(startMenu, &StartMenu::signalDoubleMode, this, [=](){
+    connect(startMenu, &StartMenu::signalDoubleMode, this, [=]()
+            {
         Mgr->addEntity(player2);
         state = GS_double_mode;
         gameMode = GS_double_mode;
@@ -187,7 +190,7 @@ void Game::cleanGame()
 
 void Game::pauseGame()
 {
-    QScreen* screen = QGuiApplication::primaryScreen();
+    QScreen *screen = QGuiApplication::primaryScreen();
     screenshot = screen->grabWindow(this->winId());
     state = GS_pause;
 }
@@ -294,7 +297,8 @@ void Game::keyPressEvent(QKeyEvent *event)
     }
 
     // player 2
-    if(this->state != GS_double_mode) return;
+    if (this->state != GS_double_mode)
+        return;
     if (player2->getState() == HS_stand_down ||
         player2->getState() == HS_stand_up ||
         player2->getState() == HS_stand_left ||
@@ -327,7 +331,7 @@ void Game::keyPressEvent(QKeyEvent *event)
 }
 
 void Game::keyReleaseEvent(QKeyEvent *event)
-{   
+{
     // pause
     if (event->key() == Qt::Key_Escape)
     {
@@ -366,7 +370,8 @@ void Game::keyReleaseEvent(QKeyEvent *event)
     }
 
     // player2
-    if(this->state != GS_double_mode) return;
+    if (this->state != GS_double_mode)
+        return;
     if (player2->getState() == HS_move_down ||
         player2->getState() == HS_move_up ||
         player2->getState() == HS_move_left ||
@@ -396,7 +401,6 @@ void Game::keyReleaseEvent(QKeyEvent *event)
             break;
         }
     }
-    
 }
 
 void Game::mouseReleaseEvent(QMouseEvent *event)
@@ -406,39 +410,47 @@ void Game::mouseReleaseEvent(QMouseEvent *event)
 
     QPoint mousePos = event->pos();
     QRect newCollider(mousePos.x() - 13, mousePos.y(), 26, 14);
-    int newX = mousePos.x() - 13; 
+    int newX = mousePos.x() - 13;
     int newY = mousePos.y() - 30;
 
     // out of the map
-    if (mousePos.x()< MAP_BLOCK_LEFT || mousePos.x()> MAP_BLOCK_RIGHT || mousePos.y()< MAP_BLOCK_UP || mousePos.y()> MAP_BLOCK_DOWN)
+    if (mousePos.x() < MAP_BLOCK_LEFT || mousePos.x() > MAP_BLOCK_RIGHT || mousePos.y() < MAP_BLOCK_UP || mousePos.y() > MAP_BLOCK_DOWN)
         return;
-    
+
     // at the edge of the map
-    QRect mapLeftEdge(MAP_BLOCK_LEFT-1, MAP_BLOCK_UP, 1, MAP_BLOCK_DOWN-MAP_BLOCK_UP);
-    QRect mapRightEdge(MAP_BLOCK_RIGHT, MAP_BLOCK_UP, 1, MAP_BLOCK_DOWN-MAP_BLOCK_UP);
-    QRect mapUpEdge(MAP_BLOCK_LEFT, MAP_BLOCK_UP-1, MAP_BLOCK_RIGHT-MAP_BLOCK_LEFT, 1);
-    QRect mapDownEdge(MAP_BLOCK_LEFT, MAP_BLOCK_DOWN, MAP_BLOCK_RIGHT-MAP_BLOCK_LEFT, 1);
-    if(newCollider.intersects(mapLeftEdge)) {
+    QRect mapLeftEdge(MAP_BLOCK_LEFT - 1, MAP_BLOCK_UP, 1, MAP_BLOCK_DOWN - MAP_BLOCK_UP);
+    QRect mapRightEdge(MAP_BLOCK_RIGHT, MAP_BLOCK_UP, 1, MAP_BLOCK_DOWN - MAP_BLOCK_UP);
+    QRect mapUpEdge(MAP_BLOCK_LEFT, MAP_BLOCK_UP - 1, MAP_BLOCK_RIGHT - MAP_BLOCK_LEFT, 1);
+    QRect mapDownEdge(MAP_BLOCK_LEFT, MAP_BLOCK_DOWN, MAP_BLOCK_RIGHT - MAP_BLOCK_LEFT, 1);
+    if (newCollider.intersects(mapLeftEdge))
+    {
         newX = MAP_BLOCK_LEFT;
-        if(newCollider.intersects(mapDownEdge)) newY = MAP_BLOCK_DOWN-44;
-        if(newCollider.intersects(mapUpEdge)) newY = MAP_BLOCK_UP-30;
+        if (newCollider.intersects(mapDownEdge))
+            newY = MAP_BLOCK_DOWN - 44;
+        if (newCollider.intersects(mapUpEdge))
+            newY = MAP_BLOCK_UP - 30;
         player1->setPosition(newX, newY);
         return;
     }
-    if(newCollider.intersects(mapRightEdge)) {
-        newX = MAP_BLOCK_RIGHT-26;
-        if(newCollider.intersects(mapDownEdge)) newY = MAP_BLOCK_DOWN-44;
-        if(newCollider.intersects(mapUpEdge)) newY = MAP_BLOCK_UP-30;
+    if (newCollider.intersects(mapRightEdge))
+    {
+        newX = MAP_BLOCK_RIGHT - 26;
+        if (newCollider.intersects(mapDownEdge))
+            newY = MAP_BLOCK_DOWN - 44;
+        if (newCollider.intersects(mapUpEdge))
+            newY = MAP_BLOCK_UP - 30;
         player1->setPosition(newX, newY);
         return;
     }
-    if(newCollider.intersects(mapDownEdge)) {
-        newY = MAP_BLOCK_DOWN-44;
+    if (newCollider.intersects(mapDownEdge))
+    {
+        newY = MAP_BLOCK_DOWN - 44;
         player1->setPosition(newX, newY);
         return;
     }
-    if(newCollider.intersects(mapUpEdge)) {
-        newY = MAP_BLOCK_UP-30;
+    if (newCollider.intersects(mapUpEdge))
+    {
+        newY = MAP_BLOCK_UP - 30;
         player1->setPosition(newX, newY);
         return;
     }
@@ -449,62 +461,82 @@ void Game::mouseReleaseEvent(QMouseEvent *event)
     int matrixRight = matrixLeft + N * CUBE_LENGTH;
     int matrixUp = MAP_BLOCK_UP + (MAP_BLOCK_DOWN - MAP_BLOCK_UP - M * CUBE_LENGTH) / 2;
     int matrixDown = matrixUp + M * CUBE_LENGTH;
-    if(mousePos.x()>matrixLeft && mousePos.x()<matrixRight && mousePos.y()>matrixUp && mousePos.y()<matrixDown){
-        c = (mousePos.x()-matrixLeft)/CUBE_LENGTH + 1;
-        r = (mousePos.y()-matrixUp)/CUBE_LENGTH + 1;
+    if (mousePos.x() > matrixLeft && mousePos.x() < matrixRight && mousePos.y() > matrixUp && mousePos.y() < matrixDown)
+    {
+        c = (mousePos.x() - matrixLeft) / CUBE_LENGTH + 1;
+        r = (mousePos.y() - matrixUp) / CUBE_LENGTH + 1;
         // 边界上
-        if(r==1 || c==1 || r==M || c==N){
+        if (r == 1 || c == 1 || r == M || c == N)
+        {
             // 空点
-            if(boxMatrix[r][c]==0){
-                newX = matrixLeft + (c-0.5)*CUBE_LENGTH -13;
-                newY = matrixUp + (r-0.5)*CUBE_LENGTH - 30;
+            if (boxMatrix[r][c] == 0)
+            {
+                newX = matrixLeft + (c - 0.5) * CUBE_LENGTH - 13;
+                newY = matrixUp + (r - 0.5) * CUBE_LENGTH - 30;
             }
             // 非空点
-            else {
-                if(c==1) newX = matrixLeft -0.5*CUBE_LENGTH -13;
-                if(r==1) newY = matrixUp - 0.5*CUBE_LENGTH - 30;
-                if(c==N) newX = matrixRight + 0.5*CUBE_LENGTH -13;
-                if(r==M) newY = matrixDown + 0.5*CUBE_LENGTH -30;
+            else
+            {
+                if (c == 1)
+                    newX = matrixLeft - 0.5 * CUBE_LENGTH - 13;
+                if (r == 1)
+                    newY = matrixUp - 0.5 * CUBE_LENGTH - 30;
+                if (c == N)
+                    newX = matrixRight + 0.5 * CUBE_LENGTH - 13;
+                if (r == M)
+                    newY = matrixDown + 0.5 * CUBE_LENGTH - 30;
                 triggerBox(r, c);
             }
             player1->setPosition(newX, newY);
             return;
         }
         // 内部
-        else{
+        else
+        {
             // 空点
-            if(boxMatrix[r][c]==0){
-                if(canReachEdge(r, c))
-                newX = matrixLeft + (c-0.5)*CUBE_LENGTH -13;
-                newY = matrixUp + (r-0.5)*CUBE_LENGTH - 30;
-            // 非空点
-            }else {
-                if(canReachEdge(r-1, c)) 
+            if (boxMatrix[r][c] == 0)
+            {
+                if (canReachEdge(r, c))
                 {
-                    newX = matrixLeft + (c-0.5)*CUBE_LENGTH -13;
-                    newY = matrixUp + (r-1.5)*CUBE_LENGTH - 30;
+                    newX = matrixLeft + (c - 0.5) * CUBE_LENGTH - 13;
+                    newY = matrixUp + (r - 0.5) * CUBE_LENGTH - 30;
                     player1->setPosition(newX, newY);
+                }
+                return;
+                // 非空点
+            }
+            else
+            {
+                if (canReachEdge(r - 1, c))
+                {
+                    newX = matrixLeft + (c - 0.5) * CUBE_LENGTH - 13;
+                    newY = matrixUp + (r - 1.5) * CUBE_LENGTH - 30;
+                    player1->setPosition(newX, newY);
+                    triggerBox(r, c);
                     return;
                 }
-                if(canReachEdge(r+1, c)) 
+                if (canReachEdge(r + 1, c))
                 {
-                    newX = matrixLeft + (c-0.5)*CUBE_LENGTH -13;
-                    newY = matrixUp + (r+0.5)*CUBE_LENGTH - 30;
+                    newX = matrixLeft + (c - 0.5) * CUBE_LENGTH - 13;
+                    newY = matrixUp + (r + 0.5) * CUBE_LENGTH - 30;
                     player1->setPosition(newX, newY);
+                    triggerBox(r, c);
                     return;
                 }
-                if(canReachEdge(r, c-1)) 
+                if (canReachEdge(r, c - 1))
                 {
-                    newX = matrixLeft + (c-1.5)*CUBE_LENGTH -13;
-                    newY = matrixUp + (r-0.5)*CUBE_LENGTH - 30;
+                    newX = matrixLeft + (c - 1.5) * CUBE_LENGTH - 13;
+                    newY = matrixUp + (r - 0.5) * CUBE_LENGTH - 30;
                     player1->setPosition(newX, newY);
+                    triggerBox(r, c);
                     return;
                 }
-                if(canReachEdge(r, c+1)) 
+                if (canReachEdge(r, c + 1))
                 {
-                    newX = matrixLeft + (c+0.5)*CUBE_LENGTH -13;
-                    newY = matrixUp + (r-0.5)*CUBE_LENGTH - 30;
+                    newX = matrixLeft + (c + 0.5) * CUBE_LENGTH - 13;
+                    newY = matrixUp + (r - 0.5) * CUBE_LENGTH - 30;
                     player1->setPosition(newX, newY);
+                    triggerBox(r, c + 1);
                     return;
                 }
                 return;
@@ -513,31 +545,39 @@ void Game::mouseReleaseEvent(QMouseEvent *event)
     }
 
     // at the edge of the box matrix
-    QRect leftEdge(matrixLeft-1, matrixUp, 1, matrixDown-matrixUp);
-    QRect rightEdge(matrixRight, matrixUp, 1, matrixDown-matrixUp);
-    QRect upEdge(matrixLeft, matrixUp-1, matrixRight-matrixLeft, 1);
-    QRect downEdge(matrixLeft, matrixDown, matrixRight-matrixLeft, 1);
-    if(newCollider.intersects(leftEdge)) {
+    QRect leftEdge(matrixLeft - 1, matrixUp, 1, matrixDown - matrixUp);
+    QRect rightEdge(matrixRight, matrixUp, 1, matrixDown - matrixUp);
+    QRect upEdge(matrixLeft, matrixUp - 1, matrixRight - matrixLeft, 1);
+    QRect downEdge(matrixLeft, matrixDown, matrixRight - matrixLeft, 1);
+    if (newCollider.intersects(leftEdge))
+    {
         newX = matrixLeft - 27;
-        if(newCollider.intersects(mapDownEdge)) newY = matrixDown-29;
-        if(newCollider.intersects(mapUpEdge)) newY = MAP_BLOCK_UP-45;
+        if (newCollider.intersects(mapDownEdge))
+            newY = matrixDown - 29;
+        if (newCollider.intersects(mapUpEdge))
+            newY = MAP_BLOCK_UP - 45;
         player1->setPosition(newX, newY);
         return;
     }
-    if(newCollider.intersects(rightEdge)) {
-        newX = matrixRight+1;
-        if(newCollider.intersects(mapDownEdge)) newY = matrixDown-29;
-        if(newCollider.intersects(mapUpEdge)) newY = matrixUp-45;
+    if (newCollider.intersects(rightEdge))
+    {
+        newX = matrixRight + 1;
+        if (newCollider.intersects(mapDownEdge))
+            newY = matrixDown - 29;
+        if (newCollider.intersects(mapUpEdge))
+            newY = matrixUp - 45;
         player1->setPosition(newX, newY);
         return;
     }
-    if(newCollider.intersects(downEdge)) {
-        newY = matrixDown-29;
+    if (newCollider.intersects(downEdge))
+    {
+        newY = matrixDown - 29;
         player1->setPosition(newX, newY);
         return;
     }
-    if(newCollider.intersects(mapUpEdge)) {
-        newY = MAP_BLOCK_UP-45;
+    if (newCollider.intersects(mapUpEdge))
+    {
+        newY = MAP_BLOCK_UP - 45;
         player1->setPosition(newX, newY);
         return;
     }
@@ -730,7 +770,7 @@ void Game::itemCollitionDect()
     }
 }
 
-void Game::ElimateBox(Box* playerBox, Box *box, int playerID)
+void Game::ElimateBox(Box *playerBox, Box *box, int playerID)
 {
     // the same box
     if (playerBox == box)
@@ -771,24 +811,37 @@ void Game::ElimateBox(Box* playerBox, Box *box, int playerID)
 
 void Game::score(int x, int playerID)
 {
-    if(playerID == 1)
+    if (playerID == 1)
         emit signalScore1(x);
-    if(playerID == 2)
+    if (playerID == 2)
         emit signalScore2(x);
 }
 
 void Game::triggerBox(int r, int c)
 {
-    for(auto i : Mgr->getEntity(ET_box))
+    for (auto i : Mgr->getEntity(ET_box))
     {
-        Box* box = (Box*) i;
-        if(box->getR()==r && box->getC()==c)
+        Box *box = (Box *)i;
+        if (box->getR() == r && box->getC() == c)
         {
+            // boxes' trigger event
             box->trigger();
-            player1->addTriggeredBox(box);
+
+            // player's trigger event
+            if (player1->getTriggeredBox() == nullptr)
+            {
+                player1->addTriggeredBox(box);
+                qInfo() << "player1 get:" << player1->getTriggeredBox();
+            }
+            else
+            {
+                qInfo() << "player1 abandon:" << player1->getTriggeredBox();
+                ElimateBox(player1->getTriggeredBox(), box);
+                player1->resetTriggeredBox();
+            }
+            return;
         }
     }
-
 }
 
 void Game::shuffleBox()
@@ -796,41 +849,44 @@ void Game::shuffleBox()
     // reset the box
     BoxColor color1 = BC_none;
     BoxColor color2 = BC_none;
-    if(player1->getTriggeredBox() != nullptr)
+    if (player1->getTriggeredBox() != nullptr)
         color1 = player1->getTriggeredBox()->getColor();
-    if(player2->getTriggeredBox() != nullptr)
-        color2 = player2->getTriggeredBox()->getColor(); 
+    if (player2->getTriggeredBox() != nullptr)
+        color2 = player2->getTriggeredBox()->getColor();
 
     Mgr->cleanEntityType(ET_box);
 
-    // flaten 
+    // flaten
     int flatArray[MAX_M * MAX_N];
     int index = 0;
-    for (int i = 1; i <= M; ++i) 
-        for (int j = 1; j <= N; ++j) 
+    for (int i = 1; i <= M; ++i)
+        for (int j = 1; j <= N; ++j)
             flatArray[index++] = boxMatrix[i][j];
 
     // shuffle
-    for (int i = M*N-1; i > 0; --i) {
-        int j = QRandomGenerator::global()->bounded(i + 1);  // Generate a random index
-        std::swap(flatArray[i], flatArray[j]);  // Swap elements
+    for (int i = M * N - 1; i > 0; --i)
+    {
+        int j = QRandomGenerator::global()->bounded(i + 1); // Generate a random index
+        std::swap(flatArray[i], flatArray[j]);              // Swap elements
     }
 
     // back to the boxMatrix
     index = 0;
-    for (int i = 1; i <= M; ++i) 
-        for (int j = 1; j <= N; ++j) 
+    for (int i = 1; i <= M; ++i)
+        for (int j = 1; j <= N; ++j)
             boxMatrix[i][j] = flatArray[index++];
-    
+
     // generateBox
     generateBox(false);
 
     // triggerBox
-    if(color1 != BC_none){
-        for(auto i: Mgr->getEntity(ET_box))
+    if (color1 != BC_none)
+    {
+        for (auto i : Mgr->getEntity(ET_box))
         {
-            Box* box = (Box*) i;
-            if(box->getColor() == color1){
+            Box *box = (Box *)i;
+            if (box->getColor() == color1)
+            {
                 player1->addTriggeredBox(box);
                 box->trigger();
                 break;
@@ -838,11 +894,13 @@ void Game::shuffleBox()
         }
     }
 
-    if(color2 != BC_none){
-        for(auto i: Mgr->getEntity(ET_box))
+    if (color2 != BC_none)
+    {
+        for (auto i : Mgr->getEntity(ET_box))
         {
-            Box* box = (Box*) i;
-            if(box->getColor() == color2){
+            Box *box = (Box *)i;
+            if (box->getColor() == color2)
+            {
                 player2->addTriggeredBox(box);
                 box->trigger();
                 break;
@@ -896,7 +954,7 @@ void Game::addLine(int r1, int c1, int r2, int c2, int playerID)
         lineSet1.insert(new QLine(x1, y1, x2, y2));
         showPathElapsedTimer1.restart();
         break;
-    case 2: 
+    case 2:
         lineSet2.insert(new QLine(x1, y1, x2, y2));
         showPathElapsedTimer2.restart();
         break;
@@ -950,7 +1008,7 @@ void Game::drawPath2(QPainter *painter)
 void Game::drawPauseMenu(QPainter *painter)
 {
     painter->drawPixmap(0, 0, screenshot);
-    
+
     QRect rect(0, 0, MAP_WIDTH * CUBE_LENGTH, MAP_HEIGHT * CUBE_LENGTH);
     painter->setPen(Qt::NoPen);
     painter->setBrush(QColor(0, 0, 0, 100));
@@ -1271,15 +1329,15 @@ bool Game::oneCornerElimatable(const Box *box1, const Box *box2, int showPath)
     for (int i = c1 + 1; i <= N && boxMatrix[r1][i] == 0; ++i)
         if (verticalElimatable(r1, i, r2, c2))
         {
-                addLine(r1, i, r2, c2, showPath);
-                addLine(r1, c1, r1, i, showPath);
+            addLine(r1, i, r2, c2, showPath);
+            addLine(r1, c1, r1, i, showPath);
             return true;
         }
     for (int i = c1 - 1; i >= 1 && boxMatrix[r1][i] == 0; --i)
         if (verticalElimatable(r1, i, r2, c2))
         {
-                addLine(r1, i, r2, c2, showPath);
-                addLine(r1, c1, r1, i, showPath);
+            addLine(r1, i, r2, c2, showPath);
+            addLine(r1, c1, r1, i, showPath);
             return true;
         }
     // find the corner in the same c with box1
@@ -1290,14 +1348,14 @@ bool Game::oneCornerElimatable(const Box *box1, const Box *box2, int showPath)
         if (horizonElimatable(i, c1, r2, c2))
         {
             addLine(i, c1, r2, c2, showPath);
-                addLine(r1, c1, i, c1, showPath);
+            addLine(r1, c1, i, c1, showPath);
             return true;
         }
     for (int i = r1 - 1; i >= 1 && boxMatrix[i][c1] == 0; --i)
         if (horizonElimatable(i, c1, r2, c2))
         {
-                addLine(i, c1, r2, c2, showPath);
-                addLine(r1, c1, i, c1, showPath);
+            addLine(i, c1, r2, c2, showPath);
+            addLine(r1, c1, i, c1, showPath);
             return true;
         }
     return false;
@@ -1323,10 +1381,10 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2, int showPath)
             continue;
         if (verticalElimatable(r1, i, r2, i) && horizonElimatable(r2, i, r2, c2))
         {
-                addLine(r1, c1, r1, i, showPath);
-                addLine(r1, i, r2, i, showPath);
-                addLine(r2, i, r2, c2, showPath);
-                        return true;
+            addLine(r1, c1, r1, i, showPath);
+            addLine(r1, i, r2, i, showPath);
+            addLine(r2, i, r2, c2, showPath);
+            return true;
         }
     }
     //  2-.-2
@@ -1341,9 +1399,9 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2, int showPath)
             continue;
         if (verticalElimatable(r1, i, r2, i) && horizonElimatable(r2, i, r2, c2))
         {
-                addLine(r1, c1, r1, i, showPath);
-                addLine(r1, i, r2, i, showPath);
-                addLine(r2, i, r2, c2, showPath);
+            addLine(r1, c1, r1, i, showPath);
+            addLine(r1, i, r2, i, showPath);
+            addLine(r2, i, r2, c2, showPath);
             return true;
         }
     }
@@ -1360,9 +1418,9 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2, int showPath)
             continue;
         if (horizonElimatable(i, c1, i, c2) && verticalElimatable(i, c2, r2, c2))
         {
-                addLine(r1, c1, i, c1, showPath);
-                addLine(i, c1, i, c2, showPath);
-                addLine(i, c2, r2, c2, showPath);
+            addLine(r1, c1, i, c1, showPath);
+            addLine(i, c1, i, c2, showPath);
+            addLine(i, c2, r2, c2, showPath);
             return true;
         }
     }
@@ -1378,10 +1436,10 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2, int showPath)
         ;
         if (horizonElimatable(i, c1, i, c2) && verticalElimatable(i, c2, r2, c2))
         {
-                addLine(r1, c1, i, c1, showPath);
-                addLine(i, c1, i, c2, showPath);
-                addLine(i, c2, r2, c2, showPath);
-                        return true;
+            addLine(r1, c1, i, c1, showPath);
+            addLine(i, c1, i, c2, showPath);
+            addLine(i, c2, r2, c2, showPath);
+            return true;
         }
     }
 
@@ -1390,7 +1448,8 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2, int showPath)
 
 bool Game::canReachEdge(const int r, const int c)
 {
-    if(boxMatrix[r][c] != 0) return false;
+    if (boxMatrix[r][c] != 0)
+        return false;
 
     std::queue<std::pair<int, int>> q;
     bool visited[MAX_M][MAX_N] = {};
@@ -1399,17 +1458,21 @@ bool Game::canReachEdge(const int r, const int c)
     q.push({r, c});
     visited[r][c] = true;
 
-    while (!q.empty()) {
+    while (!q.empty())
+    {
         auto [r, c] = q.front();
         q.pop();
 
         // point on edge
-        if (r == 1 || r == M || c == 1 || c == N) return true;
+        if (r == 1 || r == M || c == 1 || c == N)
+            return true;
 
-        for (const auto& direction : directions) {
+        for (const auto &direction : directions)
+        {
             int newR = r + direction.first;
             int newC = c + direction.second;
-            if (r>=1 && r<=M && c>=1 && c<=N && !visited[newR][newC] && boxMatrix[newR][newC] == 0) {
+            if (r >= 1 && r <= M && c >= 1 && c <= N && !visited[newR][newC] && boxMatrix[newR][newC] == 0)
+            {
                 q.push({newR, newC});
                 visited[newR][newC] = true;
             }
