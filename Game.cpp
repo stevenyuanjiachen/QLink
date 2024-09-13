@@ -18,6 +18,7 @@
 #include <QScreen>
 #include <QApplication>
 #include <iostream>
+#include <queue>
 
 // the Box Matrix is M*N
 int M = 8, N = 8;
@@ -103,11 +104,13 @@ void Game::initGame(int w, int h,
     startMenu = new StartMenu(this);
     connect(startMenu, &StartMenu::signalSingleMode, this, [=](){
         state = GS_single_mode;
+        gameMode = GS_single_mode;
         continueGame();
         startMenu->hide(); });
     connect(startMenu, &StartMenu::signalDoubleMode, this, [=](){
         Mgr->addEntity(player2);
         state = GS_double_mode;
+        gameMode = GS_double_mode;
         continueGame();
         startMenu->hide(); });
 }
@@ -192,7 +195,7 @@ void Game::pauseGame()
 void Game::continueGame()
 {
     emit signalContinue();
-    state = GS_single_mode;
+    state = gameMode;
     pauseMenu->hide();
 }
 
@@ -403,18 +406,140 @@ void Game::mouseReleaseEvent(QMouseEvent *event)
 
     QPoint mousePos = event->pos();
     QRect newCollider(mousePos.x() - 13, mousePos.y(), 26, 14);
+    int newX = mousePos.x() - 13; 
+    int newY = mousePos.y() - 30;
 
-    if (mousePos.x() - 13 < MAP_BLOCK_LEFT || mousePos.x() + 13 > MAP_BLOCK_RIGHT || mousePos.y() - 30 < MAP_BLOCK_UP || mousePos.y() + 14 > MAP_BLOCK_DOWN)
+    // out of the map
+    if (mousePos.x()< MAP_BLOCK_LEFT || mousePos.x()> MAP_BLOCK_RIGHT || mousePos.y()< MAP_BLOCK_UP || mousePos.y()> MAP_BLOCK_DOWN)
         return;
-
-    for (auto i : Mgr->getEntity(ET_box))
-    {
-        Box *box = (Box *)i;
-        if (newCollider.intersects(box->getCollider()))
-            return;
+    
+    // at the edge of the map
+    QRect mapLeftEdge(MAP_BLOCK_LEFT-1, MAP_BLOCK_UP, 1, MAP_BLOCK_DOWN-MAP_BLOCK_UP);
+    QRect mapRightEdge(MAP_BLOCK_RIGHT, MAP_BLOCK_UP, 1, MAP_BLOCK_DOWN-MAP_BLOCK_UP);
+    QRect mapUpEdge(MAP_BLOCK_LEFT, MAP_BLOCK_UP-1, MAP_BLOCK_RIGHT-MAP_BLOCK_LEFT, 1);
+    QRect mapDownEdge(MAP_BLOCK_LEFT, MAP_BLOCK_DOWN, MAP_BLOCK_RIGHT-MAP_BLOCK_LEFT, 1);
+    if(newCollider.intersects(mapLeftEdge)) {
+        newX = MAP_BLOCK_LEFT;
+        if(newCollider.intersects(mapDownEdge)) newY = MAP_BLOCK_DOWN-44;
+        if(newCollider.intersects(mapUpEdge)) newY = MAP_BLOCK_UP-30;
+        player1->setPosition(newX, newY);
+        return;
+    }
+    if(newCollider.intersects(mapRightEdge)) {
+        newX = MAP_BLOCK_RIGHT-26;
+        if(newCollider.intersects(mapDownEdge)) newY = MAP_BLOCK_DOWN-44;
+        if(newCollider.intersects(mapUpEdge)) newY = MAP_BLOCK_UP-30;
+        player1->setPosition(newX, newY);
+        return;
+    }
+    if(newCollider.intersects(mapDownEdge)) {
+        newY = MAP_BLOCK_DOWN-44;
+        player1->setPosition(newX, newY);
+        return;
+    }
+    if(newCollider.intersects(mapUpEdge)) {
+        newY = MAP_BLOCK_UP-30;
+        player1->setPosition(newX, newY);
+        return;
     }
 
-    player1->setPosition(mousePos.x() - 13, mousePos.y() - 30);
+    // in the box matrix
+    int r, c;
+    int matrixLeft = MAP_BLOCK_LEFT + (MAP_BLOCK_RIGHT - MAP_BLOCK_LEFT - N * CUBE_LENGTH) / 2;
+    int matrixRight = matrixLeft + N * CUBE_LENGTH;
+    int matrixUp = MAP_BLOCK_UP + (MAP_BLOCK_DOWN - MAP_BLOCK_UP - M * CUBE_LENGTH) / 2;
+    int matrixDown = matrixUp + M * CUBE_LENGTH;
+    if(mousePos.x()>matrixLeft && mousePos.x()<matrixRight && mousePos.y()>matrixUp && mousePos.y()<matrixDown){
+        r = (mousePos.x()-matrixLeft)/CUBE_LENGTH + 1;
+        c = (mousePos.y()-matrixUp)/CUBE_LENGTH + 1;
+        // 边界上
+        if(r==1 || c==1 || r==M || c==N){
+            // 空点
+            if(boxMatrix[r][c]==0){
+                newX = matrixLeft + (c-0.5)*CUBE_LENGTH -13;
+                newY = matrixUp + (r-0.5)*CUBE_LENGTH - 30;
+            // 非空点
+            }else {
+                if(r==1) newX = matrixLeft -0.5*CUBE_LENGTH -13;
+                if(c==1) newY = matrixUp - 0.5*CUBE_LENGTH - 30;
+                if(r==M) newX = matrixRight + 0.5*CUBE_LENGTH -13;
+                if(c==N) newX = matrixDown + 0.5*CUBE_LENGTH -30;
+            }
+            player1->setPosition(newX, newY);
+            return;
+        }
+        // 内部
+        else{
+            // 空点
+            if(boxMatrix[r][c]==0){
+                if(canReachEdge(r, c))
+                newX = matrixLeft + (c-0.5)*CUBE_LENGTH -13;
+                newY = matrixUp + (r-0.5)*CUBE_LENGTH - 30;
+            // 非空点
+            }else {
+                if(canReachEdge(r-1, c)) 
+                {
+                    newX = matrixLeft + (c-0.5)*CUBE_LENGTH -13;
+                    newY = matrixUp + (r-1.5)*CUBE_LENGTH - 30;
+                    player1->setPosition(newX, newY);
+                    return;
+                }
+                if(canReachEdge(r+1, c)) 
+                {
+                    newX = matrixLeft + (c-0.5)*CUBE_LENGTH -13;
+                    newY = matrixUp + (r+0.5)*CUBE_LENGTH - 30;
+                    player1->setPosition(newX, newY);
+                    return;
+                }
+                if(canReachEdge(r, c-1)) 
+                {
+                    newX = matrixLeft + (c-1.5)*CUBE_LENGTH -13;
+                    newY = matrixUp + (r-0.5)*CUBE_LENGTH - 30;
+                    player1->setPosition(newX, newY);
+                    return;
+                }
+                if(canReachEdge(r, c+1)) 
+                {
+                    newX = matrixLeft + (c+0.5)*CUBE_LENGTH -13;
+                    newY = matrixUp + (r-0.5)*CUBE_LENGTH - 30;
+                    player1->setPosition(newX, newY);
+                    return;
+                }
+                return;
+            }
+        }
+    }
+
+    // at the edge of the box matrix
+    QRect leftEdge(matrixLeft-1, matrixUp, 1, matrixDown-matrixUp);
+    QRect rightEdge(matrixRight, matrixUp, 1, matrixDown-matrixUp);
+    QRect upEdge(matrixLeft, matrixUp-1, matrixRight-matrixLeft, 1);
+    QRect downEdge(matrixLeft, matrixDown, matrixRight-matrixLeft, 1);
+    if(newCollider.intersects(leftEdge)) {
+        newX = matrixLeft - 27;
+        if(newCollider.intersects(mapDownEdge)) newY = matrixDown-29;
+        if(newCollider.intersects(mapUpEdge)) newY = MAP_BLOCK_UP-45;
+        player1->setPosition(newX, newY);
+        return;
+    }
+    if(newCollider.intersects(rightEdge)) {
+        newX = matrixRight+1;
+        if(newCollider.intersects(mapDownEdge)) newY = matrixDown-29;
+        if(newCollider.intersects(mapUpEdge)) newY = matrixUp-45;
+        player1->setPosition(newX, newY);
+        return;
+    }
+    if(newCollider.intersects(downEdge)) {
+        newY = matrixDown-29;
+        player1->setPosition(newX, newY);
+        return;
+    }
+    if(newCollider.intersects(mapUpEdge)) {
+        newY = MAP_BLOCK_UP-45;
+        player1->setPosition(newX, newY);
+        return;
+    }
+
 }
 
 // 功能函数
@@ -1240,6 +1365,37 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2, int showPath)
                 addLine(i, c1, i, c2, showPath);
                 addLine(i, c2, r2, c2, showPath);
                         return true;
+        }
+    }
+
+    return false;
+}
+
+bool Game::canReachEdge(const int r, const int c)
+{
+    if(boxMatrix[r][c] != 0) return false;
+
+    std::queue<std::pair<int, int>> q;
+    bool visited[MAX_M][MAX_N] = {};
+    const std::pair<int, int> directions[4] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+    q.push({r, c});
+    visited[r][c] = true;
+
+    while (!q.empty()) {
+        auto [r, c] = q.front();
+        q.pop();
+
+        // point on edge
+        if (r == 1 || r == M || c == 1 || c == N) return true;
+
+        for (const auto& direction : directions) {
+            int newR = r + direction.first;
+            int newC = c + direction.second;
+            if (r>=1 && r<=M && c>=1 && c<=N && !visited[newR][newC] && boxMatrix[newR][newC] == 0) {
+                q.push({newR, newC});
+                visited[newR][newC] = true;
+            }
         }
     }
 

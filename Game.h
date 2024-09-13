@@ -67,6 +67,7 @@ public:
     bool verticalElimatable(const Box* box1, const Box* box2, int showPath = 0);
     bool oneCornerElimatable(const Box* box1, const Box* box2, int showPath = 0);
     bool twoCornerElimatable(const Box* box1, const Box* box2, int showPath = 0);
+    bool canReachEdge(const int r, const int c);
     
 signals:
     void signalPause();
@@ -84,6 +85,7 @@ protected:
 
 private:
     GameState state;
+    GameState gameMode;
     int boxMatrix[MAX_M+2][MAX_N+2] = {};
     QElapsedTimer triggerElapsedTimer1;
     QElapsedTimer triggerElapsedTimer2;
