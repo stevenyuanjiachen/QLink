@@ -17,6 +17,7 @@
 #include <QPoint>
 #include <QScreen>
 #include <QApplication>
+#include <iostream>
 
 // the Box Matrix is M*N
 int M = 8, N = 8;
@@ -102,10 +103,12 @@ void Game::initGame(int w, int h,
     startMenu = new StartMenu(this);
     connect(startMenu, &StartMenu::signalSingleMode, this, [=](){
         state = GS_single_mode;
+        continueGame();
         startMenu->hide(); });
     connect(startMenu, &StartMenu::signalDoubleMode, this, [=](){
         Mgr->addEntity(player2);
         state = GS_double_mode;
+        continueGame();
         startMenu->hide(); });
 }
 
@@ -449,6 +452,8 @@ void Game::generateItem()
 
     // random the type
     int itemType = QRandomGenerator::global()->bounded(ITEM_TYPE_NUM);
+    if(state == GS_double_mode) // delete flash in the double mode
+        while(itemType == IT_flash) itemType = QRandomGenerator::global()->bounded(ITEM_TYPE_NUM);
     item = new Item((ItemType)itemType);
 
     // random the location
@@ -472,7 +477,7 @@ void Game::generateItem()
     Mgr->addEntity(item);
 
     // random the time
-    itemGenerateTimer.setInterval(1000 * QRandomGenerator::global()->bounded(3, 8));
+    itemGenerateTimer.setInterval(1000 * QRandomGenerator::global()->bounded(6, 9));
 }
 
 void Game::boxCollitionDect1()
@@ -570,6 +575,9 @@ void Game::itemCollitionDect()
             case IT_flash:
                 player1->addBuff(BT_flash);
                 break;
+            case IT_shuffle:
+                shuffleBox();
+                break;
             }
             item->pickUp();
         }
@@ -584,6 +592,9 @@ void Game::itemCollitionDect()
                 break;
             case IT_flash:
                 player2->addBuff(BT_flash);
+                break;
+            case IT_shuffle:
+                shuffleBox();
                 break;
             }
             item->pickUp();
@@ -636,6 +647,66 @@ void Game::score(int x, int playerID)
         emit signalScore1(x);
     if(playerID == 2)
         emit signalScore2(x);
+}
+
+void Game::shuffleBox()
+{
+    // reset the box
+    BoxColor color1 = BC_none;
+    BoxColor color2 = BC_none;
+    if(player1->getTriggeredBox() != nullptr)
+        color1 = player1->getTriggeredBox()->getColor();
+    if(player2->getTriggeredBox() != nullptr)
+        color2 = player2->getTriggeredBox()->getColor(); 
+
+    Mgr->cleanEntityType(ET_box);
+
+    // flaten 
+    int flatArray[MAX_M * MAX_N];
+    int index = 0;
+    for (int i = 1; i <= M; ++i) 
+        for (int j = 1; j <= N; ++j) 
+            flatArray[index++] = boxMatrix[i][j];
+
+    // shuffle
+    for (int i = M*N-1; i > 0; --i) {
+        int j = QRandomGenerator::global()->bounded(i + 1);  // Generate a random index
+        std::swap(flatArray[i], flatArray[j]);  // Swap elements
+    }
+
+    // back to the boxMatrix
+    index = 0;
+    for (int i = 1; i <= M; ++i) 
+        for (int j = 1; j <= N; ++j) 
+            boxMatrix[i][j] = flatArray[index++];
+    
+    // generateBox
+    generateBox(false);
+
+    // triggerBox
+    if(color1 != BC_none){
+        for(auto i: Mgr->getEntity(ET_box))
+        {
+            Box* box = (Box*) i;
+            if(box->getColor() == color1){
+                player1->addTriggeredBox(box);
+                box->trigger();
+                break;
+            }
+        }
+    }
+
+    if(color2 != BC_none){
+        for(auto i: Mgr->getEntity(ET_box))
+        {
+            Box* box = (Box*) i;
+            if(box->getColor() == color2){
+                player2->addTriggeredBox(box);
+                box->trigger();
+                break;
+            }
+        }
+    }
 }
 
 void Game::solubleCheck()

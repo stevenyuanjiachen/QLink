@@ -16,6 +16,7 @@ public:
     void draw(QPainter* painter);
     void refresh();
     void clean();
+    void cleanEntityType(EntityType type);
     
 private:
     Manager(){}

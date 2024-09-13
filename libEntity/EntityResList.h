@@ -136,3 +136,5 @@ const QStringList BOX_PINK_LIST =
 const QString ADD1S_IMAGE = "../res/images/Item/clock.png";
 
 const QString FLASH_IMAGE = "../res/images/Item/mouse_arrow.png";
+
+const QString SHUFFLE_IMAGE = "../res/images/Item/shuffle.png";

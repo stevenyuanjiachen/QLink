@@ -6,6 +6,7 @@
         "qrect": "cpp",
         "qrandomgenerator": "cpp",
         "qfontdatabase": "cpp",
-        "qimage": "cpp"
+        "qimage": "cpp",
+        "algorithm": "cpp"
     }
 }

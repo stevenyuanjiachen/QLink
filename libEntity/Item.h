@@ -5,10 +5,11 @@
 #include <QPainter>
 #include <QRect>
 
-const int ITEM_TYPE_NUM = 2;
+const int ITEM_TYPE_NUM = 3;
 enum ItemType {
     IT_add1s,
-    IT_flash
+    IT_flash,
+    IT_shuffle
 };
 
 class Item : public Entity

@@ -48,6 +48,7 @@ public:
     void itemCollitionDect();
     void ElimateBox(Box *playerBox, Box *box, int playerID = 1);
     void score(int x, int playerID);
+    void shuffleBox();
     void solubleCheck();
     void addLine(int r1, int c1, int r2, int c2, int playerID=0);
     void drawPath1(QPainter* painter);

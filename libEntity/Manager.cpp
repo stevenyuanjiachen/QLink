@@ -68,3 +68,13 @@ void Manager::clean()
     }
     refresh();
 }
+
+void Manager::cleanEntityType(EntityType type)
+{
+    for(auto i : entities[type])
+    {
+        i->destroy();
+    }
+
+    refresh();
+}

@@ -11,7 +11,8 @@
 const int BOX_COLOR_NUM = 3;
 enum BoxColor
 {
-    BC_red = 1,
+    BC_none,
+    BC_red,
     BC_pink,
     BC_blue
 };
