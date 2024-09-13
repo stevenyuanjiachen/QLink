@@ -450,20 +450,22 @@ void Game::mouseReleaseEvent(QMouseEvent *event)
     int matrixUp = MAP_BLOCK_UP + (MAP_BLOCK_DOWN - MAP_BLOCK_UP - M * CUBE_LENGTH) / 2;
     int matrixDown = matrixUp + M * CUBE_LENGTH;
     if(mousePos.x()>matrixLeft && mousePos.x()<matrixRight && mousePos.y()>matrixUp && mousePos.y()<matrixDown){
-        r = (mousePos.x()-matrixLeft)/CUBE_LENGTH + 1;
-        c = (mousePos.y()-matrixUp)/CUBE_LENGTH + 1;
+        c = (mousePos.x()-matrixLeft)/CUBE_LENGTH + 1;
+        r = (mousePos.y()-matrixUp)/CUBE_LENGTH + 1;
         // 边界上
         if(r==1 || c==1 || r==M || c==N){
             // 空点
             if(boxMatrix[r][c]==0){
                 newX = matrixLeft + (c-0.5)*CUBE_LENGTH -13;
                 newY = matrixUp + (r-0.5)*CUBE_LENGTH - 30;
+            }
             // 非空点
-            }else {
-                if(r==1) newX = matrixLeft -0.5*CUBE_LENGTH -13;
-                if(c==1) newY = matrixUp - 0.5*CUBE_LENGTH - 30;
-                if(r==M) newX = matrixRight + 0.5*CUBE_LENGTH -13;
-                if(c==N) newX = matrixDown + 0.5*CUBE_LENGTH -30;
+            else {
+                if(c==1) newX = matrixLeft -0.5*CUBE_LENGTH -13;
+                if(r==1) newY = matrixUp - 0.5*CUBE_LENGTH - 30;
+                if(c==N) newX = matrixRight + 0.5*CUBE_LENGTH -13;
+                if(r==M) newY = matrixDown + 0.5*CUBE_LENGTH -30;
+                triggerBox(r, c);
             }
             player1->setPosition(newX, newY);
             return;
@@ -540,6 +542,7 @@ void Game::mouseReleaseEvent(QMouseEvent *event)
         return;
     }
 
+    player1->setPosition(newX, newY);
 }
 
 // 功能函数
@@ -772,6 +775,20 @@ void Game::score(int x, int playerID)
         emit signalScore1(x);
     if(playerID == 2)
         emit signalScore2(x);
+}
+
+void Game::triggerBox(int r, int c)
+{
+    for(auto i : Mgr->getEntity(ET_box))
+    {
+        Box* box = (Box*) i;
+        if(box->getR()==r && box->getC()==c)
+        {
+            box->trigger();
+            player1->addTriggeredBox(box);
+        }
+    }
+
 }
 
 void Game::shuffleBox()
