@@ -738,7 +738,7 @@ void Game::itemCollitionDect()
             switch (item->getItemType())
             {
             case IT_add1s:
-                progressBar->addTime(1);
+                progressBar->addTime(30);
                 break;
             case IT_flash:
                 player1->addBuff(BT_flash);
@@ -756,7 +756,7 @@ void Game::itemCollitionDect()
             switch (item->getItemType())
             {
             case IT_add1s:
-                progressBar->addTime(1);
+                progressBar->addTime(30);
                 break;
             case IT_flash:
                 player2->addBuff(BT_flash);

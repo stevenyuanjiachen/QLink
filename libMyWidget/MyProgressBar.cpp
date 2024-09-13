@@ -90,6 +90,7 @@ void MyProgressBar::update()
 void MyProgressBar::addTime(int time)
 {
     value += 1000* time;
+    if (value>this->time) this->time = value;
 }
 
 void MyProgressBar::pauseBar()

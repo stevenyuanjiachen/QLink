@@ -56,6 +56,7 @@ private:
     HeroState state;
     HeroBlockState blockState;
     QSet<BuffType> buffSet;
+    QElapsedTimer flashElapsedTimer;
     QVector<Animation> anima;
     Box *triggeredBox;
 };

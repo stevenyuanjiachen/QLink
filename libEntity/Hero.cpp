@@ -20,6 +20,8 @@ Hero::Hero(double x, double y, int id)
     anima.append(Animation(MOVE_DOWN_LIST));
     anima.append(Animation(MOVE_LEFT_LIST));
     anima.append(Animation(MOVE_RIGHT_LIST));
+
+    flashElapsedTimer.start();
 }
 
 void Hero::update()
@@ -58,6 +60,12 @@ void Hero::update()
         position.setX(position.x() - speed);
         blockState = block_none;
         break;
+    }
+
+    // buff
+    if(flashElapsedTimer.elapsed()>5000)
+    {
+        buffSet.remove(BT_flash);
     }
 }
 
@@ -100,6 +108,11 @@ void Hero::addTriggeredBox(Box *box)
 void Hero::addBuff(BuffType buff)
 {
     if(!buffSet.contains(buff)) buffSet.insert(buff);
+    switch (buff) {
+    case BT_flash:
+        flashElapsedTimer.restart();
+        break;
+    }
 }
 
 void Hero::saveHeroState(const QString &filePath)
