@@ -13,7 +13,7 @@ class ScoreBoard: public QObject
 {
     Q_OBJECT;
 public:
-    ScoreBoard(int x, int y, bool flip = false);
+    ScoreBoard(int x, int y, bool flip = false, int id = 1);
     ~ScoreBoard();
     void draw(QPainter* painter);
     void update();
@@ -22,6 +22,7 @@ public:
     void loadState(const QString& filePath);
 
 private: 
+    int scoreBoardID;
     int x, y, score;
     bool flip;
     // the frame

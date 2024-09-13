@@ -118,6 +118,7 @@ void Hero::addBuff(BuffType buff)
 void Hero::saveHeroState(const QString &filePath)
 {
     QFile file(filePath);
+    QString ID = QString::number(playerID);
 
     // 打开文件并读取内容
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -134,37 +135,37 @@ void Hero::saveHeroState(const QString &filePath)
 
     QRegularExpression regex("");
     // 找到 hero.x: 并替换其后的内容
-    regex.setPattern("hero\\.x:\\s*\\S+");
-    fileContent.replace(regex, "hero.x: " + QString::number(position.x()));
+    regex.setPattern("hero"+ ID +"\\.x:\\s*\\S+");
+    fileContent.replace(regex, "hero"+ID+".x: " + QString::number(position.x()));
     // 找到 hero.y: 并替换其后的内容
-    regex.setPattern("hero\\.y:\\s*\\S+");
-    fileContent.replace(regex, "hero.y: " + QString::number(position.y()));
+    regex.setPattern("hero"+ID+"\\.y:\\s*\\S+");
+    fileContent.replace(regex, "hero"+ID+".y: " + QString::number(position.y()));
     // 找到 hero.state 并替换其后的内容
-    regex.setPattern("hero\\.state:\\s*\\S+");
-    fileContent.replace(regex, "hero.state: " + QString::number(int(state)));
+    regex.setPattern("hero"+ID+"\\.state:\\s*\\S+");
+    fileContent.replace(regex, "hero"+ID+".state: " + QString::number(int(state)));
     
     // 更新 buff
     if(buffSet.contains(BT_flash)){
-        regex.setPattern("hero\\.flash:\\s*\\S+");
-        fileContent.replace(regex, "hero.flash: true");
+        regex.setPattern("hero"+ID+"\\.flash:\\s*\\S+");
+        fileContent.replace(regex, "hero"+ID+".flash: true");
     } else {
-        regex.setPattern("hero\\.state:\\s*\\S+");
-        fileContent.replace(regex, "hero.flash: false");
+        regex.setPattern("hero"+ID+"\\.flash:\\s*\\S+");
+        fileContent.replace(regex, "hero"+ID+".flash: false");
     }
 
     // 更新triggerBox
     if(triggeredBox != nullptr){
-        regex.setPattern("hero\\.haveTriggerBox:\\s*\\S+");
-        fileContent.replace(regex, "hero.haveTriggerBox: true");
+        regex.setPattern("hero"+ID+"\\.haveTriggerBox:\\s*\\S+");
+        fileContent.replace(regex, "hero"+ID+".haveTriggerBox: true");
 
-        regex.setPattern("hero\\.triggerBoxR:\\s*\\S+");
-        fileContent.replace(regex, "hero.triggerBoxR: " + QString::number(triggeredBox->getR()));
+        regex.setPattern("hero"+ID+"\\.triggerBoxR:\\s*\\S+");
+        fileContent.replace(regex, "hero"+ID+".triggerBoxR: " + QString::number(triggeredBox->getR()));
         
-        regex.setPattern("hero\\.triggerBoxC:\\s*\\S+");
-        fileContent.replace(regex, "hero.triggerBoxC: " + QString::number(triggeredBox->getC()));
+        regex.setPattern("hero"+ID+"\\.triggerBoxC:\\s*\\S+");
+        fileContent.replace(regex, "hero"+ID+".triggerBoxC: " + QString::number(triggeredBox->getC()));
     }else{
-        regex.setPattern("hero\\.haveTriggerBox:\\s*\\S+");
-        fileContent.replace(regex, "hero.haveTriggerBox: false");
+        regex.setPattern("hero"+ID+"\\.haveTriggerBox:\\s*\\S+");
+        fileContent.replace(regex, "hero"+ID+".haveTriggerBox: false");
     }
 
     // 重新打开文件以写入更新后的内容
@@ -183,6 +184,7 @@ void Hero::saveHeroState(const QString &filePath)
 void Hero::loadHeroState(const QString &filePath)
 {
     QFile file(filePath);
+    QString ID = QString::number(playerID);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "无法打开文件:" << file.errorString();
@@ -193,7 +195,7 @@ void Hero::loadHeroState(const QString &filePath)
     bool foundHero = false;
     bool haveTriggerBox = false;
     int r, c;
-    QRegularExpression heroRegex(R"((hero\.(x|y|state|flash|haveTriggerBox|triggerBoxR|triggerBoxC)):\s*(\w+))");
+    QRegularExpression heroRegex("(hero"+ ID +"\\.(x|y|state|flash|haveTriggerBox|triggerBoxR|triggerBoxC)):\\s*(\\w+)");
 
     while (!in.atEnd()) {
         QString line = in.readLine();

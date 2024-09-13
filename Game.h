@@ -55,6 +55,8 @@ public:
     void drawPath1(QPainter* painter);
     void drawPath2(QPainter* painter);
     void drawPauseMenu(QPainter* painter);
+    void saveGameState(const QString& filePath);
+    void loadGameState(const QString& filePath);
     void saveBoxes(const QString& filePath);
     void loadBoxes(const QString& filePath);
     void saveItems(const QString& filePath);

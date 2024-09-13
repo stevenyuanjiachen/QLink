@@ -1,16 +1,26 @@
+# Game
+gamemode: singleMode
+
 # MAP
 M: 0
 N: 0
 map:
 
 # Hero
-hero.x: 0
-hero.y: 0
-hero.state: 0
-hero.flash: false
-hero.haveTriggerBox: false 
-hero.triggerBoxR: 0
-hero.triggerBoxC: 0
+hero1.x: 0
+hero1.y: 0
+hero1.state: 0
+hero1.flash: false
+hero1.haveTriggerBox: false
+hero1.triggerBoxR: 0
+hero1.triggerBoxC: 0
+hero2.x: 0
+hero2.y: 0
+hero2.state: 0
+hero2.flash: false
+hero2.haveTriggerBox: false
+hero2.triggerBoxR: 0
+hero2.triggerBoxC: 0
 
 # Item
 item.num: 0
@@ -20,4 +30,5 @@ progressBar.time: 0
 progressBar.value: 0
 
 # ScoreBoard
-scoreBoard.score: 0
+scoreBoard1.score: 0
+scoreBoard2.score: 0

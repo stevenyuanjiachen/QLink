@@ -4,8 +4,8 @@
 #include <QFile>
 #include <QRegularExpression>
 
-ScoreBoard::ScoreBoard(int x, int y, bool flip) :
-     x(x), y(y), flip(flip), score(0)
+ScoreBoard::ScoreBoard(int x, int y, bool flip, int id) :
+     x(x), y(y), flip(flip), score(0), scoreBoardID(id)
 {
     // set the frame
     scoreBoardFrame.load(SCOREBOARD_IMAGE);
@@ -65,6 +65,7 @@ void ScoreBoard::addScore(int x)
 void ScoreBoard::saveState(const QString &filePath)
 {
     QFile file(filePath);
+    QString ID = QString::number(scoreBoardID);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "无法打开文件:" << file.errorString();
@@ -77,8 +78,8 @@ void ScoreBoard::saveState(const QString &filePath)
     fileContent = in.readAll();
     file.close();
 
-    QRegularExpression regex("scoreBoard\\.score:\\s*\\d+");
-    QString newScoreLine = QString("scoreBoard.score: %1").arg(score);
+    QRegularExpression regex("scoreBoard"+ID+"\\.score:\\s*\\d+");
+    QString newScoreLine = QString("scoreBoard"+ID+".score: %1").arg(score);
     fileContent.replace(regex, newScoreLine);
 
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -94,6 +95,7 @@ void ScoreBoard::saveState(const QString &filePath)
 void ScoreBoard::loadState(const QString &filePath)
 {
     QFile file(filePath);
+    QString ID = QString::number(scoreBoardID);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "无法打开文件:" << file.errorString();
@@ -104,7 +106,7 @@ void ScoreBoard::loadState(const QString &filePath)
     QString fileContent = in.readAll();
     file.close();
 
-    QRegularExpression regex("scoreBoard\\.score:\\s*(\\d+)");
+    QRegularExpression regex("scoreBoard"+ID+"\\.score:\\s*(\\d+)");
     QRegularExpressionMatch match = regex.match(fileContent);
 
     if (match.hasMatch()) {

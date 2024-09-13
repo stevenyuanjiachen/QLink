@@ -91,7 +91,7 @@ void Game::initGame(int w, int h,
 
     // generate the scoreBoard
     scoreBoard1 = new ScoreBoard(0, 0);
-    scoreBoard2 = new ScoreBoard(0, 50);
+    scoreBoard2 = new ScoreBoard(0, 50, false, 2);
     connect(this, &Game::signalScore1, scoreBoard1, &ScoreBoard::addScore);
     connect(this, &Game::signalScore2, scoreBoard2, &ScoreBoard::addScore);
 
@@ -218,16 +218,14 @@ void Game::saveGame()
 
     // copy the template
     if (QFile::copy("../res/saveTemplate.txt", filePath))
-    {
         qDebug() << "文件复制成功!";
-    }
     else
-    {
         qDebug() << "文件复制失败!";
-    }
 
+    saveGameState(filePath);
     saveBoxes(filePath);              // save box
     player1->saveHeroState(filePath); // save hero
+    if(gameMode==GS_double_mode) player2->saveHeroState(filePath);
     saveItems(filePath);              // save item
     progressBar->saveState(filePath); // save progressBar
     scoreBoard1->saveState(filePath); // save scoreBoard
@@ -237,11 +235,21 @@ void Game::loadGame()
 {
     const QString &filePath = "../saves/test.txt";
 
-    Mgr->clean();        // clean Game
-    loadBoxes(filePath); // load boxes
-    player1 = new Hero(0, 0);
+    Mgr->clean(); // clean Game
+
+    loadGameState(filePath); // load game
+    loadBoxes(filePath);     // load boxes
+    // load player 1
+    player1 = new Hero(0, 0, 1);
     player1->loadHeroState(filePath);
-    Mgr->addEntity(player1);          // load player
+    Mgr->addEntity(player1); 
+    // load player 2
+    if (gameMode == GS_double_mode)
+    {
+        player2 = new Hero(0, 0, 2);
+        player2->loadHeroState(filePath);
+        Mgr->addEntity(player2);
+    }
     loadItems(filePath);              // load items
     progressBar->loadState(filePath); // load progressBar
     scoreBoard1->loadState(filePath); // load scoreBoard1
@@ -620,8 +628,9 @@ void Game::generateItem()
 
     // random the type
     int itemType = QRandomGenerator::global()->bounded(ITEM_TYPE_NUM);
-    if(state == GS_double_mode) // delete flash in the double mode
-        while(itemType == IT_flash) itemType = QRandomGenerator::global()->bounded(ITEM_TYPE_NUM);
+    if (state == GS_double_mode) // delete flash in the double mode
+        while (itemType == IT_flash)
+            itemType = QRandomGenerator::global()->bounded(ITEM_TYPE_NUM);
     item = new Item((ItemType)itemType);
 
     // random the location
@@ -1013,6 +1022,68 @@ void Game::drawPauseMenu(QPainter *painter)
     painter->setPen(Qt::NoPen);
     painter->setBrush(QColor(0, 0, 0, 100));
     painter->drawRect(rect);
+}
+
+void Game::saveGameState(const QString &filePath)
+{
+    QFile file(filePath);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        qDebug() << "无法打开文件:" << file.errorString();
+        return;
+    }
+
+    QString fileContent;
+    QTextStream in(&file);
+    while (!in.atEnd())
+        fileContent += in.readLine() + "\n";
+    file.close();
+
+    QRegularExpression regex("gamemode:\\s*\\S+");
+    if (gameMode == GS_single_mode)
+        fileContent.replace(regex, "gamemode: singleMode");
+    if (gameMode == GS_double_mode)
+        fileContent.replace(regex, "gamemode: doubleMode");
+
+    // 重新打开文件以写入更新后的内容
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        qDebug() << "无法打开文件:" << file.errorString();
+        return;
+    }
+
+    QTextStream out(&file);
+    out << fileContent; // 写入修改后的内容
+    file.close();       // 关闭文件
+}
+
+void Game::loadGameState(const QString &filePath)
+{
+    QFile file(filePath);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        qDebug() << "无法打开文件:" << file.errorString();
+        return;
+    }
+
+    QTextStream in(&file);
+    while (!in.atEnd())
+    {
+        QString line = in.readLine();
+        if (line.startsWith("gameMode:"))
+        {
+            QString mode = line.section(QRegularExpression("\\s"), 1, 1).trimmed();
+            if (mode == "doubleMode")
+                gameMode = GS_double_mode;
+            if (mode == "singleMode")
+                gameMode = GS_single_mode;
+            break;
+        }
+    }
+
+    file.close();
 }
 
 void Game::saveBoxes(const QString &filePath)
