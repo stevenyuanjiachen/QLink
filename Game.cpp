@@ -160,6 +160,7 @@ void Game::updateGame()
     case GS_start:
         emit signalPause();
         itemGenerateTimer.start(5000);
+        startMenu->update();
         break;
     case GS_single_mode:
         Mgr->update();

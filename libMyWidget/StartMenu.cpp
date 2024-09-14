@@ -5,14 +5,50 @@
 #include <QLinearGradient>
 #include <QPainterPath>
 
-StartMenu::StartMenu(QWidget *parent) : QWidget(nullptr), x(0), y(0),
-                                        singleButton(parent), doubleButton(parent)
+StartMenu::StartMenu(QWidget *parent) : 
+    QWidget(nullptr), x(0), y(0), state(SMS_start), 
+    startButton(parent), exitButton(parent), 
+    singleButton(parent), doubleButton(parent), loadButton(parent)
 {
     movie = new QMovie(START_MENU_GIF);
     movie->start();
 
+    // startButton
+    startButton.setGeometry(x + 375, y + 389, 231, 111);
+    startButton.setStyleSheet(
+        "QPushButton {"
+        "border-radius: 5px;"
+        "background-color: transparent;"
+        "background-image: url(../res/images/UI/start_button.png);" /* 将按钮背景设为图片 */
+        "background-position: center;"
+        "background-repeat: no-repeat;"
+        "}"
+        "QPushButton:pressed {"
+        "background-color: rgba(0, 0, 0, 0.1);" /* 按下时添加半透明效果 */
+        "}");
+    startButton.hide();
+    connect(&startButton, &QPushButton::clicked, this, [=]()
+            { state = SMS_choose_mode; });
+
+    // double button
+    exitButton.setGeometry(x + 375, y + 510, 231, 111);
+    exitButton.setStyleSheet(
+        "QPushButton {"
+        "border-radius: 5px;"
+        "background-color: transparent;"
+        "background-image: url(../res/images/UI/exit_button.png);" /* 将按钮背景设为图片 */
+        "background-position: center;"
+        "background-repeat: no-repeat;"
+        "}"
+        "QPushButton:pressed {"
+        "background-color: rgba(0, 0, 0, 0.1);" /* 按下时添加半透明效果 */
+        "}");
+    exitButton.hide();
+    connect(&exitButton, &QPushButton::clicked, this, [=]()
+            { emit signalExit(); });
+
     // single button
-    singleButton.setGeometry(x + 375, y + 389, 231, 111);
+    singleButton.setGeometry(x + 375, y + 370, 202, 99);
     singleButton.setStyleSheet(
         "QPushButton {"
         "border-radius: 5px;"
@@ -29,7 +65,7 @@ StartMenu::StartMenu(QWidget *parent) : QWidget(nullptr), x(0), y(0),
             { emit signalSingleMode(); });
 
     // double button
-    doubleButton.setGeometry(x + 375, y + 510, 231, 111);
+    doubleButton.setGeometry(x + 375, y + 485, 202, 99);
     doubleButton.setStyleSheet(
         "QPushButton {"
         "border-radius: 5px;"
@@ -44,15 +80,29 @@ StartMenu::StartMenu(QWidget *parent) : QWidget(nullptr), x(0), y(0),
     doubleButton.hide();
     connect(&doubleButton, &QPushButton::clicked, this, [=]()
             { emit signalDoubleMode(); });
+    
+    // load button
+    loadButton.setGeometry(x + 375, y + 600, 202, 99);
+    loadButton.setStyleSheet(
+        "QPushButton {"
+        "border-radius: 5px;"
+        "background-color: transparent;"
+        "background-image: url(../res/images/UI/sq_load_button.png);" /* 将按钮背景设为图片 */
+        "background-position: center;"
+        "background-repeat: no-repeat;"
+        "}"
+        "QPushButton:pressed {"
+        "background-color: rgba(0, 0, 0, 0.1);" /* 按下时添加半透明效果 */
+        "}");
+    loadButton.hide();
+    connect(&loadButton, &QPushButton::clicked, this, [=]()
+            { emit signalLoadGame(); });
 }
 
 void StartMenu::draw(QPainter *painter)
 {
     QImage currentFrame = movie->currentImage();
     painter->drawImage(x, y, currentFrame);
-
-    singleButton.show();
-    doubleButton.show();
 
     // 创建文本路径
     QFont font;
@@ -75,8 +125,33 @@ void StartMenu::draw(QPainter *painter)
     painter->drawPath(textPath);
 }
 
+void StartMenu::update()
+{
+    switch (state)
+    {
+    case SMS_start:
+        startButton.show();
+        exitButton.show();    
+        singleButton.hide();
+        doubleButton.hide();
+        loadButton.hide();
+        break;
+    case SMS_choose_mode:
+        startButton.hide();
+        exitButton.hide();    
+        singleButton.show();
+        doubleButton.show();
+        loadButton.show();
+        break;
+    }
+}
+
 void StartMenu::hide()
 {
+    startButton.hide();
+    exitButton.hide();
     singleButton.hide();
     doubleButton.hide();
+    loadButton.hide();
+    state = SMS_hide;
 }
