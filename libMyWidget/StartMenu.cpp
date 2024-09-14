@@ -4,11 +4,12 @@
 #include <QPen>
 #include <QLinearGradient>
 #include <QPainterPath>
+#include <QFont>
 
-StartMenu::StartMenu(QWidget *parent) : 
-    QWidget(nullptr), x(0), y(0), state(SMS_start), 
-    startButton(parent), exitButton(parent), 
-    singleButton(parent), doubleButton(parent), loadButton(parent)
+StartMenu::StartMenu(QWidget *parent) : QWidget(nullptr), x(0), y(0), state(SMS_start),
+                                        startButton(parent), exitButton(parent),
+                                        singleButton(parent), doubleButton(parent), loadButton(parent),
+                                        inputM(parent), inputN(parent), inputTime(parent), okButton(parent)
 {
     movie = new QMovie(START_MENU_GIF);
     movie->start();
@@ -30,7 +31,7 @@ StartMenu::StartMenu(QWidget *parent) :
     connect(&startButton, &QPushButton::clicked, this, [=]()
             { state = SMS_choose_mode; });
 
-    // double button
+    // exit button
     exitButton.setGeometry(x + 375, y + 510, 231, 111);
     exitButton.setStyleSheet(
         "QPushButton {"
@@ -62,7 +63,7 @@ StartMenu::StartMenu(QWidget *parent) :
         "}");
     singleButton.hide();
     connect(&singleButton, &QPushButton::clicked, this, [=]()
-            { emit signalSingleMode(); });
+            { gamemode = 1; state = SMS_input; });
 
     // double button
     doubleButton.setGeometry(x + 375, y + 485, 202, 99);
@@ -79,8 +80,8 @@ StartMenu::StartMenu(QWidget *parent) :
         "}");
     doubleButton.hide();
     connect(&doubleButton, &QPushButton::clicked, this, [=]()
-            { emit signalDoubleMode(); });
-    
+            { gamemode = 2; state = SMS_input; });
+
     // load button
     loadButton.setGeometry(x + 375, y + 600, 202, 99);
     loadButton.setStyleSheet(
@@ -97,6 +98,55 @@ StartMenu::StartMenu(QWidget *parent) :
     loadButton.hide();
     connect(&loadButton, &QPushButton::clicked, this, [=]()
             { emit signalLoadGame(); });
+
+    // input mode
+    int fontId = QFontDatabase::addApplicationFont(PIXEL_FONT);
+    QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
+    // inputM
+    labelM = new QLabel("M:", parent);
+    labelM->setStyleSheet(
+        "font-family: '" + fontFamily + "';"
+                                        "color: #22060b;"
+                                        "font-size: 35px;");
+    labelM->setGeometry(x + 375, y + 400, 49, 38);
+    inputM.setGeometry(x + 375 + 60, y + 400, 104, 36);
+    labelM->hide();
+    inputM.hide();
+    // inputN
+    labelN = new QLabel("N:", parent);
+    labelN->setStyleSheet(
+        "font-family: '" + fontFamily + "';"
+                                        "color: #22060b;"
+                                        "font-size: 35px;");
+    labelN->setGeometry(x + 375, y + 450, 49, 38);
+    inputN.setGeometry(x + 375 + 60, y + 450, 104, 36);
+    labelN->hide();
+    inputN.hide();
+    // inputTime
+    labelTime = new QLabel("Time:", parent);
+    labelTime->setStyleSheet(
+        "font-family: '" + fontFamily + "';"
+                                        "color: #22060b;"
+                                        "font-size: 30px;");
+    labelTime->setGeometry(x + 285, y + 500, 139, 38);
+    inputTime.setGeometry(x + 375 + 60, y + 500, 104, 36);
+    labelTime->hide();
+    inputTime.hide();
+    // ok button
+    okButton.setGeometry(x + 290, y + 550, 250, 47);
+    okButton.setStyleSheet(
+        "QPushButton {"
+        "border-radius: 8px;"
+        "background-color: transparent;"
+        "background-image: url(../res/images/UI/ok_button.png);" /* 将按钮背景设为图片 */
+        "background-position: center;"
+        "background-repeat: no-repeat;"
+        "}"
+        "QPushButton:pressed {"
+        "background-color: rgba(0, 0, 0, 0.1);" /* 按下时添加半透明效果 */
+        "}");
+    okButton.hide();
+    connect(&okButton, &QPushButton::clicked, this, startGame);
 }
 
 void StartMenu::draw(QPainter *painter)
@@ -131,17 +181,45 @@ void StartMenu::update()
     {
     case SMS_start:
         startButton.show();
-        exitButton.show();    
+        exitButton.show();
         singleButton.hide();
         doubleButton.hide();
         loadButton.hide();
+        labelM->hide();
+        inputM.hide();
+        labelN->hide();
+        inputN.hide();
+        labelTime->hide();
+        inputTime.hide();
+        okButton.hide();
         break;
     case SMS_choose_mode:
         startButton.hide();
-        exitButton.hide();    
+        exitButton.hide();
         singleButton.show();
         doubleButton.show();
         loadButton.show();
+        labelM->hide();
+        inputM.hide();
+        labelN->hide();
+        inputN.hide();
+        labelTime->hide();
+        inputTime.hide();
+        okButton.hide();
+        break;
+    case SMS_input:
+        startButton.hide();
+        exitButton.hide();
+        singleButton.hide();
+        doubleButton.hide();
+        loadButton.hide();
+        labelM->show();
+        inputM.show();
+        labelN->show();
+        inputN.show();
+        labelTime->show();
+        inputTime.show();
+        okButton.show();
         break;
     }
 }
@@ -153,5 +231,49 @@ void StartMenu::hide()
     singleButton.hide();
     doubleButton.hide();
     loadButton.hide();
+    labelM->hide();
+    inputM.hide();
+    labelN->hide();
+    inputN.hide();
+    labelTime->hide();
+    inputTime.hide();
+    okButton.hide();
     state = SMS_hide;
+}
+
+void StartMenu::startGame()
+{
+    bool okM, okN, okTime;
+
+    // 获取并转换输入的数字
+    int M = inputM.text().toInt(&okM);
+    int N = inputN.text().toInt(&okN);
+    int time = inputTime.text().toInt(&okTime);
+
+    // 检查所有输入是否有效
+    if (okM && okN && okTime)
+    {
+        if (M > 10 || N > 10)
+        {
+            QMessageBox::warning(this, "错误", "M*N 最大为 10*10");
+            return;
+        }
+        if (M < 3 || N < 3)
+        {
+            QMessageBox::warning(this, "错误", "M*N 最小为 3*3");
+            return;
+        }
+        if (time < 5)
+        {
+            QMessageBox::warning(this, "错误", "time 最小为 5s");
+            return;
+        }
+    }
+    else
+    {
+        QMessageBox::warning(this, "错误", "请确保所有输入都是有效的数字！");
+        return;
+    }
+
+    emit signalStartGame(gamemode, M, N, time);
 }

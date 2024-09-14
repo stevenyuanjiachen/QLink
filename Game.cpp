@@ -65,9 +65,7 @@ void Game::initGame(int w, int h,
     setFixedSize(w, h);    // size
     setWindowTitle(title); // title
     if (!icon.isNull())    // icon
-    {
         setWindowIcon(icon);
-    }
 
     // generate map
     gameMap = new Map();
@@ -79,9 +77,6 @@ void Game::initGame(int w, int h,
     Mgr->addEntity(player1);
     triggerElapsedTimer1.start();
     triggerElapsedTimer2.start();
-
-    // generate Box matric
-    generateBox();
 
     // generate the Progress Bar
     progressBar = new MyProgressBar((CUBE_LENGTH * MAP_WIDTH - MY_PROGRESS_BAR_WIDTH) / 2, CUBE_LENGTH, 60);
@@ -103,18 +98,18 @@ void Game::initGame(int w, int h,
 
     // generate the start menu
     startMenu = new StartMenu(this);
-    connect(startMenu, &StartMenu::signalSingleMode, this, [=]() {
-        state = GS_single_mode;
-        gameMode = GS_single_mode;
-        continueGame();
-        startMenu->hide(); });
-    connect(startMenu, &StartMenu::signalDoubleMode, this, [=]() {
-        Mgr->addEntity(player2);
-        state = GS_double_mode;
-        gameMode = GS_double_mode;
-        continueGame();
-        startMenu->hide(); });
+    connect(startMenu, &StartMenu::signalStartGame, this, &Game::startGame);
     connect(startMenu, &StartMenu::signalLoadGame, this, &Game::loadGame);
+}
+
+void Game::startGame(int gamemode, int m, int n, int time)
+{
+    state  = gameMode = (GameState) gamemode;
+    M = m; N = n;
+    progressBar->setTime(time);
+    generateBox();
+    continueGame();
+    startMenu->hide();
 }
 
 void Game::drawGame(QPainter *painter)
