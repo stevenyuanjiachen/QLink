@@ -241,6 +241,11 @@ void StartMenu::hide()
     state = SMS_hide;
 }
 
+void StartMenu::show()
+{
+    state = SMS_start;
+}
+
 void StartMenu::startGame()
 {
     bool okM, okN, okTime;

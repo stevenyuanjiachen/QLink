@@ -15,6 +15,7 @@ signals:
     void signalContinue();
     void signalSaveGame();
     void signalLoadGame();
+    void signalQuitGame();
 
 private:
     int x, y;

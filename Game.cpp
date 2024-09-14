@@ -43,10 +43,7 @@ Game::Game(QWidget *parent)
         updateGame();
         update(); });
     timer->start(1000 / GAME_FPS);
-
-    itemGenerateTimer.callOnTimeout(this, &Game::generateItem);
-    itemGenerateTimer.start(5000);
-
+    
     setFocusPolicy(Qt::StrongFocus);
 }
 
@@ -70,14 +67,6 @@ void Game::initGame(int w, int h,
     // generate map
     gameMap = new Map();
 
-    // generate player
-    player1 = new Hero(MAP_BLOCK_LEFT + 10, MAP_BLOCK_UP + 10);
-    player2 = new Hero(MAP_BLOCK_RIGHT - player1->pixmap.width() - 10,
-                       MAP_BLOCK_DOWN - player1->pixmap.height() - 10, 2);
-    Mgr->addEntity(player1);
-    triggerElapsedTimer1.start();
-    triggerElapsedTimer2.start();
-
     // generate the Progress Bar
     progressBar = new MyProgressBar((CUBE_LENGTH * MAP_WIDTH - MY_PROGRESS_BAR_WIDTH) / 2, CUBE_LENGTH, 60);
     connect(progressBar, &MyProgressBar::signalEnd, this, &Game::finishGame);
@@ -95,6 +84,7 @@ void Game::initGame(int w, int h,
     connect(pauseMenu, &PauseMenu::signalContinue, this, &Game::continueGame);
     connect(pauseMenu, &PauseMenu::signalSaveGame, this, &Game::saveGame);
     connect(pauseMenu, &PauseMenu::signalLoadGame, this, &Game::loadGame);
+    connect(pauseMenu, &PauseMenu::signalQuitGame, this, &Game::toStartMenu);
 
     // generate the start menu
     startMenu = new StartMenu(this);
@@ -107,7 +97,25 @@ void Game::startGame(int gamemode, int m, int n, int time)
     state  = gameMode = (GameState) gamemode;
     M = m; N = n;
     progressBar->setTime(time);
+    
+    // generate player
+    player1 = new Hero(MAP_BLOCK_LEFT + 10, MAP_BLOCK_UP + 10);
+    player2 = new Hero(MAP_BLOCK_RIGHT - player1->pixmap.width() - 10,
+                       MAP_BLOCK_DOWN - player1->pixmap.height() - 10, 2);
+    Mgr->addEntity(player1);
+    triggerElapsedTimer1.start();
+    if(gamemode==2) {   
+        Mgr->addEntity(player2);
+        triggerElapsedTimer2.start();
+    }
+    
+    // generate Box
     generateBox();
+
+    // generate items
+    itemGenerateTimer.callOnTimeout(this, &Game::generateItem);
+    itemGenerateTimer.start(5000);
+
     continueGame();
     startMenu->hide();
 }
@@ -235,10 +243,12 @@ void Game::loadGame()
 
     loadGameState(filePath); // load game
     loadBoxes(filePath);     // load boxes
+
     // load player 1
     player1 = new Hero(0, 0, 1);
     player1->loadHeroState(filePath);
     Mgr->addEntity(player1); 
+    
     // load player 2
     if (gameMode == GS_double_mode)
     {
@@ -251,6 +261,14 @@ void Game::loadGame()
     scoreBoard1->loadState(filePath); // load scoreBoard1
 
     continueGame();
+}
+
+void Game::toStartMenu()
+{
+    Mgr->clean();
+    startMenu->show();
+    pauseMenu->hide();
+    state = GS_start;
 }
 
 void Game::paintEvent(QPaintEvent *event)

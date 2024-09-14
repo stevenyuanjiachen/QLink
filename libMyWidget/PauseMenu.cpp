@@ -74,6 +74,9 @@ PauseMenu::PauseMenu(QWidget *parent, int x, int y) : QWidget(nullptr), x(x), y(
         "background-color: rgba(0, 0, 0, 0.1);" /* 按下时添加半透明效果 */
         "}");
     quitButton.hide();
+    connect(&quitButton, &QPushButton::clicked, this, [=](){
+        emit signalQuitGame();
+    });
 }
 
 void PauseMenu::draw(QPainter *painter)

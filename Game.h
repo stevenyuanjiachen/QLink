@@ -39,6 +39,7 @@ public:
     void continueGame();
     void saveGame();
     void loadGame();
+    void toStartMenu();
 
 public:
     // 功能函数

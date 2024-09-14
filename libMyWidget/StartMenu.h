@@ -23,6 +23,7 @@ public:
     void draw(QPainter *painter);
     void update();
     void hide();
+    void show();
     void startGame();
 signals:
     void signalExit();
