@@ -103,8 +103,9 @@ void Game::newGame(int gamemode, int m, int n, int time)
 {
     state  = gameMode = (GameState) gamemode;
     M = m; N = n;
-    progressBar->setTime(time);
     
+    Mgr->clean();
+
     // generate player
     player1 = new Hero(MAP_BLOCK_LEFT + 10, MAP_BLOCK_UP + 10);
     player2 = new Hero(MAP_BLOCK_RIGHT - player1->pixmap.width() - 10,
@@ -122,6 +123,13 @@ void Game::newGame(int gamemode, int m, int n, int time)
     // generate items
     itemGenerateTimer.callOnTimeout(this, &Game::generateItem);
     itemGenerateTimer.start(5000);
+
+    // init the scoreBoard
+    scoreBoard1->init();
+    scoreBoard2->init();
+
+    // init the progress bar
+    progressBar->init(time);
 
     continueGame();
     startMenu->hide();
@@ -267,6 +275,8 @@ void Game::loadGame()
     loadItems(filePath);              // load items
     progressBar->loadState(filePath); // load progressBar
     scoreBoard1->loadState(filePath); // load scoreBoard1
+    if(gameMode == GS_double_mode)
+        scoreBoard2->loadState(filePath);
 
     continueGame();
 }

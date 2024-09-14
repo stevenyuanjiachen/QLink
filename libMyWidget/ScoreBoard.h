@@ -17,7 +17,9 @@ public:
     ~ScoreBoard();
     void draw(QPainter* painter);
     void update();
+    void init();
     void addScore(int x);
+    int getScore() const { return score; }
     void saveState(const QString& filePath);
     void loadState(const QString& filePath);
 

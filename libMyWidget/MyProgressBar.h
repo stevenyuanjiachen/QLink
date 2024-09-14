@@ -19,12 +19,11 @@ public:
     void draw(QPainter* painter) ;
     void update() ;
     void addTime(int time);
-    void setTime(int time);
+    void init(int time);
     void pauseBar();
     void contineBar();
     void saveState(const QString& filePath);
     void loadState(const QString& filePath);
-
 
 signals:
     void signalEnd();

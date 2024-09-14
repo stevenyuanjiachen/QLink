@@ -57,6 +57,11 @@ void ScoreBoard::update()
     text = QString("%1").arg(score, 3, 10, QChar('0'));
 }
 
+void ScoreBoard::init()
+{
+    score = 0;
+}
+
 void ScoreBoard::addScore(int x)
 {
     score += x;

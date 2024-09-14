@@ -93,7 +93,7 @@ void MyProgressBar::addTime(int time)
     if (value>this->time) this->time = value;
 }
 
-void MyProgressBar::setTime(int time)
+void MyProgressBar::init(int time)
 {
     time = value = time*1000;
 }
