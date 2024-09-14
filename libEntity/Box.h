@@ -40,6 +40,7 @@ public:
     inline BoxColor getColor() const { return color; }
     inline int getR() const { return matrixPosition.x(); }
     inline int getC() const { return matrixPosition.y(); }
+    void setPosition(int x, int y);
     void setMatrixPosition(int r, int c);
     void trigger();
     void cancelTrigger();

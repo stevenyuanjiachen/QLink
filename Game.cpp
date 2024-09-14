@@ -669,6 +669,7 @@ void Game::generateBox(bool generateMatrix)
             x = startX + j * CUBE_LENGTH;
             Box *box = new Box(x, y, (BoxColor)boxMatrix[i + 1][j + 1]);
             box->setMatrixPosition(i + 1, j + 1);
+            adjustBox(box);
             Mgr->addEntity(box);
         }
     }
@@ -876,6 +877,38 @@ void Game::score(int x, int playerID)
         emit signalScore1(x);
     if (playerID == 2)
         emit signalScore2(x);
+}
+
+void Game::adjustBox(Box* box)
+{
+    int startX = MAP_BLOCK_LEFT + (MAP_BLOCK_RIGHT - MAP_BLOCK_LEFT - N * CUBE_LENGTH) / 2;
+    int startY = MAP_BLOCK_UP + (MAP_BLOCK_DOWN - MAP_BLOCK_UP - M * CUBE_LENGTH) / 2;
+
+    int r = box->getR();
+    int c = box->getC();
+    int x = startX + (c-1)*CUBE_LENGTH;
+    int y = startY + (r-1)*CUBE_LENGTH;
+    QRect collider(x, y, CUBE_LENGTH, CUBE_LENGTH);
+
+    if(!player1->intersects(collider) && !player2->intersects(collider)) return;
+
+    int color = box->getColor();
+    boxMatrix[r][c] = 0;
+    for(int i=1; i<=M; ++i)
+    {
+        for(int j=1; j<=N; ++j)
+        {
+            if(i==r && j==c) continue;
+            if(boxMatrix[i][j]==0)
+            {
+                boxMatrix[i][j]==color;
+                box->setMatrixPosition(i, j);
+                box->setPosition(startX+(j-1)*CUBE_LENGTH, startY+(i-1)*CUBE_LENGTH);
+                adjustBox(box);
+                return;
+            }
+        }
+    }
 }
 
 void Game::triggerBox(int r, int c)

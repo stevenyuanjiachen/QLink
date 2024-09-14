@@ -52,6 +52,7 @@ public:
     void score(int x, int playerID);
     void triggerBox(int r, int c);
     void shuffleBox();
+    void adjustBox(Box* box);
     void solubleCheck();
     void addLine(int r1, int c1, int r2, int c2, int playerID=0);
     void drawPath1(QPainter* painter);
