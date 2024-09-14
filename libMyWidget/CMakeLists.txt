@@ -7,6 +7,7 @@ add_library(MyWidget
     ScoreBoard.cpp
     PauseMenu.cpp
     StartMenu.cpp
+    FinishMenu.cpp
 )
 
 target_include_directories(MyWidget

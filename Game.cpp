@@ -7,6 +7,7 @@
 #include "ScoreBoard.h"
 #include "PauseMenu.h"
 #include "StartMenu.h"
+#include "FinishMenu.h"
 #include <QRandomGenerator>
 #include <QRegularExpression>
 #include <QSet>
@@ -31,6 +32,7 @@ ScoreBoard *scoreBoard1;
 ScoreBoard *scoreBoard2;
 PauseMenu *pauseMenu;
 StartMenu *startMenu;
+FinishMenu *finishMenu;
 
 // 游戏实现
 Game::Game(QWidget *parent)
@@ -97,6 +99,11 @@ void Game::initGame(int w, int h,
     startMenu = new StartMenu(this);
     connect(startMenu, &StartMenu::signalNewGame, this, &Game::newGame);
     connect(startMenu, &StartMenu::signalLoadGame, this, &Game::loadGame);
+
+    // generate the finish menu
+    finishMenu = new FinishMenu(this, (MAP_WIDTH * CUBE_LENGTH - PAUSE_MENU_WIDTH) / 2, (MAP_HEIGHT * CUBE_LENGTH - PAUSE_MENU_HEIGHT) / 2);
+    connect(finishMenu, &FinishMenu::signalQuitGame, this, &Game::toStartMenu);
+
 }
 
 void Game::newGame(int gamemode, int m, int n, int time)
@@ -159,14 +166,18 @@ void Game::drawGame(QPainter *painter)
         drawPath2(painter);
         break;
     case GS_pause:
-        drawPauseMenu(painter);
+        drawShadow(painter);
         pauseMenu->draw(painter);
         break;
+    case GS_finish:
+        drawShadow(painter);
+        finishMenu->draw(painter);
     }
 }
 
 void Game::finishGame()
 {
+    takeScreenShoot();
     state = GS_finish;
 }
 
@@ -197,7 +208,7 @@ void Game::updateGame()
         itemGenerateTimer.start(5000);
         break;
     case GS_finish:
-        qInfo() << "Game Finish";
+        emit signalPause();
         break;
     }
 }
@@ -208,8 +219,7 @@ void Game::cleanGame()
 
 void Game::pauseGame()
 {
-    QScreen *screen = QGuiApplication::primaryScreen();
-    screenshot = screen->grabWindow(this->winId());
+    takeScreenShoot();
     state = GS_pause;
 }
 
@@ -219,6 +229,7 @@ void Game::continueGame()
     state = gameMode;
     pauseMenu->hide();
     startMenu->hide();
+    finishMenu->hide();
 }
 
 void Game::saveGame()
@@ -286,6 +297,7 @@ void Game::toStartMenu()
     Mgr->clean();
     startMenu->show();
     pauseMenu->hide();
+    finishMenu->hide();
     state = GS_start;
 }
 
@@ -1044,7 +1056,13 @@ void Game::drawPath2(QPainter *painter)
         }
 }
 
-void Game::drawPauseMenu(QPainter *painter)
+void Game::takeScreenShoot()
+{
+    QScreen *screen = QGuiApplication::primaryScreen();
+    screenshot = screen->grabWindow(this->winId());
+}
+
+void Game::drawShadow(QPainter *painter)
 {
     painter->drawPixmap(0, 0, screenshot);
 

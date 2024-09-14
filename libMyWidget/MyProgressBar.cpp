@@ -93,9 +93,9 @@ void MyProgressBar::addTime(int time)
     if (value>this->time) this->time = value;
 }
 
-void MyProgressBar::init(int time)
+void MyProgressBar::init(int t)
 {
-    time = value = time*1000;
+    time = value = t*1000;
 }
 
 void MyProgressBar::pauseBar()

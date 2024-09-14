@@ -28,3 +28,6 @@ const int PAUSE_MENU_HEIGHT = 493;
 
 // gif of the start menu
 const QString START_MENU_GIF = "../res/images/UI/start_menu.gif";
+
+// image of the finish menu
+const QString FINISH_MENU_IMAGE = "../res/images/UI/finish_menu.png";

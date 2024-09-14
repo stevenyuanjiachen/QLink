@@ -56,7 +56,8 @@ public:
     void addLine(int r1, int c1, int r2, int c2, int playerID=0);
     void drawPath1(QPainter* painter);
     void drawPath2(QPainter* painter);
-    void drawPauseMenu(QPainter* painter);
+    void takeScreenShoot();
+    void drawShadow(QPainter* painter);
     void saveGameState(const QString& filePath);
     void loadGameState(const QString& filePath);
     void saveBoxes(const QString& filePath);
