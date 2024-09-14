@@ -30,7 +30,7 @@ public:
     explicit Game(QWidget *parent = nullptr);
     void run();
     void initGame(const int w,const int h, const QString &title, const QIcon & = QIcon());
-    void startGame(int gamemode, int m, int n, int time);
+    void newGame(int gamemode, int m, int n, int time);
     void updateGame();
     void drawGame(QPainter *painter);
     void finishGame();

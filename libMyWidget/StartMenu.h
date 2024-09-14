@@ -24,11 +24,11 @@ public:
     void update();
     void hide();
     void show();
-    void startGame();
+    void newGame();
 signals:
     void signalExit();
     void signalLoadGame();
-    void signalStartGame(int gamemode, int m, int n, int time);
+    void signalNewGame(int gamemode, int m, int n, int time);
 
 private:
     StartMenuState state;

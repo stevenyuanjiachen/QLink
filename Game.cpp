@@ -61,11 +61,18 @@ void Game::initGame(int w, int h,
     // Set the Window's Size, Title and Icon
     setFixedSize(w, h);    // size
     setWindowTitle(title); // title
-    if (!icon.isNull())    // icon
-        setWindowIcon(icon);
+    if (!icon.isNull()) setWindowIcon(icon); // icon
 
     // generate map
     gameMap = new Map();
+    
+    // generate player
+    player1 = new Hero(MAP_BLOCK_LEFT + 10, MAP_BLOCK_UP + 10);
+    player2 = new Hero(MAP_BLOCK_RIGHT - player1->pixmap.width() - 10,
+                       MAP_BLOCK_DOWN - player1->pixmap.height() - 10, 2);
+    Mgr->addEntity(player1);
+    triggerElapsedTimer1.start();
+    triggerElapsedTimer2.start();
 
     // generate the Progress Bar
     progressBar = new MyProgressBar((CUBE_LENGTH * MAP_WIDTH - MY_PROGRESS_BAR_WIDTH) / 2, CUBE_LENGTH, 60);
@@ -88,11 +95,11 @@ void Game::initGame(int w, int h,
 
     // generate the start menu
     startMenu = new StartMenu(this);
-    connect(startMenu, &StartMenu::signalStartGame, this, &Game::startGame);
+    connect(startMenu, &StartMenu::signalNewGame, this, &Game::newGame);
     connect(startMenu, &StartMenu::signalLoadGame, this, &Game::loadGame);
 }
 
-void Game::startGame(int gamemode, int m, int n, int time)
+void Game::newGame(int gamemode, int m, int n, int time)
 {
     state  = gameMode = (GameState) gamemode;
     M = m; N = n;
@@ -248,7 +255,7 @@ void Game::loadGame()
     player1 = new Hero(0, 0, 1);
     player1->loadHeroState(filePath);
     Mgr->addEntity(player1); 
-    
+
     // load player 2
     if (gameMode == GS_double_mode)
     {
@@ -256,6 +263,7 @@ void Game::loadGame()
         player2->loadHeroState(filePath);
         Mgr->addEntity(player2);
     }
+
     loadItems(filePath);              // load items
     progressBar->loadState(filePath); // load progressBar
     scoreBoard1->loadState(filePath); // load scoreBoard1

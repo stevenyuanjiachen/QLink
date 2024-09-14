@@ -146,7 +146,7 @@ StartMenu::StartMenu(QWidget *parent) : QWidget(nullptr), x(0), y(0), state(SMS_
         "background-color: rgba(0, 0, 0, 0.1);" /* 按下时添加半透明效果 */
         "}");
     okButton.hide();
-    connect(&okButton, &QPushButton::clicked, this, startGame);
+    connect(&okButton, &QPushButton::clicked, this, newGame);
 }
 
 void StartMenu::draw(QPainter *painter)
@@ -246,7 +246,7 @@ void StartMenu::show()
     state = SMS_start;
 }
 
-void StartMenu::startGame()
+void StartMenu::newGame()
 {
     bool okM, okN, okTime;
 
@@ -280,5 +280,5 @@ void StartMenu::startGame()
         return;
     }
 
-    emit signalStartGame(gamemode, M, N, time);
+    emit signalNewGame(gamemode, M, N, time);
 }
