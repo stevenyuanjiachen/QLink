@@ -103,19 +103,18 @@ void Game::initGame(int w, int h,
 
     // generate the start menu
     startMenu = new StartMenu(this);
-    connect(startMenu, &StartMenu::signalSingleMode, this, [=]()
-            {
+    connect(startMenu, &StartMenu::signalSingleMode, this, [=]() {
         state = GS_single_mode;
         gameMode = GS_single_mode;
         continueGame();
         startMenu->hide(); });
-    connect(startMenu, &StartMenu::signalDoubleMode, this, [=]()
-            {
+    connect(startMenu, &StartMenu::signalDoubleMode, this, [=]() {
         Mgr->addEntity(player2);
         state = GS_double_mode;
         gameMode = GS_double_mode;
         continueGame();
         startMenu->hide(); });
+    connect(startMenu, &StartMenu::signalLoadGame, this, &Game::loadGame);
 }
 
 void Game::drawGame(QPainter *painter)
@@ -201,6 +200,7 @@ void Game::continueGame()
     emit signalContinue();
     state = gameMode;
     pauseMenu->hide();
+    startMenu->hide();
 }
 
 void Game::saveGame()
@@ -342,10 +342,8 @@ void Game::keyPressEvent(QKeyEvent *event)
 void Game::keyReleaseEvent(QKeyEvent *event)
 {
     // pause
-    if (event->key() == Qt::Key_Escape)
-    {
-        pauseGame();
-    }
+    if(state == GS_double_mode || state == GS_single_mode)
+        if (event->key() == Qt::Key_Escape) pauseGame();
 
     // player 1
     if (player1->getState() == HS_move_down ||
@@ -1073,7 +1071,7 @@ void Game::loadGameState(const QString &filePath)
     while (!in.atEnd())
     {
         QString line = in.readLine();
-        if (line.startsWith("gameMode:"))
+        if (line.startsWith("gamemode:"))
         {
             QString mode = line.section(QRegularExpression("\\s"), 1, 1).trimmed();
             if (mode == "doubleMode")
