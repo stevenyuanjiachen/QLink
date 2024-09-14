@@ -31,3 +31,5 @@ const QString START_MENU_GIF = "../res/images/UI/start_menu.gif";
 
 // image of the finish menu
 const QString FINISH_MENU_IMAGE = "../res/images/UI/finish_menu.png";
+const int FINISH_MENU_WIDTH = 572;
+const int FINISH_MENU_HEIGHT = 493;

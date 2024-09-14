@@ -103,7 +103,7 @@ void Game::initGame(int w, int h,
     // generate the finish menu
     finishMenu = new FinishMenu(this, (MAP_WIDTH * CUBE_LENGTH - PAUSE_MENU_WIDTH) / 2, (MAP_HEIGHT * CUBE_LENGTH - PAUSE_MENU_HEIGHT) / 2);
     connect(finishMenu, &FinishMenu::signalQuitGame, this, &Game::toStartMenu);
-
+    connect(this, &Game::signalFinish, finishMenu, &FinishMenu::setLabel);
 }
 
 void Game::newGame(int gamemode, int m, int n, int time)
@@ -178,6 +178,16 @@ void Game::drawGame(QPainter *painter)
 void Game::finishGame()
 {
     takeScreenShoot();
+    if(gameMode == GS_single_mode) emit signalFinish(1, scoreBoard1->getScore());
+    else if(gameMode == GS_double_mode)
+    {
+        if(scoreBoard1->getScore() > scoreBoard2->getScore()) 
+            emit signalFinish(2, 1);
+        if(scoreBoard1->getScore() < scoreBoard2->getScore()) 
+            emit signalFinish(2, 2);
+        if(scoreBoard1->getScore() == scoreBoard2->getScore()) 
+            emit signalFinish(2, 3);
+    }
     state = GS_finish;
 }
 

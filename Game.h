@@ -78,6 +78,7 @@ public:
 signals:
     void signalPause();
     void signalContinue();
+    void signalFinish(int gamemode, int score);
     void signalScore1(int x);
     void signalScore2(int x);
 
