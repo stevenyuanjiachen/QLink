@@ -243,7 +243,7 @@ void Game::continueGame()
 
 void Game::saveGame()
 {
-    const QString filePath = "../saves/test.txt";
+    const QString filePath = "../saves/save1.txt";
 
     // if save exist, then remove it
     if (QFile::exists(filePath))
@@ -272,7 +272,7 @@ void Game::saveGame()
 
 void Game::loadGame()
 {
-    const QString &filePath = "../saves/test.txt";
+    const QString &filePath = "../saves/save1.txt";
 
     Mgr->clean(); // clean Game
 
