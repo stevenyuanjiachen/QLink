@@ -40,10 +40,7 @@ Game::Game(QWidget *parent)
 {
     // game timer
     QTimer *timer = new QTimer(this);
-    timer->callOnTimeout(this, [=]()
-                         {
-        updateGame();
-        update(); });
+    timer->callOnTimeout(this, &Game::updateGame);
     timer->start(1000 / GAME_FPS);
     
     setFocusPolicy(Qt::StrongFocus);
@@ -128,8 +125,7 @@ void Game::newGame(int gamemode, int m, int n, int time)
     generateBox();
 
     // generate items
-    itemGenerateTimer.callOnTimeout(this, &Game::generateItem);
-    itemGenerateTimer.start(5000);
+    itemGenerateElapsedTimer.start();
 
     // init the scoreBoard
     scoreBoard1->init();
@@ -197,12 +193,12 @@ void Game::updateGame()
     {
     case GS_start:
         emit signalPause();
-        itemGenerateTimer.start(5000);
         startMenu->update();
         break;
     case GS_single_mode:
         Mgr->update();
         boxCollitionDect1();
+        generateItem();
         itemCollitionDect();
         //        solubleCheck();
         break;
@@ -210,17 +206,19 @@ void Game::updateGame()
         Mgr->update();
         boxCollitionDect1();
         boxCollitionDect2();
+        generateItem();
         itemCollitionDect();
         //        solubleCheck();
         break;
     case GS_pause:
         emit signalPause();
-        itemGenerateTimer.start(5000);
         break;
     case GS_finish:
         emit signalPause();
         break;
     }
+
+    update();
 }
 
 void Game::cleanGame()
@@ -237,6 +235,7 @@ void Game::continueGame()
 {
     emit signalContinue();
     state = gameMode;
+    itemGenerateElapsedTimer.restart();
     pauseMenu->hide();
     startMenu->hide();
     finishMenu->hide();
@@ -294,6 +293,7 @@ void Game::loadGame()
     }
 
     loadItems(filePath);              // load items
+    itemGenerateElapsedTimer.restart();
     progressBar->loadState(filePath); // load progressBar
     scoreBoard1->loadState(filePath); // load scoreBoard1
     if(gameMode == GS_double_mode)
@@ -677,6 +677,10 @@ void Game::generateBox(bool generateMatrix)
 
 void Game::generateItem()
 {
+    if(itemGenerateElapsedTimer.elapsed()<QRandomGenerator::global()->bounded(10, 20)*1000)
+        return;
+    itemGenerateElapsedTimer.restart();
+
     Item *item;
 
     // random the type
@@ -706,8 +710,6 @@ void Game::generateItem()
 
     Mgr->addEntity(item);
 
-    // random the time
-    itemGenerateTimer.setInterval(1000 * QRandomGenerator::global()->bounded(6, 9));
 }
 
 void Game::boxCollitionDect1()

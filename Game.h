@@ -99,7 +99,7 @@ private:
     QElapsedTimer triggerElapsedTimer2;
     QElapsedTimer showPathElapsedTimer1;
     QElapsedTimer showPathElapsedTimer2;
-    QTimer itemGenerateTimer; 
+    QElapsedTimer itemGenerateElapsedTimer;
     QSet<QLine*> lineSet1;
     QSet<QLine*> lineSet2;
     QPixmap screenshot;
