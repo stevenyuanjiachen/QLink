@@ -256,44 +256,34 @@ void Hero::loadHeroState(const QString &filePath)
     }
 
     QTextStream in(&file);
-    bool foundHero = false;
     bool haveFlash = false;
     bool haveDizzy = false;
     bool haveFreeze = false;
     bool haveTriggerBox = false;
     int r, c;
-    QRegularExpression heroRegex("(hero"+ ID +"\\.(x|y|state|flash|flashTime|dizzy|dizzyTime|freeze|freezeTime|haveTriggerBox|triggerBoxR|triggerBoxC)):\\s*(\\w+)");
+    QRegularExpression heroRegex("hero"+ ID +"\\.(\\S+):\\s*(\\w+)");
 
     while (!in.atEnd()) {
         QString line = in.readLine();
+        QRegularExpressionMatch match = heroRegex.match(line);
 
-        // 找到 # Hero 部分
-        if (line.startsWith("# Hero")) {
-            foundHero = true;
-            continue;  // 跳过 # Hero 行
-        }
+        if (match.hasMatch()) {
+            QString key = match.captured(1);  // 属性名
+            QString value = match.captured(2);  // 属性值
 
-        // 匹配 hero 属性
-        if (foundHero) {
-            QRegularExpressionMatch match = heroRegex.match(line);
-            if (match.hasMatch()) {
-                QString key = match.captured(2);  // 属性名，如 x, y, state
-                QString value = match.captured(3);  // 属性值
-
-                // 根据属性名解析并赋值
-                if (key == "x") position.setX(value.toInt());
-                else if (key == "y") position.setY(value.toInt());
-                else if (key == "state") state = (HeroState) value.toInt();
-                else if (key == "haveTriggerBox") haveTriggerBox = (value=="true");
-                else if (key == "triggerBoxR") r = value.toInt();
-                else if (key == "triggerBoxC") c = value.toInt();
-                else if (key == "flash") haveFlash = (value=="true");
-                else if (key == "dizzy") haveDizzy = (value=="true");
-                else if (key == "freeze") haveFreeze = (value=="true");
-                else if (key == "flashTime") flashTime = value.toInt();
-                else if (key == "dizzyTime") dizzyTime = value.toInt();
-                else if (key == "freezeTime") freezeTime = value.toInt();
-            }
+            // 根据属性名解析并赋值
+            if (key == "x") position.setX(value.toInt());
+            else if (key == "y") position.setY(value.toInt());
+            else if (key == "state") state = (HeroState) value.toInt();
+            else if (key == "haveTriggerBox") haveTriggerBox = (value=="true");
+            else if (key == "triggerBoxR") r = value.toInt();
+            else if (key == "triggerBoxC") c = value.toInt();
+            else if (key == "flash") haveFlash = (value=="true");
+            else if (key == "dizzy") haveDizzy = (value=="true");
+            else if (key == "freeze") haveFreeze = (value=="true");
+            else if (key == "flashTime") flashTime = value.toInt();
+            else if (key == "dizzyTime") dizzyTime = value.toInt();
+            else if (key == "freezeTime") freezeTime = value.toInt();
         }
     }
 
