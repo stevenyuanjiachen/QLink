@@ -335,10 +335,7 @@ void Game::keyPressEvent(QKeyEvent *event)
     if (state == GS_pause) return;
 
     // player 1
-    HeroState state1 = player1->getState();
-    if (state1 == HS_stand_down || state1 == HS_stand_up || 
-        state1 == HS_stand_left || state1 == HS_stand_right
-        && !player1->haveFreeze() && !player1->haveDizzy())
+    if(!player1->haveDizzy() && !player1->haveFreeze())
     {
         switch (event->key())
         {
@@ -365,8 +362,7 @@ void Game::keyPressEvent(QKeyEvent *event)
         }
     }
     // player 1 have dizzy
-    if(player1->haveDizzy())
-    {
+    if(player1->haveDizzy() && !player1->haveFreeze()){
         switch (event->key())
         {
         case Qt::Key_W:
@@ -395,11 +391,7 @@ void Game::keyPressEvent(QKeyEvent *event)
 
     // player 2
     if (this->state != GS_double_mode) return;
-    HeroState state2 = player2->getState();
-    if (state2 == HS_stand_down || state2 == HS_stand_up ||
-        state2 == HS_stand_left || state2 == HS_stand_right
-        && !player2->haveDizzy() && !player2->haveFreeze())
-    {
+    if(!player2->haveDizzy() && !player2->haveFreeze()) {
         switch (event->key())
         {
         case Qt::Key_Up:
@@ -425,7 +417,7 @@ void Game::keyPressEvent(QKeyEvent *event)
         }
     }
     // player2 have dizzy
-    if(player2->haveDizzy())
+    if(player2->haveDizzy() && !player2->haveFreeze())
     {
         switch (event->key())
         {

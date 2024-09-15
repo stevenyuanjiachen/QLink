@@ -57,7 +57,7 @@ public:
     void loadHeroState(const QString& filePath);
 private:
     int playerID;
-    HeroState state;
+    HeroState state, lastState;
     HeroBlockState blockState;
     QSet<BuffType> buffSet;
     QElapsedTimer flashElapsedTimer;

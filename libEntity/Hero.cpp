@@ -62,7 +62,12 @@ void Hero::update()
         break;
     }
 
-    // buff
+    // buff freeze
+    if(haveFreeze()) {
+        state = lastState;
+        velocity.setX(0); velocity.setY(0);
+    }
+    // buff timer
     if(flashElapsedTimer.elapsed()>5000) buffSet.remove(BT_flash);
     if(dizzyElapsedTimer.elapsed()>10000) buffSet.remove(BT_dizzy);
     if(freezeElapsedTimer.elapsed()>3000) buffSet.remove(BT_freeze);
@@ -116,6 +121,13 @@ void Hero::addBuff(BuffType buff)
         dizzyElapsedTimer.restart();
         break;
     case BT_freeze:
+        lastState = state;
+        switch (lastState) {
+        case HS_move_up: lastState = HS_stand_up; break;
+        case HS_move_down: lastState = HS_stand_down; break;
+        case HS_move_left: lastState = HS_stand_left; break;
+        case HS_move_right: lastState = HS_stand_right; break;
+        }
         freezeElapsedTimer.restart();
         break;
     }
