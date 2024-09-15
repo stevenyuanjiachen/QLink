@@ -68,9 +68,17 @@ void Hero::update()
         velocity.setX(0); velocity.setY(0);
     }
     // buff timer
-    if(flashElapsedTimer.elapsed()-flashPauseTime >5000) buffSet.remove(BT_flash);
-    if(dizzyElapsedTimer.elapsed()-dizzyPauseTime>10000) buffSet.remove(BT_dizzy);
-    if(freezeElapsedTimer.elapsed()-freezePauseTime>3000) buffSet.remove(BT_freeze);
+    if(!isPause){
+        flashTime += flashElapsedTimer.elapsed();
+        flashElapsedTimer.restart();
+        dizzyTime+=dizzyElapsedTimer.elapsed();
+        dizzyElapsedTimer.restart();
+        freezeTime+=freezeElapsedTimer.elapsed();
+        freezeElapsedTimer.restart();
+    }
+    if(flashTime >5000) buffSet.remove(BT_flash);
+    if(dizzyTime>10000) buffSet.remove(BT_dizzy);
+    if(freezeTime>3000) buffSet.remove(BT_freeze);
 }
 
 void Hero::draw(QPainter *painter)
@@ -116,11 +124,11 @@ void Hero::addBuff(BuffType buff)
     switch (buff) {
     case BT_flash:
         flashElapsedTimer.restart();
-        flashPauseTime = 0;
+        flashTime = 0;
         break;
     case BT_dizzy:
         dizzyElapsedTimer.restart();
-        dizzyPauseTime = 0;
+        dizzyTime = 0;
         break;
     case BT_freeze:
         lastState = state;
@@ -131,21 +139,22 @@ void Hero::addBuff(BuffType buff)
         case HS_move_right: lastState = HS_stand_right; break;
         }
         freezeElapsedTimer.restart();
-        freezePauseTime = 0;
+        freezeTime = 0;
         break;
     }
 }
 
 void Hero::pauseHero()
 {
-    pauseElapsedTimer.restart();
+    isPause = true;
 }
 
 void Hero::continueHero()
 {
-    flashPauseTime = pauseElapsedTimer.elapsed();
-    dizzyPauseTime = pauseElapsedTimer.elapsed();
-    freezePauseTime = pauseElapsedTimer.elapsed();
+    isPause = false;
+    flashElapsedTimer.restart();
+    dizzyElapsedTimer.restart();
+    freezeElapsedTimer.restart();
 }
 
 void Hero::saveHeroState(const QString &filePath)

@@ -59,14 +59,14 @@ public:
     void loadHeroState(const QString& filePath);
 private:
     int playerID;
+    bool isPause;
     HeroState state, lastState;
     HeroBlockState blockState;
     QSet<BuffType> buffSet;
-    QElapsedTimer pauseElapsedTimer;
     QElapsedTimer flashElapsedTimer;
     QElapsedTimer dizzyElapsedTimer;
     QElapsedTimer freezeElapsedTimer;
-    int flashPauseTime, dizzyPauseTime, freezePauseTime;
+    int flashTime, dizzyTime, freezeTime;
     QVector<Animation> anima;
     Box *triggeredBox;
 };
