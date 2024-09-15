@@ -85,10 +85,14 @@ void Game::initGame(int w, int h,
 
     // generate the puase menu
     pauseMenu = new PauseMenu(this, (MAP_WIDTH * CUBE_LENGTH - PAUSE_MENU_WIDTH) / 2, (MAP_HEIGHT * CUBE_LENGTH - PAUSE_MENU_HEIGHT) / 2);
-    connect(pauseMenu, &PauseMenu::signalContinue, this, &Game::continueGame);
     connect(pauseMenu, &PauseMenu::signalSaveGame, this, &Game::saveGame);
     connect(pauseMenu, &PauseMenu::signalLoadGame, this, &Game::loadGame);
     connect(pauseMenu, &PauseMenu::signalQuitGame, this, &Game::toStartMenu);
+    connect(pauseMenu, &PauseMenu::signalContinue, this, [=](){
+        continueGame();
+        player1->continueHero();
+        if(gameMode == GS_double_mode) player2->continueHero();
+    });
 
     // generate the start menu
     startMenu = new StartMenu(this);
@@ -211,7 +215,6 @@ void Game::updateGame()
         //        solubleCheck();
         break;
     case GS_pause:
-        emit signalPause();
         break;
     case GS_finish:
         emit signalPause();
@@ -236,7 +239,9 @@ void Game::cleanGame()
 void Game::pauseGame()
 {
     takeScreenShoot();
+
     state = GS_pause;
+    emit signalPause();
 }
 
 void Game::continueGame()
@@ -455,7 +460,11 @@ void Game::keyReleaseEvent(QKeyEvent *event)
 
     // pause
     if(state == GS_double_mode || state == GS_single_mode)
-        if (event->key() == Qt::Key_Escape) pauseGame();
+        if (event->key() == Qt::Key_Escape) {
+            pauseGame();
+            player1->pauseHero();
+            if(gameMode == GS_double_mode) player2->pauseHero();
+        }
 
     // player 1
     if (key == Qt::Key_W || key==Qt::Key_A || key==Qt::Key_S || key==Qt::Key_D) 

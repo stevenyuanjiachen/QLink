@@ -15,9 +15,7 @@ public:
 public:
     QVector2D position;
     QPixmap pixmap; // image
-    // 速度
-    QVector2D velocity;
+    QVector2D velocity; // 速度
     int speed;
-    //碰撞箱
-    QRect collider;
+    QRect collider; // 碰撞箱
 };

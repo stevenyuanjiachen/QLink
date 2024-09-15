@@ -53,6 +53,8 @@ public:
     bool haveFreeze() { return buffSet.contains(BT_freeze); }
     void addBuff(BuffType buff);
 
+    void pauseHero();
+    void continueHero();
     void saveHeroState(const QString& filePath);
     void loadHeroState(const QString& filePath);
 private:
@@ -60,9 +62,11 @@ private:
     HeroState state, lastState;
     HeroBlockState blockState;
     QSet<BuffType> buffSet;
+    QElapsedTimer pauseElapsedTimer;
     QElapsedTimer flashElapsedTimer;
     QElapsedTimer dizzyElapsedTimer;
     QElapsedTimer freezeElapsedTimer;
+    int flashPauseTime, dizzyPauseTime, freezePauseTime;
     QVector<Animation> anima;
     Box *triggeredBox;
 };
