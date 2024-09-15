@@ -777,7 +777,7 @@ void Game::boxCollitionDect1()
     // if only one collision && trigger elapse>500 , then triggered
     if (triggeredBoxes.size() != 1)
         return;
-    if (triggerElapsedTimer1.elapsed() < 500)
+    if (triggerElapsedTimer1.elapsed() < 600)
         return;
     triggerElapsedTimer1.restart();
 
@@ -816,7 +816,7 @@ void Game::boxCollitionDect2()
     // if only one collision && trigger elapse>500 , then triggered
     if (triggeredBoxes.size() != 1)
         return;
-    if (triggerElapsedTimer2.elapsed() < 500)
+    if (triggerElapsedTimer2.elapsed() < 600)
         return;
     triggerElapsedTimer2.restart();
 

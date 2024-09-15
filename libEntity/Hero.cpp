@@ -190,9 +190,31 @@ void Hero::saveHeroState(const QString &filePath)
     if(buffSet.contains(BT_flash)){
         regex.setPattern("hero"+ID+"\\.flash:\\s*\\S+");
         fileContent.replace(regex, "hero"+ID+".flash: true");
+        regex.setPattern("hero"+ID+"\\.flashTime:\\s*\\S+");
+        fileContent.replace(regex, "hero"+ID+".flashTime: "+QString::number(flashTime));
     } else {
         regex.setPattern("hero"+ID+"\\.flash:\\s*\\S+");
         fileContent.replace(regex, "hero"+ID+".flash: false");
+    }
+
+    if(buffSet.contains(BT_dizzy)){
+        regex.setPattern("hero"+ID+"\\.dizzy:\\s*\\S+");
+        fileContent.replace(regex, "hero"+ID+".dizzy: true");
+        regex.setPattern("hero"+ID+"\\.dizzyTime:\\s*\\S+");
+        fileContent.replace(regex, "hero"+ID+".dizzyTime: "+QString::number(dizzyTime));
+    } else {
+        regex.setPattern("hero"+ID+"\\.dizzy:\\s*\\S+");
+        fileContent.replace(regex, "hero"+ID+".dizzy: false");
+    }
+
+    if(buffSet.contains(BT_freeze)){
+        regex.setPattern("hero"+ID+"\\.freeze:\\s*\\S+");
+        fileContent.replace(regex, "hero"+ID+".freeze: true");
+        regex.setPattern("hero"+ID+"\\.freezeTime:\\s*\\S+");
+        fileContent.replace(regex, "hero"+ID+".freezeTime: "+QString::number(freezeTime));
+    } else {
+        regex.setPattern("hero"+ID+"\\.freeze:\\s*\\S+");
+        fileContent.replace(regex, "hero"+ID+".freeze: false");
     }
 
     // 更新triggerBox
@@ -235,9 +257,12 @@ void Hero::loadHeroState(const QString &filePath)
 
     QTextStream in(&file);
     bool foundHero = false;
+    bool haveFlash = false;
+    bool haveDizzy = false;
+    bool haveFreeze = false;
     bool haveTriggerBox = false;
     int r, c;
-    QRegularExpression heroRegex("(hero"+ ID +"\\.(x|y|state|flash|haveTriggerBox|triggerBoxR|triggerBoxC)):\\s*(\\w+)");
+    QRegularExpression heroRegex("(hero"+ ID +"\\.(x|y|state|flash|flashTime|dizzy|dizzyTime|freeze|freezeTime|haveTriggerBox|triggerBoxR|triggerBoxC)):\\s*(\\w+)");
 
     while (!in.atEnd()) {
         QString line = in.readLine();
@@ -256,25 +281,23 @@ void Hero::loadHeroState(const QString &filePath)
                 QString value = match.captured(3);  // 属性值
 
                 // 根据属性名解析并赋值
-                if (key == "x") {
-                    position.setX(value.toInt());
-                } else if (key == "y") {
-                    position.setY(value.toInt());
-                } else if (key == "state") {
-                    state = (HeroState) value.toInt();
-                } else if (key == "flash") {
-                    if(value=="true") addBuff(BT_flash);
-                } else if (key == "haveTriggerBox") {
-                    haveTriggerBox = (value=="true");
-                } else if (key == "triggerBoxR") {
-                    r = value.toInt();
-                } else if (key == "triggerBoxC") {
-                    c = value.toInt();
-                }
+                if (key == "x") position.setX(value.toInt());
+                else if (key == "y") position.setY(value.toInt());
+                else if (key == "state") state = (HeroState) value.toInt();
+                else if (key == "haveTriggerBox") haveTriggerBox = (value=="true");
+                else if (key == "triggerBoxR") r = value.toInt();
+                else if (key == "triggerBoxC") c = value.toInt();
+                else if (key == "flash") haveFlash = (value=="true");
+                else if (key == "dizzy") haveDizzy = (value=="true");
+                else if (key == "freeze") haveFreeze = (value=="true");
+                else if (key == "flashTime") flashTime = value.toInt();
+                else if (key == "dizzyTime") dizzyTime = value.toInt();
+                else if (key == "freezeTime") freezeTime = value.toInt();
             }
         }
     }
 
+    // triggerBox
     if(haveTriggerBox)
     {
         for(auto i: Mgr->getEntity(ET_box))
@@ -288,6 +311,14 @@ void Hero::loadHeroState(const QString &filePath)
             }
         }
     }
+
+    // buff
+    if(haveFlash) this->addBuff(BT_flash);
+    if(haveDizzy) this->addBuff(BT_dizzy);
+    if(haveFreeze) this->addBuff(BT_freeze);
+    flashElapsedTimer.restart();
+    dizzyElapsedTimer.restart();
+    freezeElapsedTimer.restart();
 
     file.close();
 }
