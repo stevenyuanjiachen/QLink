@@ -14,6 +14,13 @@ Item::Item(ItemType itemType, int x, int y):
         break;
     case IT_shuffle:
         pixmap.load(SHUFFLE_IMAGE);
+        break;
+    case IT_dizzy:
+        pixmap.load(DIZZY_IMAGE);
+        break;
+    case IT_freeze:
+        pixmap.load(FREEZE_IMAGE);
+        break;
     }
 }
 

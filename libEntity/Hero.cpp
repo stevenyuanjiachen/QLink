@@ -63,10 +63,9 @@ void Hero::update()
     }
 
     // buff
-    if(flashElapsedTimer.elapsed()>5000)
-    {
-        buffSet.remove(BT_flash);
-    }
+    if(flashElapsedTimer.elapsed()>5000) buffSet.remove(BT_flash);
+    if(dizzyElapsedTimer.elapsed()>10000) buffSet.remove(BT_dizzy);
+    if(freezeElapsedTimer.elapsed()>3000) buffSet.remove(BT_freeze);
 }
 
 void Hero::draw(QPainter *painter)
@@ -108,9 +107,16 @@ void Hero::addTriggeredBox(Box *box)
 void Hero::addBuff(BuffType buff)
 {
     if(!buffSet.contains(buff)) buffSet.insert(buff);
+    
     switch (buff) {
     case BT_flash:
         flashElapsedTimer.restart();
+        break;
+    case BT_dizzy:
+        dizzyElapsedTimer.restart();
+        break;
+    case BT_freeze:
+        freezeElapsedTimer.restart();
         break;
     }
 }

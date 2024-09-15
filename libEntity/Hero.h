@@ -25,6 +25,8 @@ enum BuffType
 {
     BT_none,
     BT_flash,
+    BT_dizzy,
+    BT_freeze
 };
 
 class Hero : public Sprite
@@ -47,6 +49,8 @@ public:
     void resetTriggeredBox() { triggeredBox = nullptr; }
 
     bool haveFlash() { return buffSet.contains(BT_flash); }
+    bool haveDizzy() { return buffSet.contains(BT_dizzy); }
+    bool haveFreeze() { return buffSet.contains(BT_freeze); }
     void addBuff(BuffType buff);
 
     void saveHeroState(const QString& filePath);
@@ -57,6 +61,8 @@ private:
     HeroBlockState blockState;
     QSet<BuffType> buffSet;
     QElapsedTimer flashElapsedTimer;
+    QElapsedTimer dizzyElapsedTimer;
+    QElapsedTimer freezeElapsedTimer;
     QVector<Animation> anima;
     Box *triggeredBox;
 };

@@ -332,14 +332,13 @@ void Game::closeEvent(QCloseEvent *event)
 
 void Game::keyPressEvent(QKeyEvent *event)
 {
-    if (state == GS_pause)
-        return;
+    if (state == GS_pause) return;
 
     // player 1
-    if (player1->getState() == HS_stand_down ||
-        player1->getState() == HS_stand_up ||
-        player1->getState() == HS_stand_left ||
-        player1->getState() == HS_stand_right)
+    HeroState state1 = player1->getState();
+    if (state1 == HS_stand_down || state1 == HS_stand_up || 
+        state1 == HS_stand_left || state1 == HS_stand_right
+        && !player1->haveFreeze() && !player1->haveDizzy())
     {
         switch (event->key())
         {
@@ -365,14 +364,41 @@ void Game::keyPressEvent(QKeyEvent *event)
             break;
         }
     }
+    // player 1 have dizzy
+    if(player1->haveDizzy())
+    {
+        switch (event->key())
+        {
+        case Qt::Key_W:
+            player1->setState(HS_move_down);
+            player1->velocity.setX(0);
+            player1->velocity.setY(1);
+            break;
+        case Qt::Key_A:
+            player1->setState(HS_move_right);
+            player1->velocity.setX(1);
+            player1->velocity.setY(0);
+            break;
+        case Qt::Key_S:
+            player1->setState(HS_move_up);
+            player1->velocity.setX(0);
+            player1->velocity.setY(-1);
+            break;
+        case Qt::Key_D:
+            player1->setState(HS_move_left);
+            player1->velocity.setX(-1);
+            player1->velocity.setY(0);
+            break;
+        }
+
+    }
 
     // player 2
-    if (this->state != GS_double_mode)
-        return;
-    if (player2->getState() == HS_stand_down ||
-        player2->getState() == HS_stand_up ||
-        player2->getState() == HS_stand_left ||
-        player2->getState() == HS_stand_right)
+    if (this->state != GS_double_mode) return;
+    HeroState state2 = player2->getState();
+    if (state2 == HS_stand_down || state2 == HS_stand_up ||
+        state2 == HS_stand_left || state2 == HS_stand_right
+        && !player2->haveDizzy() && !player2->haveFreeze())
     {
         switch (event->key())
         {
@@ -398,10 +424,40 @@ void Game::keyPressEvent(QKeyEvent *event)
             break;
         }
     }
+    // player2 have dizzy
+    if(player2->haveDizzy())
+    {
+        switch (event->key())
+        {
+        case Qt::Key_Down:
+            player2->setState(HS_move_up);
+            player2->velocity.setX(0);
+            player2->velocity.setY(-1);
+            break;
+        case Qt::Key_Right:
+            player2->setState(HS_move_left);
+            player2->velocity.setX(-1);
+            player2->velocity.setY(0);
+            break;
+        case Qt::Key_Up:
+            player2->setState(HS_move_down);
+            player2->velocity.setX(0);
+            player2->velocity.setY(1);
+            break;
+        case Qt::Key_Left:
+            player2->setState(HS_move_right);
+            player2->velocity.setX(1);
+            player2->velocity.setY(0);
+            break;
+        }
+    }
+
 }
 
 void Game::keyReleaseEvent(QKeyEvent *event)
 {
+    int key = event->key();
+
     // start menu
     if(state == GS_start) emit signalKeyRelease(event);
 
@@ -410,67 +466,48 @@ void Game::keyReleaseEvent(QKeyEvent *event)
         if (event->key() == Qt::Key_Escape) pauseGame();
 
     // player 1
-    if (player1->getState() == HS_move_down ||
-        player1->getState() == HS_move_up ||
-        player1->getState() == HS_move_left ||
-        player1->getState() == HS_move_right)
+    if (key == Qt::Key_W || key==Qt::Key_A || key==Qt::Key_S || key==Qt::Key_D) 
     {
-        switch (event->key())
+        switch (player1->getState())
         {
-        case Qt::Key_W:
+        case HS_move_up:
             player1->setState(HS_stand_up);
-            player1->velocity.setX(0);
-            player1->velocity.setY(0);
             break;
-        case Qt::Key_A:
+        case HS_move_left:
             player1->setState(HS_stand_left);
-            player1->velocity.setX(0);
-            player1->velocity.setY(0);
             break;
-        case Qt::Key_S:
+        case HS_move_down:
             player1->setState(HS_stand_down);
-            player1->velocity.setX(0);
-            player1->velocity.setY(0);
             break;
-        case Qt::Key_D:
+        case HS_move_right:
             player1->setState(HS_stand_right);
-            player1->velocity.setX(0);
-            player1->velocity.setY(0);
             break;
         }
+        player1->velocity.setX(0);
+        player1->velocity.setY(0);
     }
 
     // player2
-    if (this->state != GS_double_mode)
-        return;
-    if (player2->getState() == HS_move_down ||
-        player2->getState() == HS_move_up ||
-        player2->getState() == HS_move_left ||
-        player2->getState() == HS_move_right)
+    if (this->state != GS_double_mode) return;
+    if (key == Qt::Key_Up || key==Qt::Key_Left || key==Qt::Key_Right || key==Qt::Key_Down) 
     {
-        switch (event->key())
+        switch (player2->getState())
         {
-        case Qt::Key_Up:
+        case HS_move_up:
             player2->setState(HS_stand_up);
-            player2->velocity.setX(0);
-            player2->velocity.setY(0);
             break;
-        case Qt::Key_Left:
+        case HS_move_left:
             player2->setState(HS_stand_left);
-            player2->velocity.setX(0);
-            player2->velocity.setY(0);
             break;
-        case Qt::Key_Down:
+        case HS_move_down:
             player2->setState(HS_stand_down);
-            player2->velocity.setX(0);
-            player2->velocity.setY(0);
             break;
-        case Qt::Key_Right:
+        case HS_move_right:
             player2->setState(HS_stand_right);
-            player2->velocity.setX(0);
-            player2->velocity.setY(0);
             break;
         }
+        player2->velocity.setX(0);
+        player2->velocity.setY(0);
     }
 }
 
@@ -699,6 +736,10 @@ void Game::generateItem()
     if (state == GS_double_mode) // delete flash in the double mode
         while (itemType == IT_flash)
             itemType = QRandomGenerator::global()->bounded(ITEM_TYPE_NUM);
+    if (state == GS_single_mode)
+        while (itemType == IT_dizzy || itemType==IT_freeze)
+            itemType = QRandomGenerator::global()->bounded(ITEM_TYPE_NUM);
+
     item = new Item((ItemType)itemType);
 
     // random the location
@@ -821,6 +862,11 @@ void Game::itemCollitionDect()
             case IT_shuffle:
                 shuffleBox();
                 break;
+            case IT_dizzy:
+                player2->addBuff(BT_dizzy);
+                break;
+            case IT_freeze:
+                player2->addBuff(BT_freeze);
             }
             item->pickUp();
         }
@@ -839,6 +885,11 @@ void Game::itemCollitionDect()
             case IT_shuffle:
                 shuffleBox();
                 break;
+            case IT_dizzy:
+                player1->addBuff(BT_dizzy);
+                break;
+            case IT_freeze:
+                player1->addBuff(BT_freeze);
             }
             item->pickUp();
         }

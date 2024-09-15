@@ -138,3 +138,7 @@ const QString ADD1S_IMAGE = "../res/images/Item/clock.png";
 const QString FLASH_IMAGE = "../res/images/Item/mouse_arrow.png";
 
 const QString SHUFFLE_IMAGE = "../res/images/Item/shuffle.png";
+
+const QString DIZZY_IMAGE = "../res/images/Item/mushroom.png";
+
+const QString FREEZE_IMAGE = "../res/images/Item/ice.png";
