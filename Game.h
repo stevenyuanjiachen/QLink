@@ -82,6 +82,7 @@ signals:
     void signalFinish(int gamemode, int score);
     void signalScore1(int x);
     void signalScore2(int x);
+    void signalKeyRelease(QKeyEvent* event);
 
 protected:
     // 事件处理

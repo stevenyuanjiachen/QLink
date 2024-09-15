@@ -282,3 +282,17 @@ void StartMenu::newGame()
 
     emit signalNewGame(gamemode, M, N, time);
 }
+
+void StartMenu::keyReleaseEvent(QKeyEvent* event)
+{
+    if(event->key() == Qt::Key_Escape)
+        switch (state)
+        {
+        case SMS_choose_mode:
+            state = SMS_start;
+            break;
+        case SMS_input:
+            state = SMS_choose_mode;
+            break;
+        }
+}

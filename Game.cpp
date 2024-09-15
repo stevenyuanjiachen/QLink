@@ -24,12 +24,10 @@
 // the Box Matrix is M*N
 int M = 8, N = 8;
 
-Hero *player1;
-Hero *player2;
+Hero *player1, *player2;
 Map *gameMap;
 MyProgressBar *progressBar;
-ScoreBoard *scoreBoard1;
-ScoreBoard *scoreBoard2;
+ScoreBoard *scoreBoard1, *scoreBoard2;
 PauseMenu *pauseMenu;
 StartMenu *startMenu;
 FinishMenu *finishMenu;
@@ -96,6 +94,8 @@ void Game::initGame(int w, int h,
     startMenu = new StartMenu(this);
     connect(startMenu, &StartMenu::signalNewGame, this, &Game::newGame);
     connect(startMenu, &StartMenu::signalLoadGame, this, &Game::loadGame);
+    connect(startMenu, &StartMenu::signalExit, this, &Game::close);
+    connect(this, &Game::signalKeyRelease, startMenu, &StartMenu::keyReleaseEvent);
 
     // generate the finish menu
     finishMenu = new FinishMenu(this, (MAP_WIDTH * CUBE_LENGTH - PAUSE_MENU_WIDTH) / 2, (MAP_HEIGHT * CUBE_LENGTH - PAUSE_MENU_HEIGHT) / 2);
@@ -223,6 +223,14 @@ void Game::updateGame()
 
 void Game::cleanGame()
 {
+    Mgr->clean();
+    delete scoreBoard1;
+    delete scoreBoard2;
+    delete progressBar;
+    delete gameMap;
+    delete pauseMenu;
+    delete finishMenu;
+    delete startMenu;
 }
 
 void Game::pauseGame()
@@ -394,6 +402,9 @@ void Game::keyPressEvent(QKeyEvent *event)
 
 void Game::keyReleaseEvent(QKeyEvent *event)
 {
+    // start menu
+    if(state == GS_start) emit signalKeyRelease(event);
+
     // pause
     if(state == GS_double_mode || state == GS_single_mode)
         if (event->key() == Qt::Key_Escape) pauseGame();

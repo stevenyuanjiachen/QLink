@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QKeyEvent>
 
 enum StartMenuState{
     SMS_start,
@@ -25,10 +26,14 @@ public:
     void hide();
     void show();
     void newGame();
+
 signals:
     void signalExit();
     void signalLoadGame();
     void signalNewGame(int gamemode, int m, int n, int time);
+
+public slots:
+    void keyReleaseEvent(QKeyEvent* event) override;
 
 private:
     StartMenuState state;
