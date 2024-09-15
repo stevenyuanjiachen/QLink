@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.16)
 
 project(QLink LANGUAGES CXX)
 
+set(CMAKE_EXE_LINKER_FLAGS "-static")
+
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
