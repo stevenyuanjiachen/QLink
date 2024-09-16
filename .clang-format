@@ -1,0 +1,27 @@
+BasedOnStyle: Google
+IndentWidth: 4          # 每级缩进 4 个空格
+UseTab: Never           # 不使用 Tab
+AllowShortIfStatementsOnASingleLine: true
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterFunction: true    # 函数定义的大括号放在下一行
+  AfterControlStatement: false  # 控制结构的大括号放在同一行
+  AfterEnum: false
+  AfterStruct: false
+  SplitEmptyFunction: false
+
+SpaceBeforeParens: ControlStatements  # 控制结构后面加空格，如 if (...) 
+
+SpacesInParentheses: false  # 禁止在括号内加空格
+SpaceBeforeAssignmentOperators: true  # 赋值运算符左右两边空格
+SpacesInAngles: false       # 禁止在尖括号中添加空格（用于模板）
+
+# 控制运算符周围的空格
+SpacesBeforeTrailingComments: 2  # 注释前留两个空格
+AllowShortLoopsOnASingleLine: false
+
+ColumnLimit: 100  # 每行字符限制
+
+IndentCaseLabels: false  # switch 语句中的 case 标签缩进
+AccessModifierOffset: -4

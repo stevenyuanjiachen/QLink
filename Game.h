@@ -1,30 +1,23 @@
 #pragma once
 
+#include <QElapsedTimer>
+#include <QIcon>
+#include <QKeyEvent>
+#include <QLine>
+#include <QMouseEvent>
+#include <QPainter>
+#include <QTimer>
+
 #include "MyEntity"
 #include "MyWidget"
-#include <QIcon>
-#include <QPainter>
-#include <QKeyEvent>
-#include <QMouseEvent>
-#include <QElapsedTimer>
-#include <QTimer>
-#include <QLine>
 
 const int GAME_FPS = 60;
 const int MAX_M = 10;
 const int MAX_N = 10;
 
-enum GameState
-{
-    GS_start,
-    GS_single_mode,
-    GS_double_mode,
-    GS_pause,
-    GS_finish
-};
+enum GameState { GS_start, GS_single_mode, GS_double_mode, GS_pause, GS_finish };
 
-class Game : public QWidget
-{
+class Game : public QWidget {
     Q_OBJECT
 public:
     // 游戏实现
