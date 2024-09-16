@@ -1,12 +1,10 @@
 #include "Box.h"
 
-Box::Box(int x, int y, BoxColor color):
-    Entity(ET_box), state(BS_normal), 
-    position(x, y), color(color), pixmap(BOX_RED_LIST[0])
+Box::Box(int x, int y, BoxColor color)
+    : Entity(ET_box), state(BS_normal), position(x, y), color(color), pixmap(BOX_RED_LIST[0])
 {
     // load the animation
-    switch (color)
-    {
+    switch (color) {
     case BC_red:
         anima = new Animation(BOX_RED_LIST);
         break;
@@ -24,8 +22,7 @@ void Box::update()
     collider = QRect(position.toPoint(), pixmap.size());
 
     // state machine
-    switch (state)
-    {
+    switch (state) {
     case BS_normal:
         this->disconnect();
         break;
@@ -34,16 +31,22 @@ void Box::update()
         emitSignalCancelTrigger();
         break;
     case BS_triggering:
-        if(!anima->isLastFrame()) anima->update();
-        else state = BS_triggered;
+        if (!anima->isLastFrame())
+            anima->update();
+        else
+            state = BS_triggered;
         break;
     case BS_cancel_triggering:
-        if(!anima->isFirstFrame()) anima->updateBack();
-        else state = BS_normal;
+        if (!anima->isFirstFrame())
+            anima->updateBack();
+        else
+            state = BS_normal;
         break;
     case BS_elimating:
-        if(!anima->isLastFrame()) anima->update();
-        else state = BS_elimate;
+        if (!anima->isLastFrame())
+            anima->update();
+        else
+            state = BS_elimate;
         break;
     case BS_elimate:
         state = BS_clean;
@@ -73,12 +76,12 @@ void Box::setMatrixPosition(int r, int c)
 
 void Box::trigger()
 {
-    if(state == BS_normal) state = BS_triggering;
+    if (state == BS_normal) state = BS_triggering;
 }
 
 void Box::cancelTrigger()
 {
-    if(state == BS_triggered) state = BS_cancel_triggering;
+    if (state == BS_triggered) state = BS_cancel_triggering;
 }
 
 void Box::emitSignalCancelTrigger()

@@ -1,23 +1,17 @@
 #pragma once
 
-#include "Entity.h"
-#include "Animation.h"
-#include "EntityResList.h"
-#include <QVector2D>
 #include <QPixmap>
 #include <QRect>
+#include <QVector2D>
 #include <QVector>
 
+#include "Animation.h"
+#include "Entity.h"
+#include "EntityResList.h"
+
 const int BOX_COLOR_NUM = 3;
-enum BoxColor
-{
-    BC_none,
-    BC_red,
-    BC_pink,
-    BC_blue
-};
-enum BoxState
-{
+enum BoxColor { BC_none, BC_red, BC_pink, BC_blue };
+enum BoxState {
     BS_normal,
     BS_triggered,
     BS_triggering,
@@ -27,8 +21,7 @@ enum BoxState
     BS_clean
 };
 
-class Box : public Entity
-{
+class Box : public Entity {
     Q_OBJECT
 public:
     Box(int x, int y, BoxColor color);
@@ -45,12 +38,12 @@ public:
     void trigger();
     void cancelTrigger();
     void emitSignalCancelTrigger();
-    void elimate(); 
+    void elimate();
     void emitSignalElimate();
 
 signals:
-    void signalElimate(Box* box);
-    void signalCancelTrigger(Box* box);
+    void signalElimate(Box *box);
+    void signalCancelTrigger(Box *box);
 
 private:
     QVector2D position;
