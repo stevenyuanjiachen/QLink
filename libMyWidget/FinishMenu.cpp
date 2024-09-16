@@ -49,6 +49,14 @@ void FinishMenu::hide()
     label.hide();
 }
 
+/*
+* if gamemode == 1:
+*     score = player's score
+* if gamemode == 2:
+*     score = 1: 1 win
+*     score = 2: 2 win
+*     score = 3: a tie
+*/
 void FinishMenu::setLabel(int gamemode, int score)
 {
     QFontMetrics fontMetric(label.font());
@@ -56,7 +64,12 @@ void FinishMenu::setLabel(int gamemode, int score)
 
     // inputM
     if (gamemode == 1) text = "Score: " + QString::number(score);
-    if (gamemode == 2) text = "Player" + QString::number(score) + " Win!";
+    if (gamemode == 2) {
+        if(score==1 || score==2)
+            text = "Player" + QString::number(score) + " Win!";
+        if(score==3)
+            text = "A Tie!";
+    }
 
     int width = fontMetric.horizontalAdvance(text) + 10;
     int height = fontMetric.height();

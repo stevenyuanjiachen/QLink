@@ -1011,11 +1011,7 @@ bool Game::horizonElimatable(int r1, int c1, int r2, int c2, int showPath)
     if (r1 != r2) return false;
 
     // ensure c1<c2
-    if (c1 > c2) {
-        int foo = c1;
-        c1 = c2;
-        c2 = foo;
-    }
+    if (c1 > c2) std::swap(c1, c2);
 
     for (int i = c1 + 1; i < c2; ++i)
         if (boxMatrix[r1][i] != 0) return false;
@@ -1041,11 +1037,7 @@ bool Game::verticalElimatable(int r1, int c1, int r2, int c2, int showPath)
     if (c1 != c2) return false;
 
     // ensure c1<c2
-    if (r1 > r2) {
-        int foo = r1;
-        r1 = r2;
-        r2 = foo;
-    }
+    if (r1 > r2) std::swap(r1, r2);
 
     for (int i = r1 + 1; i < r2; ++i)
         if (boxMatrix[i][c1] != 0) return false;
