@@ -11,7 +11,7 @@ public:
     FinishMenu(QWidget *parent, int x, int y);
     void draw(QPainter *painter);
     void hide();
-    void setLabel(int gamemode, int score);\
+    void setLabel(int gamemode, int score);
     
 signals:
     void signalQuitGame();
