@@ -200,7 +200,7 @@ void Game::updateGame()
         boxCollitionDect1();
         generateItem();
         itemCollitionDect();
-        //        solubleCheck();
+        solubleCheck();
         break;
     case GS_double_mode:
         Mgr->update();
@@ -208,7 +208,7 @@ void Game::updateGame()
         boxCollitionDect2();
         generateItem();
         itemCollitionDect();
-        //        solubleCheck();
+        solubleCheck();
         break;
     case GS_pause:
         break;
@@ -1461,7 +1461,8 @@ void Game::loadItems(const QString &filePath)
 
 // 判定函数
 bool Game::elimatable(const Box *box1, const Box *box2, int showPath)
-{
+{   
+    if(box1->getColor()!=box2->getColor()) return false;
     return horizonElimatable(box1, box2, showPath) || verticalElimatable(box1, box2, showPath) || oneCornerElimatable(box1, box2, showPath) || twoCornerElimatable(box1, box2, showPath);
 }
 
