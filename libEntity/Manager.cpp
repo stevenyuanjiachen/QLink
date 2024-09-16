@@ -2,8 +2,8 @@
 
 Manager *Manager::getInstance()
 {
-    static Manager* ins = nullptr;
-    if(ins==nullptr) ins = new Manager();
+    static Manager *ins = nullptr;
+    if (ins == nullptr) ins = new Manager();
     return ins;
 }
 
@@ -20,10 +20,8 @@ QSet<Entity *> &Manager::getEntity(EntityType type)
 void Manager::update()
 {
     this->refresh();
-    for(int i=0; i<ENTITY_TYPE_NUM; ++i)
-    {
-        for (auto j:entities[i])
-        {
+    for (int i = 0; i < ENTITY_TYPE_NUM; ++i) {
+        for (auto j : entities[i]) {
             j->update();
         }
     }
@@ -31,10 +29,8 @@ void Manager::update()
 
 void Manager::draw(QPainter *painter)
 {
-    for(int i=0; i<ENTITY_TYPE_NUM; ++i)
-    {
-        for (auto j:entities[i])
-        {
+    for (int i = 0; i < ENTITY_TYPE_NUM; ++i) {
+        for (auto j : entities[i]) {
             j->draw(painter);
         }
     }
@@ -42,14 +38,11 @@ void Manager::draw(QPainter *painter)
 
 void Manager::refresh()
 {
-    for(int i=0; i<ENTITY_TYPE_NUM; ++i)
-    {
-        entities[i].removeIf([](Entity* e){
-            if(e->isActive())
-            {
+    for (int i = 0; i < ENTITY_TYPE_NUM; ++i) {
+        entities[i].removeIf([](Entity *e) {
+            if (e->isActive()) {
                 return false;
-            }else
-            {
+            } else {
                 delete e;
                 return true;
             }
@@ -59,10 +52,8 @@ void Manager::refresh()
 
 void Manager::clean()
 {
-    for(int i=0 ; i<ENTITY_TYPE_NUM; ++i)
-    {
-        for(auto j: entities[i])
-        {
+    for (int i = 0; i < ENTITY_TYPE_NUM; ++i) {
+        for (auto j : entities[i]) {
             j->destroy();
         }
     }
@@ -71,8 +62,7 @@ void Manager::clean()
 
 void Manager::cleanEntityType(EntityType type)
 {
-    for(auto i : entities[type])
-    {
+    for (auto i : entities[type]) {
         i->destroy();
     }
 

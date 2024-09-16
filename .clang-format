@@ -2,6 +2,7 @@ BasedOnStyle: Google
 IndentWidth: 4          # 每级缩进 4 个空格
 UseTab: Never           # 不使用 Tab
 AllowShortIfStatementsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: false  # 仅允许空函数在一行上
 
 BreakBeforeBraces: Custom
 BraceWrapping:

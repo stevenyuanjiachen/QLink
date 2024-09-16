@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Entity.h"
-#include <QSet>
 #include <QPainter>
+#include <QSet>
+
+#include "Entity.h"
 #define Mgr Manager::getInstance()
 
-class Manager
-{
+class Manager {
 public:
     static Manager* getInstance();
     void addEntity(Entity* e);
@@ -17,8 +17,8 @@ public:
     void refresh();
     void clean();
     void cleanEntityType(EntityType type);
-    
+
 private:
-    Manager(){}
+    Manager() {}
     QSet<Entity*> entities[ENTITY_TYPE_NUM];
 };
