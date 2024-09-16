@@ -20,9 +20,9 @@ enum GameState { GS_start, GS_single_mode, GS_double_mode, GS_pause, GS_finish }
 class Game : public QWidget {
     Q_OBJECT
 public:
-    // 游戏实现
     explicit Game(QWidget *parent = nullptr);
     void run();
+    // Game Progress
     void initGame(const int w, const int h, const QString &title, const QIcon & = QIcon());
     void newGame(int gamemode, int m, int n, int time);
     void updateGame();
@@ -36,7 +36,7 @@ public:
     void toStartMenu();
 
 public:
-    // 功能函数
+    // Tools
     void generateBox(bool generateMatrix = true);
     void generateItem();
     void boxCollitionDect1();
@@ -59,9 +59,8 @@ public:
     void loadBoxes(const QString &filePath);
     void saveItems(const QString &filePath);
     void loadItems(const QString &filePath);
-
-    // 判定函数
     void setBoxMatrix(int matrix[MAX_M + 2][MAX_N + 2], int m, int n);
+    // Decision Functions
     bool elimatable(int r1, int c1, int r2, int c2, int showPath = 0);
     bool elimatable(const Box *box1, const Box *box2, int showPath = 0);
     bool horizonElimatable(int r1, int c1, int r2, int c2, int showPath = 0);
@@ -72,6 +71,7 @@ public:
     bool oneCornerElimatable(const Box *box1, const Box *box2, int showPath = 0);
     bool twoCornerElimatable(int r1, int c1, int r2, int c2, int showPath = 0);
     bool twoCornerElimatable(const Box *box1, const Box *box2, int showPath = 0);
+    // Judge whether the character can move to the box
     bool canReachEdge(const int r, const int c);
 
 signals:
@@ -83,7 +83,7 @@ signals:
     void signalKeyRelease(QKeyEvent *event);
 
 protected:
-    // 事件处理
+    // QWidget's slots
     void paintEvent(QPaintEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
@@ -95,9 +95,9 @@ private:
     GameState gameMode;
     int M = 8, N = 8;
     int boxMatrix[MAX_M + 2][MAX_N + 2] = {};
-    QElapsedTimer triggerElapsedTimer1;
+    QElapsedTimer triggerElapsedTimer1; // Preventing Repeat Triggers
     QElapsedTimer triggerElapsedTimer2;
-    QElapsedTimer showPathElapsedTimer1;
+    QElapsedTimer showPathElapsedTimer1; // Control the Path time
     QElapsedTimer showPathElapsedTimer2;
     QElapsedTimer itemGenerateElapsedTimer;
     QSet<QLine *> lineSet1;

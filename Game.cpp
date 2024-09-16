@@ -13,7 +13,6 @@
 #include <iostream>
 #include <queue>
 
-// 游戏实现
 Game::Game(QWidget *parent) : QWidget(parent), state(GS_start)
 {
     // game timer
@@ -32,6 +31,7 @@ void Game::run()
     this->show();
 }
 
+// Game Progress
 void Game::initGame(int w, int h, const QString &title, const QIcon &icon)
 {
     // Set the Window's Size, Title and Icon
@@ -287,6 +287,7 @@ void Game::loadGame()
     continueGame();
 }
 
+// Tools
 void Game::toStartMenu()
 {
     Mgr->clean();
@@ -296,330 +297,6 @@ void Game::toStartMenu()
     state = GS_start;
 }
 
-void Game::paintEvent(QPaintEvent *event)
-{
-    QPainter painter(this);
-    drawGame(&painter);
-}
-
-void Game::closeEvent(QCloseEvent *event)
-{
-    this->cleanGame();
-    return;
-}
-
-void Game::keyPressEvent(QKeyEvent *event)
-{
-    if (state == GS_pause) return;
-
-    // player 1
-    if (!player1->haveDizzy() && !player1->haveFreeze()) {
-        switch (event->key()) {
-        case Qt::Key_W:
-            player1->setState(HS_move_up);
-            player1->velocity.setX(0);
-            player1->velocity.setY(-1);
-            break;
-        case Qt::Key_A:
-            player1->setState(HS_move_left);
-            player1->velocity.setX(-1);
-            player1->velocity.setY(0);
-            break;
-        case Qt::Key_S:
-            player1->setState(HS_move_down);
-            player1->velocity.setX(0);
-            player1->velocity.setY(1);
-            break;
-        case Qt::Key_D:
-            player1->setState(HS_move_right);
-            player1->velocity.setX(1);
-            player1->velocity.setY(0);
-            break;
-        }
-    }
-    // player 1 have dizzy
-    if (player1->haveDizzy() && !player1->haveFreeze()) {
-        switch (event->key()) {
-        case Qt::Key_W:
-            player1->setState(HS_move_down);
-            player1->velocity.setX(0);
-            player1->velocity.setY(1);
-            break;
-        case Qt::Key_A:
-            player1->setState(HS_move_right);
-            player1->velocity.setX(1);
-            player1->velocity.setY(0);
-            break;
-        case Qt::Key_S:
-            player1->setState(HS_move_up);
-            player1->velocity.setX(0);
-            player1->velocity.setY(-1);
-            break;
-        case Qt::Key_D:
-            player1->setState(HS_move_left);
-            player1->velocity.setX(-1);
-            player1->velocity.setY(0);
-            break;
-        }
-    }
-
-    // player 2
-    if (this->state != GS_double_mode) return;
-    if (!player2->haveDizzy() && !player2->haveFreeze()) {
-        switch (event->key()) {
-        case Qt::Key_Up:
-            player2->setState(HS_move_up);
-            player2->velocity.setX(0);
-            player2->velocity.setY(-1);
-            break;
-        case Qt::Key_Left:
-            player2->setState(HS_move_left);
-            player2->velocity.setX(-1);
-            player2->velocity.setY(0);
-            break;
-        case Qt::Key_Down:
-            player2->setState(HS_move_down);
-            player2->velocity.setX(0);
-            player2->velocity.setY(1);
-            break;
-        case Qt::Key_Right:
-            player2->setState(HS_move_right);
-            player2->velocity.setX(1);
-            player2->velocity.setY(0);
-            break;
-        }
-    }
-    // player2 have dizzy
-    if (player2->haveDizzy() && !player2->haveFreeze()) {
-        switch (event->key()) {
-        case Qt::Key_Down:
-            player2->setState(HS_move_up);
-            player2->velocity.setX(0);
-            player2->velocity.setY(-1);
-            break;
-        case Qt::Key_Right:
-            player2->setState(HS_move_left);
-            player2->velocity.setX(-1);
-            player2->velocity.setY(0);
-            break;
-        case Qt::Key_Up:
-            player2->setState(HS_move_down);
-            player2->velocity.setX(0);
-            player2->velocity.setY(1);
-            break;
-        case Qt::Key_Left:
-            player2->setState(HS_move_right);
-            player2->velocity.setX(1);
-            player2->velocity.setY(0);
-            break;
-        }
-    }
-}
-
-void Game::keyReleaseEvent(QKeyEvent *event)
-{
-    int key = event->key();
-
-    // start menu
-    if (state == GS_start) emit signalKeyRelease(event);
-
-    // pause
-    if (state == GS_double_mode || state == GS_single_mode)
-        if (event->key() == Qt::Key_Escape) pauseGame();
-
-    // player 1
-    if (key == Qt::Key_W || key == Qt::Key_A || key == Qt::Key_S || key == Qt::Key_D) {
-        switch (player1->getState()) {
-        case HS_move_up:
-            player1->setState(HS_stand_up);
-            break;
-        case HS_move_left:
-            player1->setState(HS_stand_left);
-            break;
-        case HS_move_down:
-            player1->setState(HS_stand_down);
-            break;
-        case HS_move_right:
-            player1->setState(HS_stand_right);
-            break;
-        }
-        player1->velocity.setX(0);
-        player1->velocity.setY(0);
-    }
-
-    // player2
-    if (this->state != GS_double_mode) return;
-    if (key == Qt::Key_Up || key == Qt::Key_Left || key == Qt::Key_Right || key == Qt::Key_Down) {
-        switch (player2->getState()) {
-        case HS_move_up:
-            player2->setState(HS_stand_up);
-            break;
-        case HS_move_left:
-            player2->setState(HS_stand_left);
-            break;
-        case HS_move_down:
-            player2->setState(HS_stand_down);
-            break;
-        case HS_move_right:
-            player2->setState(HS_stand_right);
-            break;
-        }
-        player2->velocity.setX(0);
-        player2->velocity.setY(0);
-    }
-}
-
-void Game::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (!player1->haveFlash()) return;
-
-    QPoint mousePos = event->pos();
-    QRect newCollider(mousePos.x() - 13, mousePos.y(), 26, 14);
-    int newX = mousePos.x() - 13;
-    int newY = mousePos.y() - 30;
-
-    // out of the map
-    if (mousePos.x() < MAP_BLOCK_LEFT || mousePos.x() > MAP_BLOCK_RIGHT ||
-        mousePos.y() < MAP_BLOCK_UP || mousePos.y() > MAP_BLOCK_DOWN)
-        return;
-
-    // at the edge of the map
-    QRect mapLeftEdge(MAP_BLOCK_LEFT - 1, MAP_BLOCK_UP, 1, MAP_BLOCK_DOWN - MAP_BLOCK_UP);
-    QRect mapRightEdge(MAP_BLOCK_RIGHT, MAP_BLOCK_UP, 1, MAP_BLOCK_DOWN - MAP_BLOCK_UP);
-    QRect mapUpEdge(MAP_BLOCK_LEFT, MAP_BLOCK_UP - 1, MAP_BLOCK_RIGHT - MAP_BLOCK_LEFT, 1);
-    QRect mapDownEdge(MAP_BLOCK_LEFT, MAP_BLOCK_DOWN, MAP_BLOCK_RIGHT - MAP_BLOCK_LEFT, 1);
-    if (newCollider.intersects(mapLeftEdge)) {
-        newX = MAP_BLOCK_LEFT;
-        if (newCollider.intersects(mapDownEdge)) newY = MAP_BLOCK_DOWN - 44;
-        if (newCollider.intersects(mapUpEdge)) newY = MAP_BLOCK_UP - 30;
-        player1->setPosition(newX, newY);
-        return;
-    }
-    if (newCollider.intersects(mapRightEdge)) {
-        newX = MAP_BLOCK_RIGHT - 26;
-        if (newCollider.intersects(mapDownEdge)) newY = MAP_BLOCK_DOWN - 44;
-        if (newCollider.intersects(mapUpEdge)) newY = MAP_BLOCK_UP - 30;
-        player1->setPosition(newX, newY);
-        return;
-    }
-    if (newCollider.intersects(mapDownEdge)) {
-        newY = MAP_BLOCK_DOWN - 44;
-        player1->setPosition(newX, newY);
-        return;
-    }
-    if (newCollider.intersects(mapUpEdge)) {
-        newY = MAP_BLOCK_UP - 30;
-        player1->setPosition(newX, newY);
-        return;
-    }
-
-    // in the box matrix
-    int r, c;
-    int matrixLeft = MAP_BLOCK_LEFT + (MAP_BLOCK_RIGHT - MAP_BLOCK_LEFT - N * CUBE_LENGTH) / 2;
-    int matrixRight = matrixLeft + N * CUBE_LENGTH;
-    int matrixUp = MAP_BLOCK_UP + (MAP_BLOCK_DOWN - MAP_BLOCK_UP - M * CUBE_LENGTH) / 2;
-    int matrixDown = matrixUp + M * CUBE_LENGTH;
-    if (mousePos.x() > matrixLeft && mousePos.x() < matrixRight && mousePos.y() > matrixUp &&
-        mousePos.y() < matrixDown) {
-        c = (mousePos.x() - matrixLeft) / CUBE_LENGTH + 1;
-        r = (mousePos.y() - matrixUp) / CUBE_LENGTH + 1;
-        // 边界上
-        if (r == 1 || c == 1 || r == M || c == N) {
-            // 空点
-            if (boxMatrix[r][c] == 0) {
-                newX = matrixLeft + (c - 0.5) * CUBE_LENGTH - 13;
-                newY = matrixUp + (r - 0.5) * CUBE_LENGTH - 30;
-            }
-            // 非空点
-            else {
-                if (c == 1) newX = matrixLeft - 0.5 * CUBE_LENGTH - 13;
-                if (r == 1) newY = matrixUp - 0.5 * CUBE_LENGTH - 30;
-                if (c == N) newX = matrixRight + 0.5 * CUBE_LENGTH - 13;
-                if (r == M) newY = matrixDown + 0.5 * CUBE_LENGTH - 30;
-                triggerBox(r, c);
-            }
-            player1->setPosition(newX, newY);
-            return;
-        }
-        // 内部
-        else {
-            // 空点
-            if (boxMatrix[r][c] == 0) {
-                if (canReachEdge(r, c)) {
-                    newX = matrixLeft + (c - 0.5) * CUBE_LENGTH - 13;
-                    newY = matrixUp + (r - 0.5) * CUBE_LENGTH - 30;
-                    player1->setPosition(newX, newY);
-                }
-                return;
-                // 非空点
-            } else {
-                if (canReachEdge(r - 1, c)) {
-                    newX = matrixLeft + (c - 0.5) * CUBE_LENGTH - 13;
-                    newY = matrixUp + (r - 1.5) * CUBE_LENGTH - 30;
-                    player1->setPosition(newX, newY);
-                    triggerBox(r, c);
-                    return;
-                }
-                if (canReachEdge(r + 1, c)) {
-                    newX = matrixLeft + (c - 0.5) * CUBE_LENGTH - 13;
-                    newY = matrixUp + (r + 0.5) * CUBE_LENGTH - 30;
-                    player1->setPosition(newX, newY);
-                    triggerBox(r, c);
-                    return;
-                }
-                if (canReachEdge(r, c - 1)) {
-                    newX = matrixLeft + (c - 1.5) * CUBE_LENGTH - 13;
-                    newY = matrixUp + (r - 0.5) * CUBE_LENGTH - 30;
-                    player1->setPosition(newX, newY);
-                    triggerBox(r, c);
-                    return;
-                }
-                if (canReachEdge(r, c + 1)) {
-                    newX = matrixLeft + (c + 0.5) * CUBE_LENGTH - 13;
-                    newY = matrixUp + (r - 0.5) * CUBE_LENGTH - 30;
-                    player1->setPosition(newX, newY);
-                    triggerBox(r, c + 1);
-                    return;
-                }
-                return;
-            }
-        }
-    }
-
-    // at the edge of the box matrix
-    QRect leftEdge(matrixLeft - 1, matrixUp, 1, matrixDown - matrixUp);
-    QRect rightEdge(matrixRight, matrixUp, 1, matrixDown - matrixUp);
-    QRect upEdge(matrixLeft, matrixUp - 1, matrixRight - matrixLeft, 1);
-    QRect downEdge(matrixLeft, matrixDown, matrixRight - matrixLeft, 1);
-    if (newCollider.intersects(leftEdge)) {
-        newX = matrixLeft - 27;
-        if (newCollider.intersects(mapDownEdge)) newY = matrixDown - 29;
-        if (newCollider.intersects(mapUpEdge)) newY = MAP_BLOCK_UP - 45;
-        player1->setPosition(newX, newY);
-        return;
-    }
-    if (newCollider.intersects(rightEdge)) {
-        newX = matrixRight + 1;
-        if (newCollider.intersects(mapDownEdge)) newY = matrixDown - 29;
-        if (newCollider.intersects(mapUpEdge)) newY = matrixUp - 45;
-        player1->setPosition(newX, newY);
-        return;
-    }
-    if (newCollider.intersects(downEdge)) {
-        newY = matrixDown - 29;
-        player1->setPosition(newX, newY);
-        return;
-    }
-    if (newCollider.intersects(mapUpEdge)) {
-        newY = MAP_BLOCK_UP - 45;
-        player1->setPosition(newX, newY);
-        return;
-    }
-
-    player1->setPosition(newX, newY);
-}
-
-// 功能函数
 void Game::generateBox(bool generateMatrix)
 {
     // generate Box matrix
@@ -1308,7 +985,7 @@ void Game::setBoxMatrix(int matrix[MAX_M + 2][MAX_N + 2], int m, int n)
             boxMatrix[i][j] = matrix[i][j];
 }
 
-// 判定函数
+// Decision Function
 bool Game::elimatable(int r1, int c1, int r2, int c2, int showPath)
 {
     if (boxMatrix[r1][c1] != boxMatrix[r2][c2] || boxMatrix[r1][c1] == 0 || boxMatrix[r2][c2] == 0)
@@ -1544,4 +1221,328 @@ bool Game::canReachEdge(const int r, const int c)
     }
 
     return false;
+}
+
+// QWidget's slots
+void Game::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+    drawGame(&painter);
+}
+
+void Game::closeEvent(QCloseEvent *event)
+{
+    this->cleanGame();
+    return;
+}
+
+void Game::keyPressEvent(QKeyEvent *event)
+{
+    if (state == GS_pause) return;
+
+    // player 1
+    if (!player1->haveDizzy() && !player1->haveFreeze()) {
+        switch (event->key()) {
+        case Qt::Key_W:
+            player1->setState(HS_move_up);
+            player1->velocity.setX(0);
+            player1->velocity.setY(-1);
+            break;
+        case Qt::Key_A:
+            player1->setState(HS_move_left);
+            player1->velocity.setX(-1);
+            player1->velocity.setY(0);
+            break;
+        case Qt::Key_S:
+            player1->setState(HS_move_down);
+            player1->velocity.setX(0);
+            player1->velocity.setY(1);
+            break;
+        case Qt::Key_D:
+            player1->setState(HS_move_right);
+            player1->velocity.setX(1);
+            player1->velocity.setY(0);
+            break;
+        }
+    }
+    // player 1 have dizzy
+    if (player1->haveDizzy() && !player1->haveFreeze()) {
+        switch (event->key()) {
+        case Qt::Key_W:
+            player1->setState(HS_move_down);
+            player1->velocity.setX(0);
+            player1->velocity.setY(1);
+            break;
+        case Qt::Key_A:
+            player1->setState(HS_move_right);
+            player1->velocity.setX(1);
+            player1->velocity.setY(0);
+            break;
+        case Qt::Key_S:
+            player1->setState(HS_move_up);
+            player1->velocity.setX(0);
+            player1->velocity.setY(-1);
+            break;
+        case Qt::Key_D:
+            player1->setState(HS_move_left);
+            player1->velocity.setX(-1);
+            player1->velocity.setY(0);
+            break;
+        }
+    }
+
+    // player 2
+    if (this->state != GS_double_mode) return;
+    if (!player2->haveDizzy() && !player2->haveFreeze()) {
+        switch (event->key()) {
+        case Qt::Key_Up:
+            player2->setState(HS_move_up);
+            player2->velocity.setX(0);
+            player2->velocity.setY(-1);
+            break;
+        case Qt::Key_Left:
+            player2->setState(HS_move_left);
+            player2->velocity.setX(-1);
+            player2->velocity.setY(0);
+            break;
+        case Qt::Key_Down:
+            player2->setState(HS_move_down);
+            player2->velocity.setX(0);
+            player2->velocity.setY(1);
+            break;
+        case Qt::Key_Right:
+            player2->setState(HS_move_right);
+            player2->velocity.setX(1);
+            player2->velocity.setY(0);
+            break;
+        }
+    }
+    // player2 have dizzy
+    if (player2->haveDizzy() && !player2->haveFreeze()) {
+        switch (event->key()) {
+        case Qt::Key_Down:
+            player2->setState(HS_move_up);
+            player2->velocity.setX(0);
+            player2->velocity.setY(-1);
+            break;
+        case Qt::Key_Right:
+            player2->setState(HS_move_left);
+            player2->velocity.setX(-1);
+            player2->velocity.setY(0);
+            break;
+        case Qt::Key_Up:
+            player2->setState(HS_move_down);
+            player2->velocity.setX(0);
+            player2->velocity.setY(1);
+            break;
+        case Qt::Key_Left:
+            player2->setState(HS_move_right);
+            player2->velocity.setX(1);
+            player2->velocity.setY(0);
+            break;
+        }
+    }
+}
+
+void Game::keyReleaseEvent(QKeyEvent *event)
+{
+    int key = event->key();
+
+    // start menu
+    if (state == GS_start) emit signalKeyRelease(event);
+
+    // pause
+    if (state == GS_double_mode || state == GS_single_mode)
+        if (event->key() == Qt::Key_Escape) pauseGame();
+
+    // player 1
+    if (key == Qt::Key_W || key == Qt::Key_A || key == Qt::Key_S || key == Qt::Key_D) {
+        switch (player1->getState()) {
+        case HS_move_up:
+            player1->setState(HS_stand_up);
+            break;
+        case HS_move_left:
+            player1->setState(HS_stand_left);
+            break;
+        case HS_move_down:
+            player1->setState(HS_stand_down);
+            break;
+        case HS_move_right:
+            player1->setState(HS_stand_right);
+            break;
+        }
+        player1->velocity.setX(0);
+        player1->velocity.setY(0);
+    }
+
+    // player2
+    if (this->state != GS_double_mode) return;
+    if (key == Qt::Key_Up || key == Qt::Key_Left || key == Qt::Key_Right || key == Qt::Key_Down) {
+        switch (player2->getState()) {
+        case HS_move_up:
+            player2->setState(HS_stand_up);
+            break;
+        case HS_move_left:
+            player2->setState(HS_stand_left);
+            break;
+        case HS_move_down:
+            player2->setState(HS_stand_down);
+            break;
+        case HS_move_right:
+            player2->setState(HS_stand_right);
+            break;
+        }
+        player2->velocity.setX(0);
+        player2->velocity.setY(0);
+    }
+}
+
+void Game::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (!player1->haveFlash()) return;
+
+    QPoint mousePos = event->pos();
+    QRect newCollider(mousePos.x() - 13, mousePos.y(), 26, 14);
+    int newX = mousePos.x() - 13;
+    int newY = mousePos.y() - 30;
+
+    // out of the map
+    if (mousePos.x() < MAP_BLOCK_LEFT || mousePos.x() > MAP_BLOCK_RIGHT ||
+        mousePos.y() < MAP_BLOCK_UP || mousePos.y() > MAP_BLOCK_DOWN)
+        return;
+
+    // at the edge of the map
+    QRect mapLeftEdge(MAP_BLOCK_LEFT - 1, MAP_BLOCK_UP, 1, MAP_BLOCK_DOWN - MAP_BLOCK_UP);
+    QRect mapRightEdge(MAP_BLOCK_RIGHT, MAP_BLOCK_UP, 1, MAP_BLOCK_DOWN - MAP_BLOCK_UP);
+    QRect mapUpEdge(MAP_BLOCK_LEFT, MAP_BLOCK_UP - 1, MAP_BLOCK_RIGHT - MAP_BLOCK_LEFT, 1);
+    QRect mapDownEdge(MAP_BLOCK_LEFT, MAP_BLOCK_DOWN, MAP_BLOCK_RIGHT - MAP_BLOCK_LEFT, 1);
+    if (newCollider.intersects(mapLeftEdge)) {
+        newX = MAP_BLOCK_LEFT;
+        if (newCollider.intersects(mapDownEdge)) newY = MAP_BLOCK_DOWN - 44;
+        if (newCollider.intersects(mapUpEdge)) newY = MAP_BLOCK_UP - 30;
+        player1->setPosition(newX, newY);
+        return;
+    }
+    if (newCollider.intersects(mapRightEdge)) {
+        newX = MAP_BLOCK_RIGHT - 26;
+        if (newCollider.intersects(mapDownEdge)) newY = MAP_BLOCK_DOWN - 44;
+        if (newCollider.intersects(mapUpEdge)) newY = MAP_BLOCK_UP - 30;
+        player1->setPosition(newX, newY);
+        return;
+    }
+    if (newCollider.intersects(mapDownEdge)) {
+        newY = MAP_BLOCK_DOWN - 44;
+        player1->setPosition(newX, newY);
+        return;
+    }
+    if (newCollider.intersects(mapUpEdge)) {
+        newY = MAP_BLOCK_UP - 30;
+        player1->setPosition(newX, newY);
+        return;
+    }
+
+    // in the box matrix
+    int r, c;
+    int matrixLeft = MAP_BLOCK_LEFT + (MAP_BLOCK_RIGHT - MAP_BLOCK_LEFT - N * CUBE_LENGTH) / 2;
+    int matrixRight = matrixLeft + N * CUBE_LENGTH;
+    int matrixUp = MAP_BLOCK_UP + (MAP_BLOCK_DOWN - MAP_BLOCK_UP - M * CUBE_LENGTH) / 2;
+    int matrixDown = matrixUp + M * CUBE_LENGTH;
+    if (mousePos.x() > matrixLeft && mousePos.x() < matrixRight && mousePos.y() > matrixUp &&
+        mousePos.y() < matrixDown) {
+        c = (mousePos.x() - matrixLeft) / CUBE_LENGTH + 1;
+        r = (mousePos.y() - matrixUp) / CUBE_LENGTH + 1;
+        // 边界上
+        if (r == 1 || c == 1 || r == M || c == N) {
+            // 空点
+            if (boxMatrix[r][c] == 0) {
+                newX = matrixLeft + (c - 0.5) * CUBE_LENGTH - 13;
+                newY = matrixUp + (r - 0.5) * CUBE_LENGTH - 30;
+            }
+            // 非空点
+            else {
+                if (c == 1) newX = matrixLeft - 0.5 * CUBE_LENGTH - 13;
+                if (r == 1) newY = matrixUp - 0.5 * CUBE_LENGTH - 30;
+                if (c == N) newX = matrixRight + 0.5 * CUBE_LENGTH - 13;
+                if (r == M) newY = matrixDown + 0.5 * CUBE_LENGTH - 30;
+                triggerBox(r, c);
+            }
+            player1->setPosition(newX, newY);
+            return;
+        }
+        // 内部
+        else {
+            // 空点
+            if (boxMatrix[r][c] == 0) {
+                if (canReachEdge(r, c)) {
+                    newX = matrixLeft + (c - 0.5) * CUBE_LENGTH - 13;
+                    newY = matrixUp + (r - 0.5) * CUBE_LENGTH - 30;
+                    player1->setPosition(newX, newY);
+                }
+                return;
+                // 非空点
+            } else {
+                if (canReachEdge(r - 1, c)) {
+                    newX = matrixLeft + (c - 0.5) * CUBE_LENGTH - 13;
+                    newY = matrixUp + (r - 1.5) * CUBE_LENGTH - 30;
+                    player1->setPosition(newX, newY);
+                    triggerBox(r, c);
+                    return;
+                }
+                if (canReachEdge(r + 1, c)) {
+                    newX = matrixLeft + (c - 0.5) * CUBE_LENGTH - 13;
+                    newY = matrixUp + (r + 0.5) * CUBE_LENGTH - 30;
+                    player1->setPosition(newX, newY);
+                    triggerBox(r, c);
+                    return;
+                }
+                if (canReachEdge(r, c - 1)) {
+                    newX = matrixLeft + (c - 1.5) * CUBE_LENGTH - 13;
+                    newY = matrixUp + (r - 0.5) * CUBE_LENGTH - 30;
+                    player1->setPosition(newX, newY);
+                    triggerBox(r, c);
+                    return;
+                }
+                if (canReachEdge(r, c + 1)) {
+                    newX = matrixLeft + (c + 0.5) * CUBE_LENGTH - 13;
+                    newY = matrixUp + (r - 0.5) * CUBE_LENGTH - 30;
+                    player1->setPosition(newX, newY);
+                    triggerBox(r, c + 1);
+                    return;
+                }
+                return;
+            }
+        }
+    }
+
+    // at the edge of the box matrix
+    QRect leftEdge(matrixLeft - 1, matrixUp, 1, matrixDown - matrixUp);
+    QRect rightEdge(matrixRight, matrixUp, 1, matrixDown - matrixUp);
+    QRect upEdge(matrixLeft, matrixUp - 1, matrixRight - matrixLeft, 1);
+    QRect downEdge(matrixLeft, matrixDown, matrixRight - matrixLeft, 1);
+    if (newCollider.intersects(leftEdge)) {
+        newX = matrixLeft - 27;
+        if (newCollider.intersects(mapDownEdge)) newY = matrixDown - 29;
+        if (newCollider.intersects(mapUpEdge)) newY = MAP_BLOCK_UP - 45;
+        player1->setPosition(newX, newY);
+        return;
+    }
+    if (newCollider.intersects(rightEdge)) {
+        newX = matrixRight + 1;
+        if (newCollider.intersects(mapDownEdge)) newY = matrixDown - 29;
+        if (newCollider.intersects(mapUpEdge)) newY = matrixUp - 45;
+        player1->setPosition(newX, newY);
+        return;
+    }
+    if (newCollider.intersects(downEdge)) {
+        newY = matrixDown - 29;
+        player1->setPosition(newX, newY);
+        return;
+    }
+    if (newCollider.intersects(mapUpEdge)) {
+        newY = MAP_BLOCK_UP - 45;
+        player1->setPosition(newX, newY);
+        return;
+    }
+
+    player1->setPosition(newX, newY);
 }
