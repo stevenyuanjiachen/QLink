@@ -1,13 +1,5 @@
 #include "Game.h"
-#include "Hero.h"
-#include "Manager.h"
-#include "Item.h"
-#include "Map.h"
-#include "MyProgressBar.h"
-#include "ScoreBoard.h"
-#include "PauseMenu.h"
-#include "StartMenu.h"
-#include "FinishMenu.h"
+
 #include <QRandomGenerator>
 #include <QRegularExpression>
 #include <QSet>

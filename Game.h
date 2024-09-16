@@ -1,11 +1,11 @@
 #pragma once
 
-#include <QWidget>
+#include "MyEntity"
+#include "MyWidget"
 #include <QIcon>
 #include <QPainter>
 #include <QKeyEvent>
 #include <QMouseEvent>
-#include "Box.h"
 #include <QElapsedTimer>
 #include <QTimer>
 #include <QLine>

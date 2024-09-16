@@ -1,7 +1,5 @@
 #include "ElimateTest.h"
 
-
-
 void ElimateTest::horizonTest1()
 {
     Game game;
@@ -561,3 +559,81 @@ void ElimateTest::twoCornerTest16()
     game.setBoxMatrix(matrix, 5, 7);
     QVERIFY(game.elimatable(4, 4, 3, 6)==true);
 }
+
+void ElimateTest::twoCornerTest17()
+{
+    Game game;
+    int matrix[MAX_M+2][MAX_N+2]={
+        {0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 1, 1, 1, 1, 1, 1, 1, 0},
+        {0, 1, 1, 2, 1, 2, 1, 1, 0},
+        {0, 1, 1, 0, 1, 0, 1, 1, 0},
+        {0, 1, 1, 1, 2, 1, 1, 1, 0},
+        {0, 1, 1, 0, 1, 0, 1, 1, 0},
+        {0, 1, 1, 2, 1, 2, 1, 1, 0},
+        {0, 1, 1, 1, 1, 1, 1, 1, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0},
+    };
+
+    game.setBoxMatrix(matrix, 7, 7);
+    QVERIFY(game.elimatable(4, 4, 2, 3)==false);
+}
+
+void ElimateTest::twoCornerTest18()
+{
+    Game game;
+    int matrix[MAX_M+2][MAX_N+2]={
+        {0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 1, 1, 1, 1, 1, 1, 1, 0},
+        {0, 1, 1, 2, 1, 2, 1, 1, 0},
+        {0, 1, 1, 0, 1, 0, 1, 1, 0},
+        {0, 1, 1, 1, 2, 1, 1, 1, 0},
+        {0, 1, 1, 0, 1, 0, 1, 1, 0},
+        {0, 1, 1, 2, 1, 2, 1, 1, 0},
+        {0, 1, 1, 1, 1, 1, 1, 1, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0},
+    };
+
+    game.setBoxMatrix(matrix, 7, 7);
+    QVERIFY(game.elimatable(2, 3, 4, 4)==false);
+}
+
+void ElimateTest::twoCornerTest19()
+{
+    Game game;
+    int matrix[MAX_M+2][MAX_N+2]={
+        {0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 1, 1, 1, 1, 1, 1, 1, 0},
+        {0, 1, 1, 2, 1, 2, 1, 1, 0},
+        {0, 1, 2, 0, 1, 0, 2, 1, 0},
+        {0, 1, 1, 1, 2, 1, 1, 1, 0},
+        {0, 1, 2, 0, 1, 0, 2, 1, 0},
+        {0, 1, 1, 2, 1, 2, 1, 1, 0},
+        {0, 1, 1, 1, 1, 1, 1, 1, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0},
+    };
+
+    game.setBoxMatrix(matrix, 7, 7);
+    QVERIFY(game.elimatable(4, 4, 3, 2)==false);
+}
+
+void ElimateTest::twoCornerTest20()
+{
+    Game game;
+    int matrix[MAX_M+2][MAX_N+2]={
+        {0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 1, 1, 1, 1, 1, 1, 1, 0},
+        {0, 1, 1, 2, 1, 2, 1, 1, 0},
+        {0, 1, 2, 0, 1, 0, 2, 1, 0},
+        {0, 1, 1, 1, 2, 1, 1, 1, 0},
+        {0, 1, 2, 0, 1, 0, 2, 1, 0},
+        {0, 1, 1, 2, 1, 2, 1, 1, 0},
+        {0, 1, 1, 1, 1, 1, 1, 1, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0},
+    };
+
+    game.setBoxMatrix(matrix, 7, 7);
+    QVERIFY(game.elimatable(3, 2, 4, 4)==false);
+}
+
+QTEST_MAIN(ElimateTest);

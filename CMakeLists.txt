@@ -21,9 +21,10 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Test)
 
 # Add src file
 add_executable(QLink
-    main.cpp
+#    main.cpp
     Game.h
     Game.cpp
+    ElimateTest.cpp
 )
 
 #Add include file

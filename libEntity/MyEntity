@@ -1,0 +1,5 @@
+#include "Box.h"
+#include "Hero.h"
+#include "Item.h"
+#include "Manager.h"
+#include "Map.h"

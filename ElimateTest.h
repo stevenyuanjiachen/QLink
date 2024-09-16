@@ -6,7 +6,7 @@
 class ElimateTest: public QObject
 {
     Q_OBJECT
-private:
+private slots:
     void horizonTest1();
     void horizonTest2();
     void verticalTest1();
@@ -39,4 +39,8 @@ private:
     void twoCornerTest14();
     void twoCornerTest15();
     void twoCornerTest16();
+    void twoCornerTest17();
+    void twoCornerTest18();
+    void twoCornerTest19();
+    void twoCornerTest20();
 };
