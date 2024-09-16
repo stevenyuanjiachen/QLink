@@ -21,17 +21,6 @@
 #include <iostream>
 #include <queue>
 
-// the Box Matrix is M*N
-int M = 8, N = 8;
-
-Hero *player1, *player2;
-Map *gameMap;
-MyProgressBar *progressBar;
-ScoreBoard *scoreBoard1, *scoreBoard2;
-PauseMenu *pauseMenu;
-StartMenu *startMenu;
-FinishMenu *finishMenu;
-
 // 游戏实现
 Game::Game(QWidget *parent)
     : QWidget(parent), state(GS_start)
@@ -1459,17 +1448,30 @@ void Game::loadItems(const QString &filePath)
     qInfo() << "load Boxes Successfully !";
 }
 
+void Game::setBoxMatrix(int matrix[MAX_M+2][MAX_N+2], int m, int n)
+{
+    if(M>MAX_M || N>MAX_N) qDebug() << "M*N out of range!";
+    M = m, N =n;
+    for(int i=0; i<=M+1; ++i)
+        for(int j=0; j<=N+1; ++j)
+            boxMatrix[i][j] = matrix[i][j];
+}
+
+// 判定函数
 bool Game::elimatable(int r1, int c1, int r2, int c2, int showPath)
 {
     if(boxMatrix[r1][c1]!=boxMatrix[r2][c2] || boxMatrix[r1][c1]==0 || boxMatrix[r2][c2]==0) return false;
     return horizonElimatable(r1, c1, r2, c2, showPath) || verticalElimatable(r1, c1, r2, c2, showPath) || oneCornerElimatable(r1, c1, r2, c2, showPath) || twoCornerElimatable(r1, c1, r2, c2, showPath);
 }
 
-// 判定函数
 bool Game::elimatable(const Box *box1, const Box *box2, int showPath)
 {   
-    if(box1->getColor()!=box2->getColor()) return false;
-    return horizonElimatable(box1, box2, showPath) || verticalElimatable(box1, box2, showPath) || oneCornerElimatable(box1, box2, showPath) || twoCornerElimatable(box1, box2, showPath);
+    int r1 = box1->getR();
+    int c1 = box1->getC();
+    int r2 = box2->getR();
+    int c2 = box2->getC();
+
+    return elimatable(r1, c1, r2, c2, showPath);
 }
 
 bool Game::horizonElimatable(int r1, int c1, int r2, int c2, int showPath)
