@@ -1459,6 +1459,12 @@ void Game::loadItems(const QString &filePath)
     qInfo() << "load Boxes Successfully !";
 }
 
+bool Game::elimatable(int r1, int c1, int r2, int c2, int showPath)
+{
+    if(boxMatrix[r1][c1]!=boxMatrix[r2][c2] || boxMatrix[r1][c1]==0 || boxMatrix[r2][c2]==0) return false;
+    return horizonElimatable(r1, c1, r2, c2, showPath) || verticalElimatable(r1, c1, r2, c2, showPath) || oneCornerElimatable(r1, c1, r2, c2, showPath) || twoCornerElimatable(r1, c1, r2, c2, showPath);
+}
+
 // 判定函数
 bool Game::elimatable(const Box *box1, const Box *box2, int showPath)
 {   
@@ -1538,13 +1544,8 @@ bool Game::verticalElimatable(const Box *box1, const Box *box2, int showPath)
     return verticalElimatable(r1, c1, r2, c2, showPath);
 }
 
-bool Game::oneCornerElimatable(const Box *box1, const Box *box2, int showPath)
+bool Game::oneCornerElimatable(int r1, int c1, int r2, int c2, int showPath)
 {
-    int r1 = box1->getR();
-    int c1 = box1->getC();
-    int r2 = box2->getR();
-    int c2 = box2->getC();
-
     // find the corner in the same r with box1
     // 2     2
     // |--1--|
@@ -1584,13 +1585,18 @@ bool Game::oneCornerElimatable(const Box *box1, const Box *box2, int showPath)
     return false;
 }
 
-bool Game::twoCornerElimatable(const Box *box1, const Box *box2, int showPath)
+bool Game::oneCornerElimatable(const Box *box1, const Box *box2, int showPath)
 {
     int r1 = box1->getR();
     int c1 = box1->getC();
     int r2 = box2->getR();
     int c2 = box2->getC();
 
+    return oneCornerElimatable(r1, c1, r2, c2, showPath);
+}
+
+bool Game::twoCornerElimatable(int r1, int c1, int r2, int c2, int showPath)
+{
     // find the corner in same r with box1
     //  2-.-2
     //    |
@@ -1667,6 +1673,16 @@ bool Game::twoCornerElimatable(const Box *box1, const Box *box2, int showPath)
     }
 
     return false;
+}
+
+bool Game::twoCornerElimatable(const Box *box1, const Box *box2, int showPath)
+{
+    int r1 = box1->getR();
+    int c1 = box1->getC();
+    int r2 = box2->getR();
+    int c2 = box2->getC();
+
+    return twoCornerElimatable(r1, c1, r2, c2, showPath);
 }
 
 bool Game::canReachEdge(const int r, const int c)

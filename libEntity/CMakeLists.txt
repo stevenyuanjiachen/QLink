@@ -25,6 +25,6 @@ list(APPEND CMAKE_PREFIX_PATH "D:/Qt/6.7.2/mingw_64/")
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
-target_link_libraries(Entity PUBLIC
+target_link_libraries(Entity 
     PUBLIC Qt${QT_VERSION_MAJOR}::Widgets
 )

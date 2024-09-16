@@ -14,6 +14,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Add my own libs
 add_subdirectory(libEntity)
 add_subdirectory(libMyWidget)
+# Find the Qt's lib
+list(APPEND CMAKE_PREFIX_PATH "D:/Qt/6.7.2/mingw_64/")
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Test)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Test)
 
 # Add src file
 add_executable(QLink
@@ -30,4 +34,5 @@ target_include_directories(QLink
 # link the libs
 target_link_libraries(QLink PUBLIC 
     Entity MyWidget
+    Qt${QT_VERSION_MAJOR}::Test
 )

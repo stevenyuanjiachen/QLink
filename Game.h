@@ -67,12 +67,15 @@ public:
     void loadItems(const QString& filePath);
 
     // 判定函数
+    bool elimatable(int r1, int c1, int r2, int c2, int showPath = 0);
     bool elimatable(const Box* box1, const Box* box2, int showPath = 0);
     bool horizonElimatable(int r1, int c1, int r2, int c2, int showPath = 0);
     bool horizonElimatable(const Box* box1, const Box* box2, int showPath = 0);
     bool verticalElimatable(int r1, int c1, int r2, int c2, int showPath = 0);
     bool verticalElimatable(const Box* box1, const Box* box2, int showPath = 0);
+    bool oneCornerElimatable(int r1, int c1, int r2, int c2, int showPath = 0);
     bool oneCornerElimatable(const Box* box1, const Box* box2, int showPath = 0);
+    bool twoCornerElimatable(int r1, int c1, int r2, int c2, int showPath = 0);
     bool twoCornerElimatable(const Box* box1, const Box* box2, int showPath = 0);
     bool canReachEdge(const int r, const int c);
     
