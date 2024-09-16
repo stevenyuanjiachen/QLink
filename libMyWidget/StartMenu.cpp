@@ -1,15 +1,24 @@
 #include "StartMenu.h"
-#include "MyWidgetResList.h"
+
+#include <QFont>
 #include <QImage>
-#include <QPen>
 #include <QLinearGradient>
 #include <QPainterPath>
-#include <QFont>
+#include <QPen>
 
-StartMenu::StartMenu(QWidget *parent) : QWidget(nullptr), x(0), y(0), state(SMS_start),
-                                        startButton(parent), exitButton(parent),
-                                        singleButton(parent), doubleButton(parent), loadButton(parent),
-                                        inputM(parent), inputN(parent), inputTime(parent), okButton(parent)
+#include "MyWidgetResList.h"
+
+StartMenu::StartMenu(QWidget *parent)
+    : QWidget(nullptr), x(0), y(0), state(SMS_start),
+      startButton(parent),
+      exitButton(parent),
+      singleButton(parent),
+      doubleButton(parent),
+      loadButton(parent),
+      inputM(parent),
+      inputN(parent),
+      inputTime(parent),
+      okButton(parent)
 {
     movie = new QMovie(START_MENU_GIF);
     movie->start();
@@ -28,8 +37,7 @@ StartMenu::StartMenu(QWidget *parent) : QWidget(nullptr), x(0), y(0), state(SMS_
         "background-color: rgba(0, 0, 0, 0.1);" /* 按下时添加半透明效果 */
         "}");
     startButton.hide();
-    connect(&startButton, &QPushButton::clicked, this, [=]()
-            { state = SMS_choose_mode; });
+    connect(&startButton, &QPushButton::clicked, this, [=]() { state = SMS_choose_mode; });
 
     // exit button
     exitButton.setGeometry(x + 375, y + 510, 231, 111);
@@ -45,8 +53,7 @@ StartMenu::StartMenu(QWidget *parent) : QWidget(nullptr), x(0), y(0), state(SMS_
         "background-color: rgba(0, 0, 0, 0.1);" /* 按下时添加半透明效果 */
         "}");
     exitButton.hide();
-    connect(&exitButton, &QPushButton::clicked, this, [=]()
-            { emit signalExit(); });
+    connect(&exitButton, &QPushButton::clicked, this, [=]() { emit signalExit(); });
 
     // single button
     singleButton.setGeometry(x + 375, y + 370, 202, 99);
@@ -62,8 +69,10 @@ StartMenu::StartMenu(QWidget *parent) : QWidget(nullptr), x(0), y(0), state(SMS_
         "background-color: rgba(0, 0, 0, 0.1);" /* 按下时添加半透明效果 */
         "}");
     singleButton.hide();
-    connect(&singleButton, &QPushButton::clicked, this, [=]()
-            { gamemode = 1; state = SMS_input; });
+    connect(&singleButton, &QPushButton::clicked, this, [=]() {
+        gamemode = 1;
+        state = SMS_input;
+    });
 
     // double button
     doubleButton.setGeometry(x + 375, y + 485, 202, 99);
@@ -79,8 +88,10 @@ StartMenu::StartMenu(QWidget *parent) : QWidget(nullptr), x(0), y(0), state(SMS_
         "background-color: rgba(0, 0, 0, 0.1);" /* 按下时添加半透明效果 */
         "}");
     doubleButton.hide();
-    connect(&doubleButton, &QPushButton::clicked, this, [=]()
-            { gamemode = 2; state = SMS_input; });
+    connect(&doubleButton, &QPushButton::clicked, this, [=]() {
+        gamemode = 2;
+        state = SMS_input;
+    });
 
     // load button
     loadButton.setGeometry(x + 375, y + 600, 202, 99);
@@ -96,38 +107,37 @@ StartMenu::StartMenu(QWidget *parent) : QWidget(nullptr), x(0), y(0), state(SMS_
         "background-color: rgba(0, 0, 0, 0.1);" /* 按下时添加半透明效果 */
         "}");
     loadButton.hide();
-    connect(&loadButton, &QPushButton::clicked, this, [=]()
-            { emit signalLoadGame(); });
+    connect(&loadButton, &QPushButton::clicked, this, [=]() { emit signalLoadGame(); });
 
     // input mode
     int fontId = QFontDatabase::addApplicationFont(PIXEL_FONT);
     QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
     // inputM
     labelM = new QLabel("M:", parent);
-    labelM->setStyleSheet(
-        "font-family: '" + fontFamily + "';"
-                                        "color: #22060b;"
-                                        "font-size: 35px;");
+    labelM->setStyleSheet("font-family: '" + fontFamily +
+                          "';"
+                          "color: #22060b;"
+                          "font-size: 35px;");
     labelM->setGeometry(x + 375, y + 400, 49, 38);
     inputM.setGeometry(x + 375 + 60, y + 400, 104, 36);
     labelM->hide();
     inputM.hide();
     // inputN
     labelN = new QLabel("N:", parent);
-    labelN->setStyleSheet(
-        "font-family: '" + fontFamily + "';"
-                                        "color: #22060b;"
-                                        "font-size: 35px;");
+    labelN->setStyleSheet("font-family: '" + fontFamily +
+                          "';"
+                          "color: #22060b;"
+                          "font-size: 35px;");
     labelN->setGeometry(x + 375, y + 450, 49, 38);
     inputN.setGeometry(x + 375 + 60, y + 450, 104, 36);
     labelN->hide();
     inputN.hide();
     // inputTime
     labelTime = new QLabel("Time:", parent);
-    labelTime->setStyleSheet(
-        "font-family: '" + fontFamily + "';"
-                                        "color: #22060b;"
-                                        "font-size: 30px;");
+    labelTime->setStyleSheet("font-family: '" + fontFamily +
+                             "';"
+                             "color: #22060b;"
+                             "font-size: 30px;");
     labelTime->setGeometry(x + 285, y + 500, 139, 38);
     inputTime.setGeometry(x + 375 + 60, y + 500, 104, 36);
     labelTime->hide();
@@ -163,12 +173,12 @@ void StartMenu::draw(QPainter *painter)
 
     QPainterPath textPath;
     QString text = "QLINK";
-    textPath.addText(300, 350, font, text); // 起始位置 x: 10, y: 100
+    textPath.addText(300, 350, font, text);  // 起始位置 x: 10, y: 100
 
     // 创建线性渐变，从上到下的黄色渐变
     QLinearGradient gradient(0, 0, 0, 100);
-    gradient.setColorAt(0.0, QColor(247, 234, 174)); // 浅黄色
-    gradient.setColorAt(1.0, QColor(221, 148, 95));  // 深黄色
+    gradient.setColorAt(0.0, QColor(247, 234, 174));  // 浅黄色
+    gradient.setColorAt(1.0, QColor(221, 148, 95));   // 深黄色
 
     painter->setBrush(gradient);
     painter->setPen(QPen(Qt::black, 4));
@@ -177,8 +187,7 @@ void StartMenu::draw(QPainter *painter)
 
 void StartMenu::update()
 {
-    switch (state)
-    {
+    switch (state) {
     case SMS_start:
         startButton.show();
         exitButton.show();
@@ -256,26 +265,20 @@ void StartMenu::newGame()
     int time = inputTime.text().toInt(&okTime);
 
     // 检查所有输入是否有效
-    if (okM && okN && okTime)
-    {
-        if (M > 10 || N > 10)
-        {
+    if (okM && okN && okTime) {
+        if (M > 10 || N > 10) {
             QMessageBox::warning(this, "错误", "M*N 最大为 10*10");
             return;
         }
-        if (M < 3 || N < 3)
-        {
+        if (M < 3 || N < 3) {
             QMessageBox::warning(this, "错误", "M*N 最小为 3*3");
             return;
         }
-        if (time < 5)
-        {
+        if (time < 5) {
             QMessageBox::warning(this, "错误", "time 最小为 5s");
             return;
         }
-    }
-    else
-    {
+    } else {
         QMessageBox::warning(this, "错误", "请确保所有输入都是有效的数字！");
         return;
     }
@@ -283,11 +286,10 @@ void StartMenu::newGame()
     emit signalNewGame(gamemode, M, N, time);
 }
 
-void StartMenu::keyReleaseEvent(QKeyEvent* event)
+void StartMenu::keyReleaseEvent(QKeyEvent *event)
 {
-    if(event->key() == Qt::Key_Escape)
-        switch (state)
-        {
+    if (event->key() == Qt::Key_Escape) {
+        switch (state) {
         case SMS_choose_mode:
             state = SMS_start;
             break;
@@ -295,4 +297,5 @@ void StartMenu::keyReleaseEvent(QKeyEvent* event)
             state = SMS_choose_mode;
             break;
         }
+    }
 }

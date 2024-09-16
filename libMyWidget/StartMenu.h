@@ -1,27 +1,21 @@
 #pragma once
 
-#include <QWidget>
-#include <QPushButton>
-#include <QMovie>
-#include <QPainter>
+#include <QKeyEvent>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMessageBox>
-#include <QKeyEvent>
+#include <QMovie>
+#include <QPainter>
+#include <QPushButton>
+#include <QWidget>
 
-enum StartMenuState{
-    SMS_start,
-    SMS_choose_mode,
-    SMS_input,
-    SMS_hide
-};
+enum StartMenuState { SMS_start, SMS_choose_mode, SMS_input, SMS_hide };
 
-class StartMenu: public QWidget
-{
+class StartMenu : public QWidget {
     Q_OBJECT
 public:
     StartMenu(QWidget* parent);
-    void draw(QPainter *painter);
+    void draw(QPainter* painter);
     void update();
     void hide();
     void show();
@@ -42,7 +36,7 @@ private:
     QMovie* movie;
     QPushButton singleButton, doubleButton, loadButton;
     QPushButton startButton, exitButton;
-    QLabel* labelM, * labelN, * labelTime;
+    QLabel *labelM, *labelN, *labelTime;
     QLineEdit inputM, inputN, inputTime;
     QPushButton okButton;
 };

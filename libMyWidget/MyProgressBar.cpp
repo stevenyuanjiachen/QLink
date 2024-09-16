@@ -1,8 +1,10 @@
 #include "MyProgressBar.h"
-#include "MyWidgetResList.h"
-#include <QFontMetrics>
+
 #include <QFile>
+#include <QFontMetrics>
 #include <QRegularExpression>
+
+#include "MyWidgetResList.h"
 
 MyProgressBar::MyProgressBar(int x, int y, double time)
     : QObject(nullptr), x(x), y(y), pause(false),
@@ -12,10 +14,10 @@ MyProgressBar::MyProgressBar(int x, int y, double time)
     frame = PROGRESSBAR_IMAGE;
 
     // set the bar
-    barX = x + BAR_INTERVAL_LEFT ;
-    barY = y + BAR_INTERVAL_UP ;
-    barWidth = BAR_INTERVAL_RIGHT - BAR_INTERVAL_LEFT ;
-    barHeight = BAR_INTERVAL_DOWN - BAR_INTERVAL_UP ;
+    barX = x + BAR_INTERVAL_LEFT;
+    barY = y + BAR_INTERVAL_UP;
+    barWidth = BAR_INTERVAL_RIGHT - BAR_INTERVAL_LEFT;
+    barHeight = BAR_INTERVAL_DOWN - BAR_INTERVAL_UP;
     barRect.setRect(barX, barY, barWidth, barHeight);
     barPen.setStyle(Qt::NoPen);
     barBrush.setColor(QColor(237, 216, 91));
@@ -27,7 +29,7 @@ MyProgressBar::MyProgressBar(int x, int y, double time)
     QString fontFamily = QFontDatabase::applicationFontFamilies(fontId).at(0);
     textFont.setFamily(fontFamily);
     textFont.setPixelSize(12);
-    
+
     QFontMetrics fm(textFont);
     int textWidth = fm.horizontalAdvance(timeText);
     int textHeight = fm.height();
@@ -48,8 +50,7 @@ void MyProgressBar::draw(QPainter *painter)
     painter->drawPixmap(x, y, frame);
 
     // draw the bar
-    if (value > 0)
-    {
+    if (value > 0) {
         painter->setPen(barPen);
         painter->setBrush(barBrush);
         painter->drawRoundedRect(barRect, 3, 3);
@@ -63,14 +64,13 @@ void MyProgressBar::draw(QPainter *painter)
 
 void MyProgressBar::update()
 {
-    if(pause == true) return;
+    if (pause == true) return;
 
     value -= 1;
-    if(value<=0)
-    {
+    if (value <= 0) {
         emit signalEnd();
         timeText = "00:00";
-        return ;
+        return;
     }
 
     // update the bar
@@ -83,19 +83,19 @@ void MyProgressBar::update()
     int seconds = totalSeconds % 60;
     // Format time as mm:ss
     timeText = QString("%1:%2")
-                           .arg(minutes, 2, 10, QChar('0'))  // Ensure two digits for minutes
-                           .arg(seconds, 2, 10, QChar('0')); // Ensure two digits for seconds
+                   .arg(minutes, 2, 10, QChar('0'))   // Ensure two digits for minutes
+                   .arg(seconds, 2, 10, QChar('0'));  // Ensure two digits for seconds
 }
 
 void MyProgressBar::addTime(int t)
 {
-    value += 1000* t;
+    value += 1000 * t;
     if (value > time) value = time;
 }
 
 void MyProgressBar::init(int t)
 {
-    time = value = t*1000;
+    time = value = t * 1000;
 }
 
 void MyProgressBar::pauseBar()
@@ -136,7 +136,7 @@ void MyProgressBar::saveState(const QString &filePath)
 
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         qDebug() << "无法写入文件:" << file.errorString();
-        return ;
+        return;
     }
 
     QTextStream out(&file);
@@ -150,7 +150,7 @@ void MyProgressBar::loadState(const QString &filePath)
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "无法打开文件:" << file.errorString();
-        return; 
+        return;
     }
 
     QTextStream in(&file);
@@ -162,11 +162,15 @@ void MyProgressBar::loadState(const QString &filePath)
 
     regex.setPattern("progressBar\\.time:\\s*(\\d+)");
     match = regex.match(fileContent);
-    if (match.hasMatch()) time = match.captured(1).toInt();
-    else qDebug() << "未找到 progressBar.time 行";
+    if (match.hasMatch())
+        time = match.captured(1).toInt();
+    else
+        qDebug() << "未找到 progressBar.time 行";
 
     regex.setPattern("progressBar\\.value:\\s*(\\d+)");
     match = regex.match(fileContent);
-    if (match.hasMatch()) value = match.captured(1).toInt();
-    else qDebug() << "未找到 progressBar.value 行";
+    if (match.hasMatch())
+        value = match.captured(1).toInt();
+    else
+        qDebug() << "未找到 progressBar.value 行";
 }

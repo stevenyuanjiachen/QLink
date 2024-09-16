@@ -27,14 +27,11 @@ private:
     int scoreBoardID;
     int x, y, score;
     bool flip;
-    // the frame
-    QPixmap scoreBoardFrame;
-    // the text
-    QString text;
+    QPixmap scoreBoardFrame; // the frame
+    QString text; // the text
     int textX, textY;
     QFont textFont;
     QBrush textBrush;
-    QLinearGradient yellowGradient; //text color
-    //timer
+    QLinearGradient yellowGradient; // text color
     QTimer timer;
 };

@@ -1,23 +1,22 @@
 #pragma once
 
+#include <QFontDataBase>
 #include <QObject>
+#include <QPainter>
 #include <QPixmap>
 #include <QRectF>
-#include <QFontDataBase>
-#include <QPainter>
 #include <QTimer>
 
 const int MY_PROGRESS_BAR_WIDTH = 346;
 const int MY_PROGRESS_BAR_HEIGHT = 36;
 
-class MyProgressBar : public QObject
-{
+class MyProgressBar : public QObject {
     Q_OBJECT
 public:
-    MyProgressBar(int x, int y ,double time);
-    ~MyProgressBar(){};
-    void draw(QPainter* painter) ;
-    void update() ;
+    MyProgressBar(int x, int y, double time);
+    ~MyProgressBar() {};
+    void draw(QPainter* painter);
+    void update();
     void addTime(int time);
     void init(int time);
     void pauseBar();
@@ -36,7 +35,7 @@ private:
 
     // the frame
     QPixmap frame;
-    
+
     // the bar
     int barX, barY, barWidth, barHeight;
     QRectF barRect;

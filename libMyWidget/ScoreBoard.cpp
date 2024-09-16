@@ -114,10 +114,6 @@ void ScoreBoard::loadState(const QString &filePath)
     QRegularExpression regex("scoreBoard"+ID+"\\.score:\\s*(\\d+)");
     QRegularExpressionMatch match = regex.match(fileContent);
 
-    if (match.hasMatch()) {
-        // 提取括号内捕获的分数
-        score = match.captured(1).toInt();
-    } else {
-        qDebug() << "未找到 scoreBoard.score 行";
-    }
+    if (match.hasMatch()) score = match.captured(1).toInt();
+    else qDebug() << "未找到 scoreBoard.score 行";
 }
