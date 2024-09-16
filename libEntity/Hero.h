@@ -57,6 +57,7 @@ public:
     void continueHero();
     void saveHeroState(const QString& filePath);
     void loadHeroState(const QString& filePath);
+
 private:
     int playerID;
     bool isPause;

@@ -4,8 +4,7 @@
 Item::Item(ItemType itemType, int x, int y):
     Entity(ET_item),itemType(itemType), x(x), y(y)
 {
-    switch (itemType)
-    {
+    switch (itemType) {
     case IT_add1s:
         pixmap.load(ADD1S_IMAGE);
         break;
