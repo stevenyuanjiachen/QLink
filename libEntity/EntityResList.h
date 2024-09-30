@@ -99,7 +99,13 @@ const QStringList MAP_LIST =
     "../res/images/Grass_Tile/6.png",
     "../res/images/Grass_Tile/7.png",
     "../res/images/Grass_Tile/8.png",
-    "../res/images/Grass_Tile/9.png"
+    "../res/images/Grass_Tile/9.png",
+    "../res/images/Grass_Tile/10.png",
+    "../res/images/Grass_Tile/11.png",
+    "../res/images/Grass_Tile/12.png",
+    "../res/images/Grass_Tile/13.png",
+    "../res/images/Grass_Tile/14.png",
+    "../res/images/Grass_Tile/15.png"
 };
 
 // Box Resource List
