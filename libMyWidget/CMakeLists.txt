@@ -4,13 +4,10 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-add_library(MyWidget
-    MyProgressBar.cpp
-    ScoreBoard.cpp
-    PauseMenu.cpp
-    StartMenu.cpp
-    FinishMenu.cpp
+file(GLOB MYWIDGET_SRC
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 )
+add_library(MyWidget ${MYWIDGET_SRC})
 
 target_include_directories(MyWidget
     INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}"

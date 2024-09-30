@@ -4,16 +4,10 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-add_library(Entity
-    Entity.cpp
-    Sprite.cpp
-    Manager.cpp
-    Map.cpp
-    Animation.cpp 
-    Hero.cpp
-    Box.cpp
-    Item.cpp
+file(GLOB ENTITY_SRC
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 )
+add_library(Entity ${ENTITY_SRC})
 
 target_include_directories(Entity 
     INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}"
