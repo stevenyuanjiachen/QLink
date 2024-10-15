@@ -278,6 +278,10 @@ void StartMenu::newGame()
             QMessageBox::warning(this, "错误", "time 最小为 5s");
             return;
         }
+        if (time > 600) {
+            QMessageBox::warning(this, "错误", "time 最大为 600s");
+            return;
+        }
     } else {
         QMessageBox::warning(this, "错误", "请确保所有输入都是有效的数字！");
         return;
